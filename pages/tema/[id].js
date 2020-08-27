@@ -50,11 +50,6 @@ export default function TopicPage({ topic, description }) {
     }
   }, [data, topic, router.isFallback]);
 
-  // TODO ezt megcsinalni szepre
-  if (router.isFallback) {
-    return <div>Loading...</div>;
-  }
-
   return (
     <Layout footer={false}>
       <div className={styles.root}>

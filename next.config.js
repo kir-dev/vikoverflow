@@ -9,7 +9,7 @@ module.exports = {
         headers: [
           {
             key: "Cache-Control",
-            value: "public, no-transform, immutable, max-age=31536000",
+            value: "max-age=31536000, public",
           },
         ],
       },

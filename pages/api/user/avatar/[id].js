@@ -13,7 +13,7 @@ export default async function getUserAvatar(req, res) {
 
     res.setHeader(
       "Cache-Control",
-      "public, no-transform, immutable, max-age=31536000"
+      "max-age=31536000, public"
     );
     res.setHeader("Content-Type", data.ContentType);
     return res.send(data.Body);

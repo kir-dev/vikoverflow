@@ -1,0 +1,53 @@
+.root {
+  width: 100%;
+  margin: 0 auto;
+  border-bottom: 1px solid var(--accent-2);
+}
+
+.root:last-child {
+  margin-bottom: -1px;
+}
+
+.content {
+  padding: 1.5rem;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.content textarea {
+  width: 100%;
+}
+
+.footer {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: var(--accent-6);
+  font-size: 14px;
+  line-height: 1;
+}
+
+.stats svg {
+  margin-right: 0.25rem;
+  stroke-width: 1.75px;
+}
+
+.actions {
+  margin-left: auto;
+}
+
+.actions > * + * {
+  margin-left: 0.25rem;
+}
+
+.error {
+  display: flex;
+  margin-top: 0.5rem;
+}

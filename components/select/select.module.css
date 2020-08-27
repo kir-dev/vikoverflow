@@ -1,0 +1,71 @@
+.root {
+  --select-bg: var(--background);
+  --select-fg: var(--foreground);
+  --select-border: var(--accent-2);
+
+  position: relative;
+  display: inline-flex;
+  background: var(--select-bg);
+  color: var(--select-fg);
+  border: 1px solid var(--select-border);
+  border-radius: var(--radius);
+  height: 2.5rem;
+  transition: color 200ms ease, border-color 200ms ease;
+  overflow: hidden;
+  min-width: 10rem;
+}
+
+.select {
+  appearance: none;
+  border: none;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  color: inherit;
+  padding: 0 calc(0.75rem + 2rem) 0 0.75rem;
+  user-select: none;
+  width: 100%;
+  background: var(--select-bg);
+  color: var(--select-fg);
+}
+
+.select:focus {
+  outline: none;
+}
+
+.arrow {
+  pointer-events: none;
+  background: var(--select-bg);
+  height: 100%;
+  position: absolute;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+}
+
+.root:focus-within:not(.disabled):not(.errored) {
+  --select-border: var(--foreground);
+}
+
+.root.errored {
+  --select-fg: var(--error);
+  --select-border: var(--error);
+}
+
+.root.disabled {
+  --select-bg: var(--accent-1);
+  --select-border: var(--accent-2);
+  --select-fg: var(--accent-3);
+}
+
+.root.disabled .select {
+  cursor: not-allowed;
+}
+
+/* if first option has value="" and the select element is required we can have a nice "placeholder" style */
+.select:invalid {
+  --select-fg: var(--accent-3);
+}

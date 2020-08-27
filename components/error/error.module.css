@@ -1,0 +1,14 @@
+.root {
+  font-size: 0.875rem;
+  display: inline-flex;
+  align-items: center;
+  color: var(--error);
+  line-height: 1;
+  font-weight: 500;
+}
+
+.root svg {
+  height: 1rem;
+  width: 1rem;
+  margin-right: 0.2rem;
+}

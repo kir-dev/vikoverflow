@@ -1,0 +1,48 @@
+.root {
+  composes: container from global;
+  composes: screen from global;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .root {
+    grid-template-columns: 0.4fr minmax(0, 1fr);
+  }
+}
+
+.sidebarWrapper {
+  padding: 1.5rem 0 4rem;
+  height: 100%;
+}
+
+.sidebar {
+  position: sticky;
+  top: calc(4rem + 1.5rem);
+}
+
+.searchInput {
+  width: 100%;
+}
+
+.questionList {
+  padding: 1.5rem 0 4rem;
+  border-left: 1px solid var(--accent-2);
+  border-right: 1px solid var(--accent-2);
+  height: 100%;
+}
+
+.empty {
+  border-left: 1px solid var(--accent-2);
+  border-right: 1px solid var(--accent-2);
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty h1 {
+  font-size: 1.125rem;
+  font-weight: 500;
+}

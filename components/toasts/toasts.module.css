@@ -1,0 +1,79 @@
+.list {
+  position: fixed;
+  bottom: 10px;
+  right: 20px;
+  max-width: 420px;
+  transition: transform 400ms ease;
+}
+
+.toastContainer {
+  width: 420px;
+  height: 72px;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  transition: all 400ms ease;
+  transform: translate3d(0, calc(100% + 10px), 0);
+  opacity: 1;
+  user-select: none;
+}
+
+.toastContainer.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: all 200ms ease;
+}
+
+.toastContainer.visible {
+  transform: translate3d(
+      0,
+      calc(var(--index) * -15px),
+      calc(var(--index) * -1px)
+    )
+    scale(calc(1 - (var(--index) / 100) * 5));
+}
+
+.list:hover .toastContainer.visible {
+  transform: translate3d(
+    0,
+    calc(var(--index) * -70px),
+    calc(var(--index) * -1px)
+  );
+}
+
+.toast {
+  width: 420px;
+  background: var(--success);
+  color: var(--background);
+  border-radius: var(--radius);
+  height: 60px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  box-shadow: var(--shadow);
+  font-size: 0.875rem;
+}
+
+.toast.errored {
+  background-color: var(--error);
+  color: var(--background);
+}
+
+.toast span {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  margin-top: -1px;
+}
+
+@media (max-width: 440px) {
+  .list {
+    max-width: 90vw;
+    right: 5vw;
+  }
+
+  .toastContainer,
+  .toast {
+    width: 90vw;
+  }
+}

@@ -1,0 +1,66 @@
+.root {
+  composes: screen from global;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  border-bottom: 1px solid var(--accent-2);
+}
+
+.headerContent {
+  composes: container from global;
+  padding-top: 3rem;
+}
+
+.headerActions {
+  composes: container from global;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.headerActions * + * {
+  margin-left: 0.625rem;
+}
+
+.headerContent h1 {
+  font-weight: 500;
+  font-size: 2.25rem;
+}
+
+.headerContent p {
+  font-size: 0.875rem;
+  word-break: break-all;
+}
+
+.questions {
+  padding-bottom: 4rem;
+  width: 100%;
+  max-width: calc(var(--page) * (4 / 5));
+  margin: 0 auto;
+  border-left: 1px solid var(--accent-2);
+  border-right: 1px solid var(--accent-2);
+  flex: 1;
+}
+
+.questions > *:first-child {
+  border-top: none !important;
+}
+
+.empty {
+  composes: container from global;
+  border-left: 1px solid var(--accent-2);
+  border-right: 1px solid var(--accent-2);
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty h1 {
+  font-size: 1.125rem;
+  font-weight: 500;
+}

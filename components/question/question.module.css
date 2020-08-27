@@ -1,0 +1,117 @@
+.root {
+  border-bottom: 1px solid var(--accent-2);
+  width: 100%;
+  margin: 0 auto;
+  position: relative;
+}
+
+.root:first-of-type {
+  border-top: 1px solid var(--accent-2);
+}
+
+.root.clickable {
+  cursor: pointer;
+}
+
+.root.clickable:hover {
+  background: var(--accent-1);
+}
+
+.overlay {
+  position: absolute;
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 2;
+}
+
+.content {
+  white-space: pre-wrap;
+  word-break: break-all;
+  padding: 1rem 1.5rem 0;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+}
+
+.titleRow h1 {
+  font-size: 1.2rem;
+}
+
+.avatar {
+  margin-left: auto;
+}
+
+.content p {
+  margin-top: 0.5rem;
+  line-height: 1.4;
+  max-width: 100%;
+  line-height: 1.4;
+  word-break: break-word;
+  white-space: pre-line;
+}
+
+.stats {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+}
+
+.stat,
+.topic,
+.date {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+  color: var(--accent-6);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.date {
+  margin-left: 0.3rem;
+}
+
+.topic {
+  margin-left: auto;
+}
+
+.topic:before {
+  content: "# ";
+}
+
+.statIcon {
+  margin-left: -8px;
+  padding: 8px;
+  border-radius: 100%;
+  display: flex;
+  margin-right: 3px;
+  position: relative;
+}
+
+.root.allowActions .action {
+  z-index: 3;
+  cursor: pointer;
+}
+
+.root.allowActions .action:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.action.fill {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.stat svg {
+  stroke-width: 1.75px;
+}
+
+.stat + .stat {
+  margin-left: 1rem;
+}

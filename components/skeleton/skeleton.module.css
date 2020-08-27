@@ -1,0 +1,22 @@
+.root {
+  display: block;
+  border-radius: var(--radius);
+  background: linear-gradient(
+    270deg,
+    var(--accent-1),
+    var(--accent-2),
+    var(--accent-2),
+    var(--accent-1)
+  );
+  background-size: 400% 100%;
+  animation: loading 8s ease-in-out infinite;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

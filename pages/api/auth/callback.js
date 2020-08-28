@@ -69,7 +69,7 @@ export default async function handleCallbackFromOauth(req, res) {
     res.setHeader("Set-Cookie", [
       serialize(
         "token",
-        jwt.sign({ id, name, email }, process.env.OAUTH_SECRET, {
+        jwt.sign({ id, name, email }, process.env.JWT_SECRET, {
           expiresIn: "7d",
         }),
         {

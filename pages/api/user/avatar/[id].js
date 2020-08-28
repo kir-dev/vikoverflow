@@ -13,23 +13,20 @@ export default async function getUserAvatar(req, res) {
     if (!req.query.size) {
       return res
         .status(400)
-        .json({ error: "size query parameter is required" });
+        .json({ error: "must include size query parameter" });
     }
 
     const size = parseInt(req.query.size);
 
     const data = await getFromS3(req.query.id);
 
-    const acceptsWebP = req.headers?.accept?.split(",")?.includes("image/webp");
-
     const optimizedImage = await sharp(data.Body)
       .resize(size, size)
-      .toFormat(acceptsWebP ? "webp" : "png")
+      .toFormat("jpeg")
       .toBuffer();
 
     res.setHeader("Cache-Control", "max-age=31536000, immutable");
-    res.setHeader("Content-Type", acceptsWebP ? "image/webp" : "image/png");
-
+    res.setHeader("Content-Type", "image/jpeg");
     return res.send(optimizedImage);
   } catch (e) {
     return res.status(500).json({ error: e.message });

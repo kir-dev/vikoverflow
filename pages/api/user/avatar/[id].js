@@ -10,11 +10,11 @@ export default async function getUserAvatar(req, res) {
         .json({ error: `Method ${req.method} Not Allowed` });
     }
 
-    const size = req.query.size ? parseInt(req.query.size) : 100;
+    const size = req.query.size ? parseInt(req.query.size) * 2 : 200;
 
     const data = await getFromS3(req.query.id);
 
-    res.setHeader("Cache-Control", "max-age=31536000, public");
+    res.setHeader("Cache-Control", "max-age=31536000, immutable");
     res.setHeader("Content-Type", data.ContentType);
 
     const optimizedImage = await sharp(data.Body).resize(size, size).toBuffer();

@@ -1,4 +1,5 @@
 import { getFromS3 } from "lib/api/s3";
+import sharp from "sharp";
 
 export default async function getUserAvatar(req, res) {
   try {
@@ -9,14 +10,15 @@ export default async function getUserAvatar(req, res) {
         .json({ error: `Method ${req.method} Not Allowed` });
     }
 
+    const size = req.query.size ? parseInt(req.query.size) : 100;
+
     const data = await getFromS3(req.query.id);
 
-    res.setHeader(
-      "Cache-Control",
-      "max-age=31536000, public"
-    );
+    res.setHeader("Cache-Control", "max-age=31536000, public");
     res.setHeader("Content-Type", data.ContentType);
-    return res.send(data.Body);
+
+    const optimizedImage = await sharp(data.Body).resize(size, size).toBuffer();
+    return res.send(optimizedImage);
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }

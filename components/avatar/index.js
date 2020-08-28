@@ -39,7 +39,7 @@ export default function Avatar({
           ref={imgRef}
           src={
             id
-              ? `/api/user/avatar/${id}`
+              ? `/api/user/avatar/${id}?size=${size}`
               : "/static/default-avatar-20200809.svg"
           }
         />

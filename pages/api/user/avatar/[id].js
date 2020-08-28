@@ -10,7 +10,7 @@ export default async function getUserAvatar(req, res) {
         .json({ error: `Method ${req.method} Not Allowed` });
     }
 
-    const size = req.query.size ? parseInt(req.query.size) * 2 : 200;
+    const size = parseInt(req.query.size);
 
     const data = await getFromS3(req.query.id);
 

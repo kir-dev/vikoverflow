@@ -34,6 +34,7 @@ export default function Avatar({
           decoding="async"
           loading="lazy"
           importance="low"
+          alt="User's avatar"
           className={cn({ [styles.ready]: ready })}
           onLoad={() => setReady(true)}
           ref={imgRef}

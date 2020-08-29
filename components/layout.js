@@ -7,7 +7,7 @@ const SEO = ({ title, description, image }) => (
     {/* Preload */}
     <link
       rel="preload"
-      href="/static/inter-20200519.woff2"
+      href="/static/inter-20200829.woff2"
       as="font"
       type="font/woff2"
       crossOrigin="anonymous"

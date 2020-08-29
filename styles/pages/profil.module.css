@@ -18,23 +18,19 @@
   margin-left: 1.75rem;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
 .info h1 {
   font-size: 2.25rem;
   font-weight: 600;
   letter-spacing: -0.019em;
-  line-height: 1;
 }
 
 .info h2 {
-  margin-top: 0.75rem;
   font-size: 1.2rem;
   font-weight: 500;
   letter-spacing: -0.019em;
   color: var(--accent-5);
-  line-height: 1;
 }
 
 .main {
@@ -130,13 +126,15 @@
   animation: fadeIn 200ms ease-out forwards;
 }
 
-.activities li a {
+.activities li a,
+.footer a {
   font-weight: 500;
   color: inherit;
   text-decoration: none;
 }
 
-.activities li a:hover {
+.activities li a:hover,
+.footer a:hover {
   text-decoration: underline;
 }
 
@@ -163,4 +161,11 @@
 
 .loadMore:hover {
   text-decoration: underline;
+}
+
+.gap {
+  display: block;
+  width: 1px;
+  height: 1px;
+  margin-top: calc(var(--form-gap) - 1px);
 }

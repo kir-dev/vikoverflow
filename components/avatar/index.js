@@ -4,7 +4,7 @@ import { useToasts } from "components/toasts";
 import styles from "./avatar.module.css";
 import cn from "classnames";
 import LoadingDots from "components/loading-dots";
-import { mutate } from "swr";
+import useSWR, { mutate } from "swr";
 
 export default function Avatar({
   className,
@@ -51,6 +51,7 @@ export default function Avatar({
 
 export function UploadAvatar({ className, size }) {
   const { user } = useUser();
+  const { data: userData } = useSWR(user?.id ? `/api/user/${user.id}` : "");
   const hiddenInputRef = useRef(null);
   const [uploading, setUploading] = useState(false);
   const { addToast } = useToasts();
@@ -95,8 +96,8 @@ export function UploadAvatar({ className, size }) {
   return (
     <div className={cn(styles.root, className)}>
       <Avatar
-        loading={!user || uploading}
-        id={user?.avatar}
+        loading={!userData?.user || uploading}
+        id={userData?.user?.avatar}
         onClick={handleClick}
         size={size}
         disabled={uploading}

@@ -43,12 +43,12 @@ export default function TopicPage({ topic, description }) {
   }, [inView, isReachingEnd]);
 
   useEffect(() => {
-    if (!data || router.isFallback) return;
+    if (!data) return;
 
     if (!questions) {
       router.push("/404");
     }
-  }, [data, topic, router.isFallback]);
+  }, [data, topic]);
 
   return (
     <Layout footer={false}>

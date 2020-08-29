@@ -8,6 +8,7 @@ import Avatar from "components/avatar";
 import { formatDistanceToNowStrict } from "date-fns";
 import { hu } from "date-fns/locale";
 import useSWR from "swr";
+import { useRouter } from "next/router";
 
 function Question(
   {
@@ -28,6 +29,7 @@ function Question(
   ref
 ) {
   const { data } = useSWR(creator ? `/api/user/${creator}` : null);
+  const router = useRouter();
 
   // TODO cleanup :p, also make responsible and use css module
   if (skeleton) {
@@ -82,6 +84,7 @@ function Question(
             id={data?.user?.avatar}
             className={styles.avatar}
             size={28}
+            onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
           />
           {createdAt && (
             <span className={styles.date}>

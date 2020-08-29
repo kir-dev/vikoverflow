@@ -1,4 +1,4 @@
-import styles from "./form.module.css";
+import styles from "./question-form.module.css";
 import Button from "components/button";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import Input from "components/input";

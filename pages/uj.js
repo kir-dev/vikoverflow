@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import Form from "components/ask/form";
+import Form from "components/question-form";
 import Layout from "components/layout";
 import Head from "next/head";
 import { useUser } from "lib/authenticate";

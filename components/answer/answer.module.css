@@ -8,8 +8,16 @@
   margin-bottom: -1px;
 }
 
+.avatar {
+  margin-left: auto;
+}
+
+.date {
+  margin-left: 0.3rem;
+}
+
 .content {
-  padding: 1.5rem;
+  padding: 1.5rem 1.5rem 0;
   white-space: pre-wrap;
   word-break: break-all;
 }
@@ -22,21 +30,49 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 0 1.5rem 1.5rem;
+  padding: 0 1.5rem;
 }
 
 .stats {
   display: flex;
   align-items: center;
+  padding: 0.5rem 0;
+}
+
+.stat,
+.date {
+  display: flex;
+  align-items: center;
   font-weight: 500;
   color: var(--accent-6);
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1;
 }
 
-.stats svg {
-  margin-right: 0.25rem;
+.statIcon {
+  margin-left: -8px;
+  padding: 7px;
+  border-radius: 100%;
+  display: flex;
+  margin-right: 3px;
+  position: relative;
+}
+
+.stat svg {
   stroke-width: 1.75px;
+}
+
+.root.allowActions .action {
+  z-index: 3;
+  cursor: pointer;
+}
+
+.root.allowActions .action:hover {
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.action.fill {
+  background: rgba(0, 0, 0, 0.05);
 }
 
 .actions {

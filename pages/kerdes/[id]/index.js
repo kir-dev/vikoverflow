@@ -13,9 +13,6 @@ import AnswerForm from "components/answer-form";
 import { useToasts } from "components/toasts";
 import cn from "classnames";
 
-// TODO uj kerdes letrehozasa utan ronda az ui
-// TODO answer delete is egy jo modal legyen
-
 const QuestionPage = () => {
   const router = useRouter();
   const questionId = router.query.id;
@@ -24,6 +21,11 @@ const QuestionPage = () => {
   );
   const { user } = useUser();
   const [deleteModal, setDeleteModal] = useState({
+    open: false,
+    loading: false,
+  });
+  const [answerDeleteModal, setAnswerDeleteModal] = useState({
+    id: null,
     open: false,
     loading: false,
   });
@@ -39,8 +41,6 @@ const QuestionPage = () => {
   }, [data]);
 
   const closeDeleteModal = () => {
-    // TODO ez veszelyes ha beragad.. maradhat mert kell ne lepjen ki kozben
-    // de finally {} blokkban mindenkepp foglalkozni vele
     if (deleteModal.loading) return;
     setDeleteModal({ open: false, loading: false });
   };
@@ -49,6 +49,16 @@ const QuestionPage = () => {
     setDeleteModal({
       open: true,
     });
+  };
+
+  const closeAnswerDeleteModal = () => {
+    if (answerDeleteModal.loading) return;
+
+    setAnswerDeleteModal({ open: false, loading: false, id: null });
+  };
+
+  const openAnswerDeleteModal = (id) => () => {
+    setAnswerDeleteModal({ open: true, id });
   };
 
   async function handleAnswer(values) {
@@ -67,12 +77,12 @@ const QuestionPage = () => {
           answers: {
             count: oldData.question.answers.count + 1,
             list: [
-              ...oldData.question.answers.list,
               {
                 body: values.body,
                 upvotes: { count: 0, currentUserUpvoted: false },
                 creator: user.id,
               },
+              ...oldData.question.answers.list,
             ],
           },
         },
@@ -109,7 +119,7 @@ const QuestionPage = () => {
         },
       }));
       setEditingAnswer(null);
-      addToast("A válaszod sikeresen szerkesztve");
+      addToast("A válaszod sikeresen szerkesztve.");
     } else {
       addToast("Hiba lépett fel a válaszod szerkesztése közben.", {
         errored: true,
@@ -132,6 +142,8 @@ const QuestionPage = () => {
       addToast("Hiba lépett fel a kérdésed törlése közben.", {
         errored: true,
       });
+    } finally {
+      setDeleteModal((deleteModal) => ({ ...deleteModal, loading: false }));
     }
   };
 
@@ -218,9 +230,22 @@ const QuestionPage = () => {
     };
   }
 
-  function handleAnswerDelete(answerId) {
-    return async function answerDeleteCallback() {
-      try {
+  async function handleAnswerDelete() {
+    try {
+      setAnswerDeleteModal((oldVal) => ({ ...oldVal, loading: true }));
+
+      const answerId = answerDeleteModal.id;
+
+      console.log("answerId", answerId);
+
+      const res = await fetch(
+        `/api/question/${questionId}/answer/${answerId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (res.ok) {
         mutate(({ question: oldQuestion }) => {
           return {
             question: {
@@ -232,24 +257,19 @@ const QuestionPage = () => {
             },
           };
         }, false);
-
-        const res = await fetch(
-          `/api/question/${questionId}/answer/${answerId}`,
-          {
-            method: "DELETE",
-          }
-        );
-
-        if (!res.ok) {
-          mutate();
-          throw new Error("request failed");
-        }
-      } catch (e) {
-        addToast("Hiba lépett fel a válaszod törlése közben.", {
-          errored: true,
-        });
+        addToast("A válaszod sikeresen törlésre került.");
+        closeAnswerDeleteModal();
+      } else {
+        mutate();
+        throw new Error("request failed");
       }
-    };
+    } catch (e) {
+      addToast("Hiba lépett fel a válaszod törlése közben.", {
+        errored: true,
+      });
+    } finally {
+      setAnswerDeleteModal((oldVal) => ({ ...oldVal, loading: false }));
+    }
   }
 
   return (
@@ -265,6 +285,23 @@ const QuestionPage = () => {
           <Modal.Action
             loading={deleteModal.loading}
             onClick={handleDeleteModalSubmit}
+          >
+            Igen
+          </Modal.Action>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal open={answerDeleteModal.open} onClose={closeAnswerDeleteModal}>
+        <Modal.Header>Válasz törlése</Modal.Header>
+        <Modal.Body>
+          Biztosan törlöd a válaszodat? A válasz később nem lesz
+          visszaállítható.
+        </Modal.Body>
+        <Modal.Footer>
+          <Modal.Action onClick={closeAnswerDeleteModal}>Nem</Modal.Action>
+          <Modal.Action
+            loading={answerDeleteModal.loading}
+            onClick={handleAnswerDelete}
           >
             Igen
           </Modal.Action>
@@ -324,35 +361,22 @@ const QuestionPage = () => {
                     editing={editingAnswer === a.id}
                     onCancelEdit={() => setEditingAnswer(null)}
                     onEdit={handleAnswerEdit}
+                    allowActions={data && user}
+                    onUpvoteClick={handleAnswerVote(
+                      a.id,
+                      a.upvotes.currentUserUpvoted ? false : true
+                    )}
                     actions={
-                      <>
-                        {user && (
-                          <Button
-                            small
-                            onClick={handleAnswerVote(
-                              a.id,
-                              a.upvotes.currentUserUpvoted ? false : true
-                            )}
-                          >
-                            {a.upvotes.currentUserUpvoted
-                              ? "Nem tetszik"
-                              : "Tetszik"}
+                      a.creator === user?.id ? (
+                        <>
+                          <Button small onClick={() => setEditingAnswer(a.id)}>
+                            Szerkesztés
                           </Button>
-                        )}
-                        {a.creator === user?.id && (
-                          <>
-                            <Button
-                              small
-                              onClick={() => setEditingAnswer(a.id)}
-                            >
-                              Szerkesztés
-                            </Button>
-                            <Button small onClick={handleAnswerDelete(a.id)}>
-                              Törlés
-                            </Button>
-                          </>
-                        )}
-                      </>
+                          <Button small onClick={openAnswerDeleteModal(a.id)}>
+                            Törlés
+                          </Button>
+                        </>
+                      ) : null
                     }
                   />
                 ))}

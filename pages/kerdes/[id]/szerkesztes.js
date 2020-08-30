@@ -46,7 +46,7 @@ const QuestionEditPage = () => {
         }),
         false
       );
-      addToast("A kérdésed sikeresen szerkesztve");
+      addToast("A kérdésed sikeresen szerkesztve.");
       return router.push(`/kerdes/[id]`, `/kerdes/${questionId}`);
     } else {
       addToast("Hiba lépett fel kérdésed szerkesztése közben", {

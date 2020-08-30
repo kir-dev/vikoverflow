@@ -5,17 +5,30 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { getAnswerSchema } from "lib/schemas";
 import Error from "components/error";
 import Button from "components/button";
+import cn from "classnames";
+import Avatar from "components/avatar";
+import useSWR from "swr";
+import { useRouter } from "next/router";
+import { formatDistanceToNowStrict } from "date-fns";
+import { hu } from "date-fns/locale";
 
 const validationSchema = getAnswerSchema(true);
 
 export default function Answer({
   body,
   upvotes,
+  creator,
+  createdAt,
   actions,
   editing,
   onCancelEdit,
   onEdit,
+  allowActions,
+  onUpvoteClick,
 }) {
+  const { data } = useSWR(creator ? `/api/user/${creator}` : null);
+  const router = useRouter();
+
   async function handleSubmit(values) {
     await onEdit(values);
   }
@@ -29,7 +42,11 @@ export default function Answer({
       >
         {({ errors, touched, isSubmitting, isValid, dirty }) => (
           <Form>
-            <div className={styles.root}>
+            <div
+              className={cn(styles.root, {
+                [styles.allowActions]: allowActions,
+              })}
+            >
               <div className={styles.content}>
                 <Field
                   minRows={3}
@@ -49,8 +66,17 @@ export default function Answer({
               </div>
               <div className={styles.footer}>
                 <span className={styles.stats}>
-                  <ThumbsUp size={18} />
-                  {upvotes.count}
+                  <span className={styles.stat}>
+                    <span
+                      onClick={allowActions && onUpvoteClick}
+                      className={cn(styles.statIcon, styles.action, {
+                        [styles.fill]: upvotes?.currentUserUpvoted,
+                      })}
+                    >
+                      <ThumbsUp size={16} />
+                    </span>
+                    <span className={styles.statCount}>{upvotes?.count}</span>
+                  </span>
                 </span>
                 <span className={styles.actions}>
                   <Button
@@ -80,16 +106,45 @@ export default function Answer({
   }
 
   return (
-    <div className={styles.root}>
+    <div className={cn(styles.root, { [styles.allowActions]: allowActions })}>
       <div className={styles.content}>
         <p>{body}</p>
       </div>
       <div className={styles.footer}>
         <span className={styles.stats}>
-          <ThumbsUp size={18} />
-          {upvotes.count}
+          <span className={styles.stat}>
+            <span
+              onClick={allowActions && onUpvoteClick}
+              className={cn(styles.statIcon, styles.action, {
+                [styles.fill]: upvotes?.currentUserUpvoted,
+              })}
+            >
+              <ThumbsUp size={16} />
+            </span>
+            <span className={styles.statCount}>{upvotes?.count}</span>
+          </span>
         </span>
-        <span className={styles.actions}>{actions}</span>
+        {actions ? (
+          <span className={styles.actions}>{actions}</span>
+        ) : (
+          <>
+            <Avatar
+              loading={!data?.user}
+              id={data?.user?.avatar}
+              className={styles.avatar}
+              size={24}
+              onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
+            />
+            {createdAt && (
+              <span className={styles.date}>
+                {`· ${formatDistanceToNowStrict(new Date(createdAt), {
+                  locale: hu,
+                  addSuffix: true,
+                })}`}
+              </span>
+            )}
+          </>
+        )}
       </div>
     </div>
   );

@@ -122,8 +122,11 @@
 
 .activities li {
   padding: 10px 0;
-  word-break: break-all;
   animation: fadeIn 200ms ease-out forwards;
+}
+
+.activities li a {
+  word-break: break-all;
 }
 
 .activities li a,

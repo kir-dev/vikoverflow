@@ -54,7 +54,7 @@ export default async function handleCallbackFromOauth(req, res) {
         SK: `USER#${id}`,
       },
       UpdateExpression:
-        "set #n = if_not_exists(#n, :name), email = if_not_exists(email, :email)",
+        "set #n = :name, email = :email",
       ExpressionAttributeNames: {
         "#n": "name",
       },

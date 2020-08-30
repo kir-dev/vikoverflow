@@ -7,7 +7,7 @@ export default withUser(async function vote(req, res) {
       TransactItems: [
         {
           Update: {
-            TableName: "Questions",
+            TableName: "vikoverflow",
             Key: {
               PK: `QUESTION#${req.query.questionId}`,
               SK: `QUESTION#${req.query.questionId}`,
@@ -22,7 +22,7 @@ export default withUser(async function vote(req, res) {
         req.body.upvote
           ? {
               Put: {
-                TableName: "Questions",
+                TableName: "vikoverflow",
                 Item: {
                   PK: `QUESTION#${req.query.questionId}`,
                   SK: `QUESTIONUPVOTE#${req.user.id}`,
@@ -34,7 +34,7 @@ export default withUser(async function vote(req, res) {
             }
           : {
               Delete: {
-                TableName: "Questions",
+                TableName: "vikoverflow",
                 Key: {
                   PK: `QUESTION#${req.query.questionId}`,
                   SK: `QUESTIONUPVOTE#${req.user.id}`,

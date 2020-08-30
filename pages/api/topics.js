@@ -3,7 +3,7 @@ import db from "lib/api/db";
 async function getAllTopics(req, res) {
   try {
     const params = {
-      TableName: "Questions",
+      TableName: "vikoverflow",
       IndexName: "GSI1",
       KeyConditionExpression: "GSI1PK = :GSI1PK",
       ExpressionAttributeValues: {

@@ -17,7 +17,7 @@ export default withUser(async function createAnswer(req, res) {
       TransactItems: [
         {
           Update: {
-            TableName: "Questions",
+            TableName: "vikoverflow",
             Key: {
               PK: `QUESTION#${req.query.questionId}`,
               SK: `QUESTION#${req.query.questionId}`,
@@ -31,7 +31,7 @@ export default withUser(async function createAnswer(req, res) {
         },
         {
           Put: {
-            TableName: "Questions",
+            TableName: "vikoverflow",
             Item: {
               PK: `QUESTION#${req.query.questionId}`,
               SK: `ANSWER#${id}`,

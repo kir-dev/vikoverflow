@@ -17,7 +17,7 @@ import { getQuestionSchema } from "lib/schemas";
 async function getQuestion(req, res) {
   try {
     const params = {
-      TableName: "Questions",
+      TableName: "vikoverflow",
       KeyConditionExpression: "PK = :PK",
       ExpressionAttributeValues: {
         ":PK": `QUESTION#${req.query.questionId}`,
@@ -108,7 +108,7 @@ async function editQuestion(req, res) {
     };
 
     const getParams = {
-      TableName: "Questions",
+      TableName: "vikoverflow",
       Key: {
         PK: `QUESTION#${req.query.questionId}`,
         SK: `QUESTION#${req.query.questionId}`,
@@ -125,7 +125,7 @@ async function editQuestion(req, res) {
       // we are upserting a topic so the transaction doesnt fail
       // but using if_not_exists s to make sure createdAt and stuff is not overwritten
       const preparedUpdate = {
-        TableName: "Questions",
+        TableName: "vikoverflow",
         Key: {
           PK: `TOPIC#${newTopicId}`,
           SK: `TOPIC#${newTopicId}`,
@@ -158,7 +158,7 @@ async function editQuestion(req, res) {
       params.TransactItems.push(
         {
           Update: {
-            TableName: "Questions",
+            TableName: "vikoverflow",
             Key: {
               PK: `TOPIC#${oldTopicId}`,
               SK: `TOPIC#${oldTopicId}`,
@@ -177,7 +177,7 @@ async function editQuestion(req, res) {
     }
 
     const preparedUpdate = {
-      TableName: "Questions",
+      TableName: "vikoverflow",
       Key: {
         PK: `QUESTION#${req.query.questionId}`,
         SK: `QUESTION#${req.query.questionId}`,
@@ -214,7 +214,7 @@ async function deleteQuestion(req, res) {
     // getting all sks
     const { Items } = await db
       .query({
-        TableName: "Questions",
+        TableName: "vikoverflow",
         KeyConditionExpression: "PK = :PK",
         ProjectionExpression: "SK, topic, creator",
         ExpressionAttributeValues: {
@@ -238,7 +238,7 @@ async function deleteQuestion(req, res) {
     let currentBatch = [
       {
         Update: {
-          TableName: "Questions",
+          TableName: "vikoverflow",
           Key: {
             PK: `TOPIC#${topicId}`,
             SK: `TOPIC#${topicId}`,
@@ -254,7 +254,7 @@ async function deleteQuestion(req, res) {
     for (const item of Items) {
       currentBatch.push({
         Delete: {
-          TableName: "Questions",
+          TableName: "vikoverflow",
           Key: {
             PK: `QUESTION#${req.query.questionId}`,
             SK: item.SK,

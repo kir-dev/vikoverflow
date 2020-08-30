@@ -5,7 +5,7 @@ import { getAnswerSchema } from "lib/schemas";
 async function editAnswer(req, res) {
   try {
     const params = {
-      TableName: "Questions",
+      TableName: "vikoverflow",
       Key: {
         PK: `QUESTION#${req.query.questionId}`,
         SK: `ANSWER#${req.query.answerId}`,
@@ -52,7 +52,7 @@ async function deleteAnswer(req, res) {
     // getting all vote SKs
     const { Items } = await db
       .query({
-        TableName: "Questions",
+        TableName: "vikoverflow",
         KeyConditionExpression: "PK = :PK and begins_with(SK, :prefix)",
         ProjectionExpression: "SK",
         ExpressionAttributeValues: {
@@ -66,7 +66,7 @@ async function deleteAnswer(req, res) {
     let currentBatch = [
       {
         Delete: {
-          TableName: "Questions",
+          TableName: "vikoverflow",
           Key: {
             PK: `QUESTION#${req.query.questionId}`,
             SK: `ANSWER#${req.query.answerId}`,
@@ -79,7 +79,7 @@ async function deleteAnswer(req, res) {
       },
       {
         Update: {
-          TableName: "Questions",
+          TableName: "vikoverflow",
           Key: {
             PK: `QUESTION#${req.query.questionId}`,
             SK: `QUESTION#${req.query.questionId}`,
@@ -95,7 +95,7 @@ async function deleteAnswer(req, res) {
     for (const item of Items) {
       currentBatch.push({
         Delete: {
-          TableName: "Questions",
+          TableName: "vikoverflow",
           Key: {
             PK: `QUESTION#${req.query.questionId}`,
             SK: item.SK,

@@ -5,7 +5,7 @@ import { UserProfileSchema } from "lib/schemas";
 async function getUser(req, res) {
   try {
     const params = {
-      TableName: "Questions",
+      TableName: "vikoverflow",
       Key: {
         PK: `USER#${req.query.id}`,
         SK: `USER#${req.query.id}`,
@@ -56,7 +56,7 @@ async function editUser(req, res) {
     }
 
     const params = {
-      TableName: "Questions",
+      TableName: "vikoverflow",
       Key: {
         PK: `USER#${req.query.id}`,
         SK: `USER#${req.query.id}`,

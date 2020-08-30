@@ -11,7 +11,7 @@ export default async function getUserActivities(req, res) {
     }
 
     const params = {
-      TableName: "Questions",
+      TableName: "vikoverflow",
       IndexName: "GSI3",
       KeyConditionExpression: "creator = :creator",
       ScanIndexForward: false,

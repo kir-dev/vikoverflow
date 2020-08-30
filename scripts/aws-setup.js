@@ -14,7 +14,7 @@ const chalk = require("chalk");
     });
 
     const params = {
-      TableName: "Questions",
+      TableName: "vikoverflow",
       BillingMode: "PROVISIONED",
       KeySchema: [
         {

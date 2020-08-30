@@ -112,7 +112,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const getParams = {
-    TableName: "Questions",
+    TableName: "vikoverflow",
     Key: {
       PK: `TOPIC#${params.id}`,
       SK: `TOPIC#${params.id}`,

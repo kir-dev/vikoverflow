@@ -24,7 +24,7 @@ export default withUser(async function addCustomUserStuff(req, res) {
     }
 
     const params = {
-      TableName: "Questions",
+      TableName: "vikoverflow",
       Key: {
         PK: `USER#${req.user.id}`,
         SK: `USER#${req.user.id}`,

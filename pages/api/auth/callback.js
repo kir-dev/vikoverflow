@@ -48,7 +48,7 @@ export default async function handleCallbackFromOauth(req, res) {
     } = await dataResponse.json();
 
     const params = {
-      TableName: "Questions",
+      TableName: "vikoverflow",
       Key: {
         PK: `USER#${id}`,
         SK: `USER#${id}`,

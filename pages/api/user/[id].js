@@ -69,11 +69,8 @@ async function editUser(req, res) {
 
     await db.update(params).promise();
 
-    console.log("lefutott", params);
-
     return res.json({ success: true });
   } catch (e) {
-    console.log(e);
     return res.status(500).json({ error: e.message });
   }
 }

@@ -236,8 +236,6 @@ const QuestionPage = () => {
 
       const answerId = answerDeleteModal.id;
 
-      console.log("answerId", answerId);
-
       const res = await fetch(
         `/api/question/${questionId}/answer/${answerId}`,
         {

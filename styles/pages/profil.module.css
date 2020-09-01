@@ -21,7 +21,7 @@
 }
 
 .info h1 {
-  font-size: 2.25rem;
+  font-size: 2rem;
   font-weight: 600;
   letter-spacing: -0.019em;
 }
@@ -31,6 +31,17 @@
   font-weight: 500;
   letter-spacing: -0.019em;
   color: var(--accent-5);
+}
+
+.info h1,
+.info h2 {
+  display: inline-block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+  max-width: calc(100vw - 176px);
+  min-width: 0;
 }
 
 .main {
@@ -43,22 +54,29 @@
   composes: container from global;
   transform: translateY(-2rem);
   display: flex;
+  flex-direction: column;
 }
 
 .left {
-  width: 540px;
-  max-width: 100%;
-  margin-right: 80px;
+  width: 100%;
 }
 
 .right {
-  flex: 1;
+  margin-top: 80px;
 }
 
-.mainContent h2,
+.right h2 {
+  font-size: 1.2rem;
+  text-align: center;
+  font-weight: 700;
+}
+
 .loadMore {
   font-weight: 700;
   font-size: 0.875rem;
+  text-align: center;
+  display: block;
+  width: 100%;
 }
 
 .settingsContainer {
@@ -171,4 +189,40 @@
   width: 1px;
   height: 1px;
   margin-top: calc(var(--form-gap) - 1px);
+}
+
+@media (min-width: 1048px) {
+  .info h1 {
+    font-size: 2.25rem;
+  }
+
+  .info h2 {
+    font-size: 1.2rem;
+  }
+
+  .mainContent {
+    flex-direction: row;
+  }
+
+  .left {
+    width: 540px;
+    max-width: 100%;
+    margin-right: 80px;
+  }
+
+  .right {
+    flex: 1;
+    margin-top: 0;
+  }
+
+  .right h2 {
+    text-align: left;
+    font-size: 0.875rem;
+  }
+
+  .loadMore {
+    text-align: left;
+    display: inline-block;
+    width: auto;
+  }
 }

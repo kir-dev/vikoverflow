@@ -11,7 +11,7 @@
 
 .content {
   margin: 0 auto;
-  max-width: calc(var(--page) + 2 * 1.5rem);
+  max-width: var(--page-with-padding);
   padding: 0 1.5rem;
   display: flex;
   align-items: center;

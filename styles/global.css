@@ -32,6 +32,7 @@
   --radius-large: 8px;
   --shadow: 0 5px 10px rgba(0, 0, 0, 0.12);
   --page: 1000px;
+  --page-with-padding: calc(var(--page) + 2 * 1.5rem);
 }
 
 * {
@@ -58,7 +59,7 @@ body {
   padding-left: 1.5rem;
   padding-right: 1.5rem;
   max-width: 100%;
-  width: calc(var(--page) + 2 * 1.5rem);
+  width: var(--page-with-padding);
 }
 
 .screen {

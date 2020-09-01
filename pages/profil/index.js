@@ -12,6 +12,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useToasts } from "components/toasts";
 import { UserProfileSchema } from "lib/schemas";
 import Error from "components/error";
+import cn from "classnames";
 
 function stringifyActivity(a) {
   switch (a.type) {
@@ -122,6 +123,8 @@ export default function ProfilePage() {
 
   const isErrored = data?.some((p) => !!p.error);
   const isReachingEnd = data && !data[data.length - 1]?.nextCursor;
+  const isLoadingMore =
+    size > 0 && data && typeof data[size - 1] === "undefined";
   const activities =
     data && !isErrored
       ? [].concat(...data.map((page) => page.activities))
@@ -247,8 +250,10 @@ export default function ProfilePage() {
 
                 {!isReachingEnd && activities?.length && (
                   <span
-                    onClick={() => setSize(size + 1)}
-                    className={styles.loadMore}
+                    onClick={() => !isLoadingMore && setSize(size + 1)}
+                    className={cn(styles.loadMore, {
+                      [styles.loading]: isLoadingMore,
+                    })}
                   >
                     Továbbiak betöltése...
                   </span>

@@ -187,6 +187,13 @@
   text-decoration: underline;
 }
 
+.loadMore.loading {
+  color: var(--accent-4);
+  pointer-events: none;
+  text-decoration: none;
+  cursor: initial;
+}
+
 .gap {
   display: block;
   width: 1px;

@@ -117,13 +117,12 @@
 
 .footer {
   display: flex;
-  align-items: center;
   flex-direction: column;
   margin-top: 1.5rem;
   width: 100%;
   background: var(--accent-1);
   border-top: 1px solid var(--accent-2);
-  padding: 1rem 1.5rem;
+  padding: 1.5rem;
   border-bottom-left-radius: var(--radius);
   border-bottom-right-radius: var(--radius);
   font-size: 0.875rem;
@@ -133,7 +132,7 @@
 }
 
 .footer > :last-child {
-  margin-top: 12px;
+  margin-top: 1rem;
 }
 
 .activities {
@@ -233,6 +232,7 @@
   .footer {
     justify-content: space-between;
     flex-direction: row;
+    padding: 0.75rem 1.5rem;
   }
 
   .footer > :last-child {

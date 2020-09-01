@@ -58,7 +58,7 @@
 .root.disabled {
   --select-bg: var(--accent-1);
   --select-border: var(--accent-2);
-  --select-fg: var(--accent-3);
+  --select-fg: var(--accent-4);
 }
 
 .root.disabled .select {
@@ -67,5 +67,5 @@
 
 /* if first option has value="" and the select element is required we can have a nice "placeholder" style */
 .select:invalid {
-  --select-fg: var(--accent-3);
+  --select-fg: var(--accent-4);
 }

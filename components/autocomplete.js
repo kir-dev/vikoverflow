@@ -20,7 +20,7 @@ const styles = {
     color: state?.selectProps?.errored
       ? "var(--error) !important"
       : state.isDisabled
-      ? "var(--accent-3)"
+      ? "var(--accent-4)"
       : "var(--foreground)",
     borderRadius: "var(--radius)",
     boxShadow: "none",
@@ -35,7 +35,7 @@ const styles = {
     padding: "0 0 0 calc(0.75rem - 2px)",
   }),
   indicatorSeparator: () => ({ display: "none" }),
-  placeholder: (provided, state) => ({ ...provided, color: "var(--accent-3)" }),
+  placeholder: (provided, state) => ({ ...provided, color: "var(--accent-4)" }),
   indicatorsContainer: (provided, state) => ({
     ...provided,
     color: "inherit",

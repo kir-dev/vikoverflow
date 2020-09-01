@@ -59,13 +59,13 @@
 
 .input[disabled] {
   background: var(--accent-1);
-  color: var(--accent-3);
+  color: var(--accent-4);
   cursor: not-allowed;
 }
 
 .input::placeholder,
 .container.hasPrefix > :nth-child(2) {
-  color: var(--accent-3);
+  color: var(--accent-4);
 }
 
 .input[type="search"]::-webkit-search-decoration,

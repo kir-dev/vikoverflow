@@ -11,8 +11,6 @@ function Button(
     loading,
     disabled,
     className,
-    Component = "button",
-    innerRef,
     children,
     onClick,
     ...props
@@ -30,7 +28,7 @@ function Button(
   };
 
   return (
-    <Component
+    <button
       className={cn(styles.root, className, {
         [styles.inverted]: inverted,
         [styles.small]: small,
@@ -49,7 +47,7 @@ function Button(
           <LoadingDots size="big" />
         </span>
       )}
-    </Component>
+    </button>
   );
 }
 

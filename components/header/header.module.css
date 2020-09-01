@@ -4,8 +4,6 @@
   top: 0;
   width: 100%;
   background: var(--background);
-  /* background: hsla(0, 0%, 100%, 0.8); */
-  /*backdrop-filter: saturate(180%) blur(5px);*/
   box-shadow: inset 0 -1px 0 0 var(--accent-2);
   font-size: 0.875rem;
   z-index: 999;
@@ -104,6 +102,10 @@
     width: 24px;
   }
 
+  .root.active {
+    box-shadow: none;
+  }
+
   .root .rightNav,
   .root .leftNav {
     display: none;
@@ -129,5 +131,10 @@
     height: 48px;
     font-size: 1rem;
     border-bottom: 1px solid var(--accent-2);
+  }
+
+  .mobileNav button {
+    width: 100%;
+    margin-bottom: 20px;
   }
 }

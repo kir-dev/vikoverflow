@@ -61,10 +61,8 @@ export default function TopicPage({ topic, description }) {
           <div className={styles.headerActions}>
             {user && (
               <>
-                <Link href={`/uj?tema=${topic}`} passHref>
-                  <Button Component="a" small>
-                    Új kérdés ehhez a témához
-                  </Button>
+                <Link href={`/uj?tema=${topic}`}>
+                  <Button small>Új kérdés ehhez a témához</Button>
                 </Link>
 
                 <Button small>Téma leírásának módosítása</Button>

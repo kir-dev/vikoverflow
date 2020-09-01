@@ -331,11 +331,8 @@ const QuestionPage = () => {
                     <Link
                       href="/kerdes/[id]/szerkesztes"
                       as={`/kerdes/${questionId}/szerkesztes`}
-                      passHref
                     >
-                      <Button Component="a" medium>
-                        Szerkesztés
-                      </Button>
+                      <Button medium>Szerkesztés</Button>
                     </Link>
                     <Button
                       onClick={openDeleteModal}

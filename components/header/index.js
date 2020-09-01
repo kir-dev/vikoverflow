@@ -3,8 +3,9 @@ import cn from "classnames";
 import Link from "next/link";
 import { logout, useUser } from "lib/authenticate";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Toggle from "./toggle";
+import Button from "components/Button";
 
 const ActiveLink = ({ href, children, className }) => {
   const router = useRouter();
@@ -24,9 +25,13 @@ const Header = () => {
   const { isLoading, user } = useUser();
   const [active, setActive] = useState(false);
 
+  useEffect(() => {
+    document.body.style.overflow = active ? "hidden" : "auto";
+  }, [active]);
+
   return (
     <>
-      <header className={styles.root}>
+      <header className={cn(styles.root, { [styles.active]: active })}>
         <div className={styles.content}>
           <Link href="/">
             <a className={styles.logo}>vikoverflow</a>
@@ -69,8 +74,8 @@ const Header = () => {
       <div className={cn(styles.mobileNav, { [styles.active]: active })}>
         {user ? (
           <>
-            <Link href="/uj">
-              <a>Új kérdés</a>
+            <Link href="/uj" passHref>
+              <Button>Új kérdés</Button>
             </Link>
             <Link href="/profil">
               <a>Profil</a>

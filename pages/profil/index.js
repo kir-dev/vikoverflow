@@ -228,6 +228,7 @@ export default function ProfilePage() {
                             disabled={isSubmitting || !(isValid && dirty)}
                             loading={isSubmitting}
                             inverted
+                            medium
                           >
                             Mentés
                           </Button>

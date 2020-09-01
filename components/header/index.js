@@ -5,7 +5,7 @@ import { logout, useUser } from "lib/authenticate";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Toggle from "./toggle";
-import Button from "components/Button";
+import Button from "components/button";
 
 const ActiveLink = ({ href, children, className }) => {
   const router = useRouter();

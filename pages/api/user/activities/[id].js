@@ -63,7 +63,7 @@ export default async function getUserActivities(req, res) {
     if (additionalQuestions.size) {
       const additionalInfoParams = {
         RequestItems: {
-          Questions: {
+          vikoverflow: {
             Keys: [...additionalQuestions].map((v) => ({ PK: v, SK: v })),
             ProjectionExpression: "PK, SK, title",
           },
@@ -71,7 +71,7 @@ export default async function getUserActivities(req, res) {
       };
 
       const {
-        Responses: { Questions: responseQuestions },
+        Responses: { vikoverflow: responseQuestions },
       } = await db.batchGet(additionalInfoParams).promise();
 
       extraMetadata.push(...responseQuestions);

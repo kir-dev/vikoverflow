@@ -59,6 +59,8 @@
   --select-bg: var(--accent-1);
   --select-border: var(--accent-2);
   --select-fg: var(--accent-4);
+  opacity: 1;
+  -webkit-text-fill-color: var(--accent-4);
 }
 
 .root.disabled .select {

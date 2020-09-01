@@ -35,6 +35,7 @@
   --textarea-bg: var(--accent-1);
   --textarea-border: var(--accent-2);
   --textarea-fg: var(--accent-4);
+  -webkit-text-fill-color: var(--accent-4);
   cursor: not-allowed;
   opacity: 1;
 }

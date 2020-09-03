@@ -24,13 +24,15 @@ const AskPage = () => {
 
     if (res.ok) {
       const { id } = await res.json();
-
+      const { title, body, ...rest } = values;
       mutate(
         `/api/question/${id}`,
         {
           question: {
             id,
-            ...values,
+            title: title.trim().replace(/\s\s+/g, " "),
+            body: body.trim().replace(/\n\s*\n\s*\n/g, '\n\n'),
+            ...rest,
             answers: {
               count: 0,
               list: [],

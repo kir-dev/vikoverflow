@@ -196,6 +196,14 @@ async function editQuestion(req, res) {
         preparedUpdate.UpdateExpression += ",";
       }
 
+      if (key === "title") {
+        value = value.trim().replace(/\s\s+/g, " ");
+      }
+
+      if (key === "body") {
+        value = value.trim().replace(/\n\s*\n\s*\n/g, '\n\n');
+      }
+
       preparedUpdate.ExpressionAttributeValues[`:${key}`] = value;
     });
 

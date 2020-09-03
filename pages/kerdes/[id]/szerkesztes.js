@@ -37,11 +37,14 @@ const QuestionEditPage = () => {
     });
 
     if (res.ok) {
+      const { title, body, ...rest } = values;
       mutate(
         (oldData) => ({
           question: {
             ...oldData.question,
-            ...values,
+            title: title.trim().replace(/\s\s+/g, " "),
+            body: body.trim().replace(/\n\s*\n\s*\n/g, '\n\n'),
+            ...rest,
           },
         }),
         false

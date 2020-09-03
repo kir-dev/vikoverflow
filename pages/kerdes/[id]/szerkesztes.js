@@ -7,6 +7,7 @@ import Head from "next/head";
 import { useEffect } from "react";
 import styles from "styles/pages/ask.module.css";
 import { useToasts } from "components/toasts";
+import { trimTitle, trimBody } from "lib/trim";
 
 const QuestionEditPage = () => {
   const router = useRouter();
@@ -42,8 +43,8 @@ const QuestionEditPage = () => {
         (oldData) => ({
           question: {
             ...oldData.question,
-            title: title.trim().replace(/\s\s+/g, " "),
-            body: body.trim().replace(/\n\s*\n\s*\n/g, '\n\n'),
+            title: trimTitle(title),
+            body: trimBody(body),
             ...rest,
           },
         }),

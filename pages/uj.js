@@ -6,6 +6,7 @@ import { useUser } from "lib/authenticate";
 import styles from "styles/pages/ask.module.css";
 import { mutate } from "swr";
 import { useToasts } from "components/toasts";
+import { trimTitle, trimBody } from "lib/trim";
 
 const AskPage = () => {
   const router = useRouter();
@@ -30,8 +31,8 @@ const AskPage = () => {
         {
           question: {
             id,
-            title: title.trim().replace(/\s\s+/g, " "),
-            body: body.trim().replace(/\n\s*\n\s*\n/g, '\n\n'),
+            title: trimTitle(title),
+            body: trimBody(body),
             ...rest,
             answers: {
               count: 0,

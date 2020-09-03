@@ -1,6 +1,7 @@
 import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { getQuestionSchema } from "lib/schemas";
+import { trimTitle, trimBody } from "lib/trim";
 
 // TODO pagination:
 // VOTE -> #VOTE , ANSWERVOTE -> #ANSWERVOTE hogy felulre keruljenek,
@@ -197,11 +198,11 @@ async function editQuestion(req, res) {
       }
 
       if (key === "title") {
-        value = value.trim().replace(/\s\s+/g, " ");
+        value = trimTitle(value);
       }
 
       if (key === "body") {
-        value = value.trim().replace(/\n\s*\n\s*\n/g, '\n\n');
+        value = trimBody(value);
       }
 
       preparedUpdate.ExpressionAttributeValues[`:${key}`] = value;

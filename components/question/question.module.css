@@ -102,7 +102,6 @@
 }
 
 .root.allowActions .action {
-  z-index: 3;
   cursor: pointer;
 }
 

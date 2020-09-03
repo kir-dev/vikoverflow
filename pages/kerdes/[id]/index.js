@@ -11,7 +11,6 @@ import styles from "styles/pages/kerdes.module.css";
 import Answer from "components/answer";
 import AnswerForm from "components/answer-form";
 import { useToasts } from "components/toasts";
-import cn from "classnames";
 
 const QuestionPage = () => {
   const router = useRouter();
@@ -307,11 +306,7 @@ const QuestionPage = () => {
       </Modal>
 
       <Layout footer={false}>
-        <div
-          className={cn(styles.root, {
-            [styles.noInput]: !(data && user),
-          })}
-        >
+        <div className={styles.root}>
           <Question
             skeleton={!data}
             {...data?.question}

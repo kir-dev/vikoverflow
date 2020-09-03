@@ -10,14 +10,6 @@
   flex-direction: column;
 }
 
-.content.noInput {
-  padding-bottom: 4rem;
-}
-
-.content.noInput > *:last-child {
-  border-bottom: 1px solid var(--accent-2);
-}
-
 .answers {
   flex: 1;
   padding-bottom: 4rem;

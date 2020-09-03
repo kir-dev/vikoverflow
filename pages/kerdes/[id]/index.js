@@ -11,6 +11,7 @@ import styles from "styles/pages/kerdes.module.css";
 import Answer from "components/answer";
 import AnswerForm from "components/answer-form";
 import { useToasts } from "components/toasts";
+import { trimBody } from "lib/trim";
 
 const QuestionPage = () => {
   const router = useRouter();
@@ -77,7 +78,7 @@ const QuestionPage = () => {
             count: oldData.question.answers.count + 1,
             list: [
               {
-                body: values.body,
+                body: trimBody(values.body),
                 upvotes: { count: 0, currentUserUpvoted: false },
                 creator: user.id,
               },
@@ -112,7 +113,7 @@ const QuestionPage = () => {
           answers: {
             ...oldData.question.answers,
             list: oldData.question.answers.list.map((a) =>
-              a.id === editingAnswer ? { ...a, body: values.body } : a
+              a.id === editingAnswer ? { ...a, body: trimBody(values.body) } : a
             ),
           },
         },

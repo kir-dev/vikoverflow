@@ -1,6 +1,7 @@
 import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { getAnswerSchema } from "lib/schemas";
+import { trimBody } from "lib/trim";
 
 async function editAnswer(req, res) {
   try {
@@ -36,6 +37,11 @@ async function editAnswer(req, res) {
       params.UpdateExpression += ` ${key} = :${key}${
         i !== updates.length - 1 ? "," : ""
       }`;
+
+      if (key === "body") {
+        value = trimBody(value);
+      }
+
       params.ExpressionAttributeValues[`:${key}`] = value;
     });
 

@@ -52,9 +52,15 @@
   margin-top: 0.5rem;
   line-height: 1.4;
   max-width: 100%;
-  line-height: 1.4;
   word-break: break-word;
   white-space: pre-line;
+}
+
+.root.clickable .content p {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .stats {

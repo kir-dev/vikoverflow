@@ -85,7 +85,7 @@ const HomePage = () => {
           ) : questions.length > 0 ? (
             <div className={styles.questionList}>
               {questions.map((q) => (
-                <Question shortBody key={q.id} {...q} />
+                <Question clickable key={q.id} {...q} />
               ))}
               {!isReachingEnd && <Question ref={loaderRef} skeleton />}
             </div>

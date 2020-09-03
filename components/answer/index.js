@@ -11,6 +11,7 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 import { formatDistanceToNowStrict } from "date-fns";
 import { hu } from "date-fns/locale";
+import Linkify from "components/linkify";
 
 const validationSchema = getAnswerSchema(true);
 
@@ -108,7 +109,9 @@ export default function Answer({
   return (
     <div className={cn(styles.root, { [styles.allowActions]: allowActions })}>
       <div className={styles.content}>
-        <p>{body}</p>
+        <p>
+          <Linkify>{body}</Linkify>
+        </p>
       </div>
       <div className={styles.footer}>
         <span className={styles.stats}>

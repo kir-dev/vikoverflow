@@ -86,7 +86,7 @@ export default function TopicPage({ topic, description }) {
         ) : questions.length > 0 ? (
           <div className={styles.questions}>
             {questions.map((q) => (
-              <Question shortBody key={q.id} {...q} />
+              <Question clickable key={q.id} {...q} />
             ))}
             {!isReachingEnd && <Question ref={loaderRef} skeleton />}
           </div>

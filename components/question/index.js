@@ -9,6 +9,7 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { hu } from "date-fns/locale";
 import useSWR from "swr";
 import { useRouter } from "next/router";
+import Linkify from "components/linkify";
 
 function Question(
   {
@@ -19,7 +20,7 @@ function Question(
     upvotes,
     topic,
     answers,
-    shortBody,
+    clickable,
     innerRef,
     onUpvoteClick,
     allowActions,
@@ -67,11 +68,11 @@ function Question(
     <div
       ref={innerRef}
       className={cn(styles.root, {
-        [styles.clickable]: shortBody,
+        [styles.clickable]: clickable,
         [styles.allowActions]: allowActions,
       })}
     >
-      {shortBody && (
+      {clickable && (
         <Link href="/kerdes/[id]" as={`/kerdes/${id}`}>
           <a className={styles.overlay}></a>
         </Link>
@@ -96,8 +97,7 @@ function Question(
           )}
         </div>
         <p>
-          {shortBody ? body.slice(0, 275) : body}
-          {shortBody && body.length > 275 ? "…" : ""}
+          <Linkify>{body}</Linkify>
         </p>
         <div className={styles.stats}>
           <span className={styles.stat}>

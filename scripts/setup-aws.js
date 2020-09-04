@@ -27,8 +27,8 @@ const chalk = require("chalk");
         },
       ],
       ProvisionedThroughput: {
-        ReadCapacityUnits: 6,
-        WriteCapacityUnits: 6,
+        ReadCapacityUnits: 5,
+        WriteCapacityUnits: 5,
       },
       GlobalSecondaryIndexes: [
         {
@@ -47,8 +47,8 @@ const chalk = require("chalk");
             ProjectionType: "ALL",
           },
           ProvisionedThroughput: {
-            ReadCapacityUnits: 6,
-            WriteCapacityUnits: 6,
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5,
           },
         },
         {
@@ -67,8 +67,8 @@ const chalk = require("chalk");
             ProjectionType: "ALL",
           },
           ProvisionedThroughput: {
-            ReadCapacityUnits: 6,
-            WriteCapacityUnits: 6,
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5,
           },
         },
         {
@@ -87,8 +87,8 @@ const chalk = require("chalk");
             ProjectionType: "ALL",
           },
           ProvisionedThroughput: {
-            ReadCapacityUnits: 6,
-            WriteCapacityUnits: 6,
+            ReadCapacityUnits: 5,
+            WriteCapacityUnits: 5,
           },
         },
       ],

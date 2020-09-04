@@ -47,14 +47,19 @@ export default async function handleCallbackFromOauth(req, res) {
       mail: email,
     } = await dataResponse.json();
 
+    if (!id) {
+      return res
+        .status(400)
+        .json({ error: "could not get user id from authsch" });
+    }
+
     const params = {
       TableName: "vikoverflow",
       Key: {
         PK: `USER#${id}`,
         SK: `USER#${id}`,
       },
-      UpdateExpression:
-        "set #n = :name, email = :email",
+      UpdateExpression: "set #n = :name, email = :email",
       ExpressionAttributeNames: {
         "#n": "name",
       },

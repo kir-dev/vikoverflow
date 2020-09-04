@@ -2,11 +2,10 @@ import useSWR from "swr";
 import Skeleton from "components/skeleton";
 import Link from "next/link";
 import styles from "./topics.module.css";
+import cn from "classnames";
 
 export default function Topics({ search }) {
-  const { data } = useSWR(
-    `/api/topics${search ? `?search=${search}` : ""}`
-  );
+  const { data } = useSWR(`/api/topics${search ? `?search=${search}` : ""}`);
 
   return (
     <div className={styles.topicsWrapper}>
@@ -26,33 +25,33 @@ export default function Topics({ search }) {
               </li>
             ))
           ) : (
-            <li className={`${styles.topic} ${styles.empty}`}>
+            <li className={cn(styles.topic, styles.empty)}>
               Nem találtunk témákat
             </li>
           )
         ) : (
           <>
-            <li className={styles.topic}>
+            <li className={cn(styles.topic, styles.empty)}>
               <Skeleton
                 style={{ width: "71%", height: 20, margin: "10px 0" }}
               />
             </li>
-            <li className={styles.topic}>
+            <li className={cn(styles.topic, styles.empty)}>
               <Skeleton
                 style={{ width: "67%", height: 20, margin: "10px 0" }}
               />
             </li>
-            <li className={styles.topic}>
+            <li className={cn(styles.topic, styles.empty)}>
               <Skeleton
                 style={{ width: "80%", height: 20, margin: "10px 0" }}
               />
             </li>
-            <li className={styles.topic}>
+            <li className={cn(styles.topic, styles.empty)}>
               <Skeleton
                 style={{ width: "60%", height: 20, margin: "10px 0" }}
               />
             </li>
-            <li className={styles.topic}>
+            <li className={cn(styles.topic, styles.empty)}>
               <Skeleton
                 style={{ width: "68%", height: 20, margin: "10px 0" }}
               />

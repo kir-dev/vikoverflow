@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "aws-setup": "node ./scripts/aws-setup.js",
+    "setup-aws": "node ./scripts/setup-aws.js",
     "dev": "next dev",
     "build": "next build",
     "testonly": "jest --forceExit",

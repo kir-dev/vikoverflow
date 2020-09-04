@@ -1,7 +1,7 @@
 import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { getAnswerSchema } from "lib/schemas";
-import { trimBody } from "lib/trim";
+import { trimLineBreaks } from "lib/utils";
 
 async function editAnswer(req, res) {
   try {
@@ -39,7 +39,7 @@ async function editAnswer(req, res) {
       }`;
 
       if (key === "body") {
-        value = trimBody(value);
+        value = trimLineBreaks(value);
       }
 
       params.ExpressionAttributeValues[`:${key}`] = value;

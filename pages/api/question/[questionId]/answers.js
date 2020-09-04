@@ -2,7 +2,7 @@ import db from "lib/api/db";
 import ksuid from "ksuid";
 import withUser from "lib/api/with-user";
 import { getAnswerSchema } from "lib/schemas";
-import { trimBody } from "lib/trim";
+import { trimLineBreaks } from "lib/utils";
 
 export default withUser(async function createAnswer(req, res) {
   try {
@@ -36,7 +36,7 @@ export default withUser(async function createAnswer(req, res) {
             Item: {
               PK: `QUESTION#${req.query.questionId}`,
               SK: `ANSWER#${id}`,
-              body: trimBody(req.body.body),
+              body: trimLineBreaks(req.body.body),
               upvotes: 0,
               creator: req.user.id,
               createdAt: Date.now(),

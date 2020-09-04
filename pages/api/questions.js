@@ -2,7 +2,7 @@ import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { getQuestionSchema } from "lib/schemas";
 import { nanoid } from "nanoid";
-import { trimTitle, trimBody } from "lib/trim";
+import { trimSpaces, trimLineBreaks } from "lib/utils";
 
 async function getAllQuestions(req, res) {
   try {
@@ -183,8 +183,8 @@ async function createQuestion(req, res) {
               SK: `QUESTION#${id}`,
               GSI1PK: "QUESTION",
               GSI1SK: Date.now(),
-              title: trimTitle(req.body.title),
-              body: trimBody(req.body.body),
+              title: trimSpaces(req.body.title),
+              body: trimLineBreaks(req.body.body),
               upvotes: 0,
               numberOfAnswers: 0,
               topic: req.body.topic,

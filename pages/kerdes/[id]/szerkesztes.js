@@ -7,7 +7,7 @@ import Head from "next/head";
 import { useEffect } from "react";
 import styles from "styles/pages/ask.module.css";
 import { useToasts } from "components/toasts";
-import { trimTitle, trimBody } from "lib/trim";
+import { trimSpaces, trimLineBreaks } from "lib/utils";
 
 const QuestionEditPage = () => {
   const router = useRouter();
@@ -43,8 +43,8 @@ const QuestionEditPage = () => {
         (oldData) => ({
           question: {
             ...oldData.question,
-            title: trimTitle(title),
-            body: trimBody(body),
+            title: trimSpaces(title),
+            body: trimLineBreaks(body),
             ...rest,
           },
         }),

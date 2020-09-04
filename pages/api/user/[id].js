@@ -1,6 +1,7 @@
 import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { UserProfileSchema } from "lib/schemas";
+import { trimSpaces } from "lib/utils";
 
 async function getUser(req, res) {
   try {
@@ -63,7 +64,7 @@ async function editUser(req, res) {
       },
       UpdateExpression: "set bio = :bio",
       ExpressionAttributeValues: {
-        ":bio": req.body.bio,
+        ":bio": trimSpaces(req.body.bio),
       },
     };
 

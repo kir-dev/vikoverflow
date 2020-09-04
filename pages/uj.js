@@ -6,7 +6,7 @@ import { useUser } from "lib/authenticate";
 import styles from "styles/pages/ask.module.css";
 import { mutate } from "swr";
 import { useToasts } from "components/toasts";
-import { trimTitle, trimBody } from "lib/trim";
+import { trimSpaces, trimLineBreaks } from "lib/utils";
 
 const AskPage = () => {
   const router = useRouter();
@@ -31,8 +31,8 @@ const AskPage = () => {
         {
           question: {
             id,
-            title: trimTitle(title),
-            body: trimBody(body),
+            title: trimSpaces(title),
+            body: trimLineBreaks(body),
             ...rest,
             answers: {
               count: 0,

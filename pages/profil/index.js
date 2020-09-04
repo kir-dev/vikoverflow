@@ -13,6 +13,7 @@ import { useToasts } from "components/toasts";
 import { UserProfileSchema } from "lib/schemas";
 import Error from "components/error";
 import cn from "classnames";
+import { trimSpaces } from "lib/utils";
 
 function stringifyActivity(a) {
   switch (a.type) {
@@ -107,7 +108,7 @@ export default function ProfilePage() {
         (oldData) => ({
           user: {
             ...oldData.user,
-            bio: values.bio,
+            bio: trimSpaces(values.bio),
           },
         }),
         false

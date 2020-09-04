@@ -5,7 +5,7 @@ import styles from "styles/pages/index.module.css";
 import Input from "components/input";
 import { useState, useEffect } from "react";
 import TopicsSidebarBox from "components/home/topics";
-import useDebounce from "lib/use-debounce";
+import { useDebounce } from "lib/utils";
 import { useInView } from "react-intersection-observer";
 
 const HomePage = () => {

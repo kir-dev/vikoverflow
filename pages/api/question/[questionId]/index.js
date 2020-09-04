@@ -1,7 +1,7 @@
 import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { getQuestionSchema } from "lib/schemas";
-import { trimTitle, trimBody } from "lib/trim";
+import { trimSpaces, trimLineBreaks } from "lib/utils";
 
 // TODO pagination:
 // VOTE -> #VOTE , ANSWERVOTE -> #ANSWERVOTE hogy felulre keruljenek,
@@ -198,11 +198,11 @@ async function editQuestion(req, res) {
       }
 
       if (key === "title") {
-        value = trimTitle(value);
+        value = trimSpaces(value);
       }
 
       if (key === "body") {
-        value = trimBody(value);
+        value = trimLineBreaks(value);
       }
 
       preparedUpdate.ExpressionAttributeValues[`:${key}`] = value;

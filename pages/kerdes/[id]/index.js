@@ -113,7 +113,9 @@ const QuestionPage = () => {
           answers: {
             ...oldData.question.answers,
             list: oldData.question.answers.list.map((a) =>
-              a.id === editingAnswer ? { ...a, body: trimLineBreaks(values.body) } : a
+              a.id === editingAnswer
+                ? { ...a, body: trimLineBreaks(values.body) }
+                : a
             ),
           },
         },

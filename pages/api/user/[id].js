@@ -6,7 +6,7 @@ import { trimSpaces } from "lib/utils";
 async function getUser(req, res) {
   try {
     const params = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {
         PK: `USER#${req.query.id}`,
         SK: `USER#${req.query.id}`,
@@ -57,7 +57,7 @@ async function editUser(req, res) {
     }
 
     const params = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {
         PK: `USER#${req.query.id}`,
         SK: `USER#${req.query.id}`,

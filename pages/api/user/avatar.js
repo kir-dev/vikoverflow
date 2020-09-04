@@ -24,7 +24,7 @@ export default withUser(async function addCustomUserStuff(req, res) {
     }
 
     const params = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {
         PK: `USER#${req.user.id}`,
         SK: `USER#${req.user.id}`,

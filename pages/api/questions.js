@@ -10,7 +10,7 @@ async function getAllQuestions(req, res) {
 
     if (req.query.topic) {
       const checkParams = {
-        TableName: "vikoverflow",
+        TableName: process.env.DYNAMO_TABLE_NAME,
         Key: {
           PK: `TOPIC#${req.query.topic}`,
           SK: `TOPIC#${req.query.topic}`,
@@ -24,7 +24,7 @@ async function getAllQuestions(req, res) {
       }
 
       params = {
-        TableName: "vikoverflow",
+        TableName: process.env.DYNAMO_TABLE_NAME,
         IndexName: "GSI2",
         KeyConditionExpression: "topic = :topic",
         ScanIndexForward: false,
@@ -34,7 +34,7 @@ async function getAllQuestions(req, res) {
       };
     } else {
       params = {
-        TableName: "vikoverflow",
+        TableName: process.env.DYNAMO_TABLE_NAME,
         IndexName: "GSI1",
         KeyConditionExpression: "GSI1PK = :GSI1PK",
         ScanIndexForward: false,
@@ -127,7 +127,7 @@ async function createQuestion(req, res) {
     const id = nanoid();
 
     const checkParams = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {
         PK: `TOPIC#${req.body.topic}`,
         SK: `TOPIC#${req.body.topic}`,
@@ -148,7 +148,7 @@ async function createQuestion(req, res) {
     // we are upserting a topic so the transaction doesnt fail
     // but using if_not_exists s to make sure createdAt and stuff is not overwritten
     const preparedUpdate = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {
         PK: `TOPIC#${topic}`,
         SK: `TOPIC#${topic}`,
@@ -177,7 +177,7 @@ async function createQuestion(req, res) {
         },
         {
           Put: {
-            TableName: "vikoverflow",
+            TableName: process.env.DYNAMO_TABLE_NAME,
             Item: {
               PK: `QUESTION#${id}`,
               SK: `QUESTION#${id}`,

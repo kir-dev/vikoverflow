@@ -110,7 +110,7 @@ export async function getStaticPaths() {
 
 export async function getStaticProps({ params }) {
   const getParams = {
-    TableName: "vikoverflow",
+    TableName: process.env.DYNAMO_TABLE_NAME,
     Key: {
       PK: `TOPIC#${params.id}`,
       SK: `TOPIC#${params.id}`,

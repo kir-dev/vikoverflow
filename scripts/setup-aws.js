@@ -14,7 +14,7 @@ const chalk = require("chalk");
     });
 
     const params = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       BillingMode: "PROVISIONED",
       KeySchema: [
         {
@@ -124,8 +124,13 @@ const chalk = require("chalk");
       ],
     };
 
+    const waitForParams = {
+      TableName: process.env.DYNAMO_TABLE_NAME,
+    };
+
     try {
       await db.createTable(params).promise();
+      await db.waitFor("tableExists", waitForParams).promise();
       console.info(chalk.blue("dynamodb - setup successfull"));
     } catch (e) {
       console.info(chalk.red(`dynamodb - ${e.message}`));
@@ -141,12 +146,16 @@ const chalk = require("chalk");
     });
 
     const createParams = {
-      Bucket: "vikoverflow",
+      Bucket: process.env.S3_BUCKET_NAME,
       ACL: "private",
     };
 
+    const waitForParams = {
+      Bucket: process.env.S3_BUCKET_NAME,
+    };
+
     const accessParams = {
-      Bucket: "vikoverflow",
+      Bucket: process.env.S3_BUCKET_NAME,
       PublicAccessBlockConfiguration: {
         BlockPublicAcls: true,
         BlockPublicPolicy: true,
@@ -157,7 +166,7 @@ const chalk = require("chalk");
 
     try {
       await s3.createBucket(createParams).promise();
-
+      await s3.waitFor("bucketExists", waitForParams).promise();
       await s3.putPublicAccessBlock(accessParams).promise();
 
       console.info(chalk.blue("s3 - setup successfull"));

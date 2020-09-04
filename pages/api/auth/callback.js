@@ -54,7 +54,7 @@ export default async function handleCallbackFromOauth(req, res) {
     }
 
     const params = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {
         PK: `USER#${id}`,
         SK: `USER#${id}`,

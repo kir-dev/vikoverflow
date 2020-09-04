@@ -18,7 +18,7 @@ import { trimSpaces, trimLineBreaks } from "lib/utils";
 async function getQuestion(req, res) {
   try {
     const params = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       KeyConditionExpression: "PK = :PK",
       ExpressionAttributeValues: {
         ":PK": `QUESTION#${req.query.questionId}`,
@@ -109,7 +109,7 @@ async function editQuestion(req, res) {
     };
 
     const getParams = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {
         PK: `QUESTION#${req.query.questionId}`,
         SK: `QUESTION#${req.query.questionId}`,
@@ -126,7 +126,7 @@ async function editQuestion(req, res) {
       // we are upserting a topic so the transaction doesnt fail
       // but using if_not_exists s to make sure createdAt and stuff is not overwritten
       const preparedUpdate = {
-        TableName: "vikoverflow",
+        TableName: process.env.DYNAMO_TABLE_NAME,
         Key: {
           PK: `TOPIC#${newTopicId}`,
           SK: `TOPIC#${newTopicId}`,
@@ -159,7 +159,7 @@ async function editQuestion(req, res) {
       params.TransactItems.push(
         {
           Update: {
-            TableName: "vikoverflow",
+            TableName: process.env.DYNAMO_TABLE_NAME,
             Key: {
               PK: `TOPIC#${oldTopicId}`,
               SK: `TOPIC#${oldTopicId}`,
@@ -178,7 +178,7 @@ async function editQuestion(req, res) {
     }
 
     const preparedUpdate = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {
         PK: `QUESTION#${req.query.questionId}`,
         SK: `QUESTION#${req.query.questionId}`,
@@ -223,7 +223,7 @@ async function deleteQuestion(req, res) {
     // getting all sks
     const { Items } = await db
       .query({
-        TableName: "vikoverflow",
+        TableName: process.env.DYNAMO_TABLE_NAME,
         KeyConditionExpression: "PK = :PK",
         ProjectionExpression: "SK, topic, creator",
         ExpressionAttributeValues: {
@@ -247,7 +247,7 @@ async function deleteQuestion(req, res) {
     let currentBatch = [
       {
         Update: {
-          TableName: "vikoverflow",
+          TableName: process.env.DYNAMO_TABLE_NAME,
           Key: {
             PK: `TOPIC#${topicId}`,
             SK: `TOPIC#${topicId}`,
@@ -263,7 +263,7 @@ async function deleteQuestion(req, res) {
     for (const item of Items) {
       currentBatch.push({
         Delete: {
-          TableName: "vikoverflow",
+          TableName: process.env.DYNAMO_TABLE_NAME,
           Key: {
             PK: `QUESTION#${req.query.questionId}`,
             SK: item.SK,

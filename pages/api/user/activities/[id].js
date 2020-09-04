@@ -11,7 +11,7 @@ export default async function getUserActivities(req, res) {
     }
 
     const params = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       IndexName: "GSI3",
       KeyConditionExpression: "creator = :creator",
       ScanIndexForward: false,

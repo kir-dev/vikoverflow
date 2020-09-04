@@ -6,7 +6,7 @@ import { trimLineBreaks } from "lib/utils";
 async function editAnswer(req, res) {
   try {
     const params = {
-      TableName: "vikoverflow",
+      TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {
         PK: `QUESTION#${req.query.questionId}`,
         SK: `ANSWER#${req.query.answerId}`,
@@ -58,7 +58,7 @@ async function deleteAnswer(req, res) {
     // getting all vote SKs
     const { Items } = await db
       .query({
-        TableName: "vikoverflow",
+        TableName: process.env.DYNAMO_TABLE_NAME,
         KeyConditionExpression: "PK = :PK and begins_with(SK, :prefix)",
         ProjectionExpression: "SK",
         ExpressionAttributeValues: {
@@ -72,7 +72,7 @@ async function deleteAnswer(req, res) {
     let currentBatch = [
       {
         Delete: {
-          TableName: "vikoverflow",
+          TableName: process.env.DYNAMO_TABLE_NAME,
           Key: {
             PK: `QUESTION#${req.query.questionId}`,
             SK: `ANSWER#${req.query.answerId}`,
@@ -85,7 +85,7 @@ async function deleteAnswer(req, res) {
       },
       {
         Update: {
-          TableName: "vikoverflow",
+          TableName: process.env.DYNAMO_TABLE_NAME,
           Key: {
             PK: `QUESTION#${req.query.questionId}`,
             SK: `QUESTION#${req.query.questionId}`,
@@ -101,7 +101,7 @@ async function deleteAnswer(req, res) {
     for (const item of Items) {
       currentBatch.push({
         Delete: {
-          TableName: "vikoverflow",
+          TableName: process.env.DYNAMO_TABLE_NAME,
           Key: {
             PK: `QUESTION#${req.query.questionId}`,
             SK: item.SK,

@@ -131,6 +131,7 @@
     height: 48px;
     font-size: 1rem;
     border-bottom: 1px solid var(--accent-2);
+    cursor: pointer;
   }
 
   .mobileNav button {

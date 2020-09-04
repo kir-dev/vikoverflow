@@ -25,7 +25,7 @@ export default async function getUserAvatar(req, res) {
       .toFormat("jpeg")
       .toBuffer();
 
-    res.setHeader("Cache-Control", "public, max-age=31536000, s-maxage=31536000");
+    res.setHeader("Cache-Control", "public, max-age=31536000");
     res.setHeader("Content-Type", "image/jpeg");
     return res.send(optimizedImage);
   } catch (e) {

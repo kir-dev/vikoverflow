@@ -63,7 +63,7 @@ export default async function getUserActivities(req, res) {
     if (additionalQuestions.size) {
       const additionalInfoParams = {
         RequestItems: {
-          vikoverflow: {
+          [process.env.DYNAMO_TABLE_NAME]: {
             Keys: [...additionalQuestions].map((v) => ({ PK: v, SK: v })),
             ProjectionExpression: "PK, SK, title",
           },
@@ -71,7 +71,7 @@ export default async function getUserActivities(req, res) {
       };
 
       const {
-        Responses: { vikoverflow: responseQuestions },
+        Responses: { [process.env.DYNAMO_TABLE_NAME]: responseQuestions },
       } = await db.batchGet(additionalInfoParams).promise();
 
       extraMetadata.push(...responseQuestions);

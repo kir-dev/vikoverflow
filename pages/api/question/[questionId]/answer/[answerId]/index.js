@@ -3,6 +3,9 @@ import withUser from "lib/api/with-user";
 import { getAnswerSchema } from "lib/schemas";
 import { trimLineBreaks } from "lib/utils";
 
+// https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
+const BATCH_SIZE = 25;
+
 async function editAnswer(req, res) {
   try {
     const params = {
@@ -55,6 +58,7 @@ async function editAnswer(req, res) {
 
 async function deleteAnswer(req, res) {
   try {
+    // TODO this is flawed as query() has an 1MB limit and may return a LastEvaluatedKey
     // getting all vote SKs
     const { Items } = await db
       .query({
@@ -109,7 +113,7 @@ async function deleteAnswer(req, res) {
         },
       });
 
-      if (currentBatch.length === 25) {
+      if (currentBatch.length === BATCH_SIZE) {
         batches.push({
           TransactItems: currentBatch,
         });

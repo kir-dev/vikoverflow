@@ -15,6 +15,9 @@ import { trimSpaces, trimLineBreaks } from "lib/utils";
 // vagy batchget a jelenlegi 10 itemre, marmint osszeallitod a vote kulcsat 10 letolott kerdes/valaszbol meg userbol
 //  es ha nem null az Item akkor van vote ha null akk nincs
 
+// https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
+const BATCH_SIZE = 25;
+
 async function getQuestion(req, res) {
   try {
     const params = {
@@ -220,6 +223,7 @@ async function editQuestion(req, res) {
 
 async function deleteQuestion(req, res) {
   try {
+    // TODO this is flawed as query() has an 1MB limit and may return a LastEvaluatedKey
     // getting all sks
     const { Items } = await db
       .query({
@@ -271,7 +275,7 @@ async function deleteQuestion(req, res) {
         },
       });
 
-      if (currentBatch.length === 25) {
+      if (currentBatch.length === BATCH_SIZE) {
         batches.push({
           TransactItems: currentBatch,
         });

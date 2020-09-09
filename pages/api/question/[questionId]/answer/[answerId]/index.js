@@ -58,10 +58,11 @@ async function editAnswer(req, res) {
 
 async function deleteAnswer(req, res) {
   try {
-    // TODO this is flawed as query() has an 1MB limit and may return a LastEvaluatedKey
-    // getting all vote SKs
-    const { Items } = await db
-      .query({
+    let cursor;
+    let itemsToDelete = [];
+
+    do {
+      const queryParams = {
         TableName: process.env.DYNAMO_TABLE_NAME,
         KeyConditionExpression: "PK = :PK and begins_with(SK, :prefix)",
         ProjectionExpression: "SK",
@@ -69,8 +70,17 @@ async function deleteAnswer(req, res) {
           ":PK": `QUESTION#${req.query.questionId}`,
           ":prefix": `ANSWERUPVOTE#${req.query.answerId}`,
         },
-      })
-      .promise();
+      };
+
+      if (cursor) {
+        queryParams.ExclusiveStartKey = cursor;
+      }
+
+      const { Items, LastEvaluatedKey } = await db.query(queryParams).promise();
+
+      cursor = LastEvaluatedKey;
+      itemsToDelete.push(...Items);
+    } while (cursor);
 
     const batches = [];
     let currentBatch = [
@@ -102,7 +112,7 @@ async function deleteAnswer(req, res) {
       },
     ];
 
-    for (const item of Items) {
+    for (const item of itemsToDelete) {
       currentBatch.push({
         Delete: {
           TableName: process.env.DYNAMO_TABLE_NAME,

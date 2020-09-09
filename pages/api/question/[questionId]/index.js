@@ -3,43 +3,43 @@ import withUser from "lib/api/with-user";
 import { getQuestionSchema } from "lib/schemas";
 import { trimSpaces, trimLineBreaks } from "lib/utils";
 
-// TODO pagination:
-// VOTE -> #VOTE , ANSWERVOTE -> #ANSWERVOTE hogy felulre keruljenek,
-// majd keycondition SK < # && SK > QUESTION$ scanforward=false limit11 ez igy pont a metadata es a 10 answer,
-// lastevaluatedkeyyel lehet szepen felfelé olvasni.
-
-// annyi h igy nem tudod megmodani a req.user.idrol h mire voteolt,
-//  arra talan: if(req.user.id) akkor query for sk begins with # az osszes valaszt lesz leszeded es eldontod.
-// bar lehet a kerdes voteokat felesleges is, arra 1 kulon query meg az osszes answervotera 1 kulon query
-// vagy ezt egyben vhogy szepen..
-// vagy batchget a jelenlegi 10 itemre, marmint osszeallitod a vote kulcsat 10 letolott kerdes/valaszbol meg userbol
-//  es ha nem null az Item akkor van vote ha null akk nincs
-
 // https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
 const BATCH_SIZE = 25;
 
 async function getQuestion(req, res) {
   try {
-    const params = {
-      TableName: process.env.DYNAMO_TABLE_NAME,
-      KeyConditionExpression: "PK = :PK",
-      ExpressionAttributeValues: {
-        ":PK": `QUESTION#${req.query.questionId}`,
-      },
-      ScanIndexForward: false,
-    };
+    let cursor;
+    let items = [];
 
-    const { Items } = await db.query(params).promise();
+    do {
+      const params = {
+        TableName: process.env.DYNAMO_TABLE_NAME,
+        KeyConditionExpression: "PK = :PK",
+        ExpressionAttributeValues: {
+          ":PK": `QUESTION#${req.query.questionId}`,
+        },
+        ScanIndexForward: false,
+      };
 
-    if (!Items.length) {
+      if (cursor) {
+        params.ExclusiveStartKey = cursor;
+      }
+
+      const { Items, LastEvaluatedKey } = await db.query(params).promise();
+
+      cursor = LastEvaluatedKey;
+      items.push(...Items);
+    } while (cursor);
+
+    if (!items.length) {
       return res.status(404).json({ error: "Question not found." });
     }
 
-    const metadata = Items.find((e) => e.SK.startsWith("QUESTION#"));
-    const answers = Items.filter((e) => e.SK.startsWith("ANSWER#"));
-    const questionUpvotingUsers = Items.filter((e) =>
-      e.SK.startsWith("QUESTIONUPVOTE#")
-    ).map((e) => e.SK.split("#")[1]);
+    const metadata = items.find((e) => e.SK.startsWith("QUESTION#"));
+    const answers = items.filter((e) => e.SK.startsWith("ANSWER#"));
+    const questionUpvotingUsers = items
+      .filter((e) => e.SK.startsWith("QUESTIONUPVOTE#"))
+      .map((e) => e.SK.split("#")[1]);
 
     const question = {
       id: metadata.PK.split("#")[1],
@@ -58,9 +58,9 @@ async function getQuestion(req, res) {
         count: metadata.numberOfAnswers,
         list: answers.map((e) => {
           const id = e.SK.split("#")[1];
-          const answerUpvotingUsers = Items.filter((e) =>
-            e.SK.startsWith(`ANSWERUPVOTE#${id}`)
-          ).map((e) => e.SK.split("#")[2]);
+          const answerUpvotingUsers = items
+            .filter((e) => e.SK.startsWith(`ANSWERUPVOTE#${id}`))
+            .map((e) => e.SK.split("#")[2]);
 
           return {
             id,
@@ -223,20 +223,30 @@ async function editQuestion(req, res) {
 
 async function deleteQuestion(req, res) {
   try {
-    // TODO this is flawed as query() has an 1MB limit and may return a LastEvaluatedKey
-    // getting all sks
-    const { Items } = await db
-      .query({
+    let cursor;
+    let itemsToDelete = [];
+
+    do {
+      const queryParams = {
         TableName: process.env.DYNAMO_TABLE_NAME,
         KeyConditionExpression: "PK = :PK",
         ProjectionExpression: "SK, topic, creator",
         ExpressionAttributeValues: {
           ":PK": `QUESTION#${req.query.questionId}`,
         },
-      })
-      .promise();
+      };
 
-    const metadata = Items.find((e) => e.SK.startsWith("QUESTION#"));
+      if (cursor) {
+        queryParams.ExclusiveStartKey = cursor;
+      }
+
+      const { Items, LastEvaluatedKey } = await db.query(queryParams).promise();
+
+      cursor = LastEvaluatedKey;
+      itemsToDelete.push(...Items);
+    } while (cursor);
+
+    const metadata = itemsToDelete.find((e) => e.SK.startsWith("QUESTION#"));
 
     if (metadata.creator !== req.user.id) {
       return res
@@ -246,8 +256,8 @@ async function deleteQuestion(req, res) {
 
     const topicId = metadata.topic;
 
-    // batching deletes into 25s and adding the topic update into the first batch
     const batches = [];
+
     let currentBatch = [
       {
         Update: {
@@ -264,7 +274,7 @@ async function deleteQuestion(req, res) {
       },
     ];
 
-    for (const item of Items) {
+    for (const item of itemsToDelete) {
       currentBatch.push({
         Delete: {
           TableName: process.env.DYNAMO_TABLE_NAME,

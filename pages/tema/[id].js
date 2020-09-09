@@ -1,4 +1,4 @@
-import { useSWRInfinite } from "swr";
+import useSWR, { useSWRInfinite } from "swr";
 import { useRouter } from "next/router";
 import Layout from "components/layout";
 import { useEffect } from "react";
@@ -19,12 +19,15 @@ import { useInView } from "react-intersection-observer";
 export default function TopicPage({ topic, description }) {
   const { user } = useUser();
   const router = useRouter();
+  const topicId = router.query.id;
+  const { data: topicData } = useSWR(topicId ? `/api/topic/${topicId}` : null);
   const { data, size, setSize } = useSWRInfinite((index, prevData) => {
-    if (prevData && !prevData.nextCursor) return null;
+    if ((prevData && !prevData.nextCursor) || !topicData?.topic?.id)
+      return null;
 
-    if (index === 0) return `/api/questions?topic=${topic}`;
+    if (index === 0) return `/api/questions?topic=${topicData.topic.id}`;
 
-    return `/api/questions?topic=${topic}&cursor=${prevData.nextCursor}&cursorCreatedAt=${prevData.nextCursorCreatedAt}`;
+    return `/api/questions?topic=${topicData.topic.id}&cursor=${prevData.nextCursor}&cursorCreatedAt=${prevData.nextCursorCreatedAt}`;
   });
 
   const [loaderRef, inView] = useInView({ rootMargin: "400px 0px" });
@@ -43,25 +46,25 @@ export default function TopicPage({ topic, description }) {
   }, [inView, isReachingEnd]);
 
   useEffect(() => {
-    if (!data) return;
+    if (!topicData) return;
 
-    if (!questions) {
+    if (!topicData.topic) {
       router.push("/404");
     }
-  }, [data, topic]);
+  }, [topicData]);
 
   return (
     <Layout footer={false}>
       <div className={styles.root}>
         <header className={styles.header}>
           <div className={styles.headerContent}>
-            <h1>{topic}</h1>
-            <p>{description}</p>
+            <h1>{topicData?.topic?.id}</h1>
+            <p>{topicData?.topic?.description}</p>
           </div>
           <div className={styles.headerActions}>
-            {user && (
+            {user && topicData?.topic?.id && (
               <>
-                <Link href={`/uj?tema=${topic}`}>
+                <Link href={`/uj?tema=${topicData?.topic?.id}`}>
                   <Button small>Új kérdés ehhez a témához</Button>
                 </Link>
 
@@ -98,32 +101,4 @@ export default function TopicPage({ topic, description }) {
       </div>
     </Layout>
   );
-}
-
-export async function getStaticPaths() {
-  return {
-    paths: [],
-    // TODO change to stable blocking once released
-    fallback: "unstable_blocking",
-  };
-}
-
-export async function getStaticProps({ params }) {
-  const getParams = {
-    TableName: process.env.DYNAMO_TABLE_NAME,
-    Key: {
-      PK: `TOPIC#${params.id}`,
-      SK: `TOPIC#${params.id}`,
-    },
-  };
-
-  const { Item } = await db.get(getParams).promise();
-
-  return {
-    props: {
-      topic: Item ? Item.PK.split("#")[1] : null,
-      description: Item ? Item.description : null,
-    },
-    revalidate: 1,
-  };
 }

@@ -154,16 +154,7 @@ export default function ProfilePage() {
               <UploadAvatar size={102} />
               <div className={styles.info}>
                 {userData?.user?.name && <h1>{userData?.user?.name}</h1>}
-                {userData?.user && (
-                  <>
-                    {
-                      <h2>
-                        {userData?.user?.bio ||
-                          "Ide fog kerülni a bemutatkozásod..."}
-                      </h2>
-                    }
-                  </>
-                )}
+                {userData?.user && <h2>{userData?.user?.bio}</h2>}
               </div>
             </div>
           </header>

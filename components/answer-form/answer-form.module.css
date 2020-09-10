@@ -24,7 +24,8 @@
 }
 
 .root button.showOnMobile {
-  display: block;
+  /* button component's original display */
+  display: inline-flex;
 }
 
 @media (min-width: 600px) {
@@ -38,6 +39,7 @@
 
   .root button {
     margin: 0;
-    display: block;
+    /* button component's original display */
+    display: inline-flex;
   }
 }

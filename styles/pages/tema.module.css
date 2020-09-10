@@ -64,3 +64,17 @@
   font-size: 1.125rem;
   font-weight: 500;
 }
+
+.modalBody,
+.modalBody textarea {
+  width: 100%;
+  width: 100%;
+}
+
+.modalBody p {
+  margin-bottom: 1rem;
+}
+
+.error {
+  margin-top: 0.5rem;
+}

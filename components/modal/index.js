@@ -38,12 +38,13 @@ Modal.Footer = ({ children }) => (
   <div className={styles.footer}>{children}</div>
 );
 
-Modal.Action = ({ children, onClick, disabled, loading }) => (
+Modal.Action = ({ children, onClick, disabled, loading, ...rest }) => (
   <Button
     loading={loading}
     disabled={disabled}
     onClick={onClick}
     className={styles.action}
+    {...rest}
   >
     {children}
   </Button>

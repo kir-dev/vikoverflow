@@ -17,7 +17,9 @@
   background-color: var(--button-bg);
   border: 1px solid var(--button-border);
   color: var(--button-fg);
-  transition: all 200ms ease;
+  transition-property: color, background-color, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
   font-family: inherit;
   font-size: 0.875rem;
   font-weight: 500;

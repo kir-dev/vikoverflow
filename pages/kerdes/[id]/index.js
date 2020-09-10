@@ -123,6 +123,7 @@ const QuestionPage = () => {
       setEditingAnswer(null);
       addToast("A válaszod sikeresen szerkesztve.");
     } else {
+      // TODO a toast nem latszik ha a modal még nyitva van, inkabb a modalba irni a hibat.
       addToast("Hiba lépett fel a válaszod szerkesztése közben.", {
         errored: true,
       });
@@ -264,6 +265,7 @@ const QuestionPage = () => {
         throw new Error("request failed");
       }
     } catch (e) {
+      // TODO a toast nem latszik ha a modal még nyitva van, inkabb a modalba irni a hibat.
       addToast("Hiba lépett fel a válaszod törlése közben.", {
         errored: true,
       });
@@ -277,8 +279,11 @@ const QuestionPage = () => {
       <Modal open={deleteModal.open} onClose={closeDeleteModal}>
         <Modal.Header>Kérdés törlése</Modal.Header>
         <Modal.Body>
-          Biztosan törlöd a(z) "<b>{data?.question?.title}</b>" című kérdésedet?
-          A kérdés, a válaszok és kapott karma sem lesz később visszaállítható.
+          <p>
+            Biztosan törlöd a(z) "<b>{data?.question?.title}</b>" című
+            kérdésedet?
+            <br />A kérdés és a válaszok sem lesznek később visszaállíthatóak.
+          </p>
         </Modal.Body>
         <Modal.Footer>
           <Modal.Action onClick={closeDeleteModal}>Nem</Modal.Action>
@@ -294,8 +299,10 @@ const QuestionPage = () => {
       <Modal open={answerDeleteModal.open} onClose={closeAnswerDeleteModal}>
         <Modal.Header>Válasz törlése</Modal.Header>
         <Modal.Body>
-          Biztosan törlöd a válaszodat? A válasz később nem lesz
-          visszaállítható.
+          <p>
+            Biztosan törlöd a válaszodat?
+            <br />A válasz nem lesz visszaállítható.
+          </p>
         </Modal.Body>
         <Modal.Footer>
           <Modal.Action onClick={closeAnswerDeleteModal}>Nem</Modal.Action>

@@ -24,7 +24,7 @@
   background: var(--background);
   border-top-left-radius: var(--radius-large);
   border-top-right-radius: var(--radius-large);
-  max-width: 100%;
+  width: 100%;
   animation: up 200ms ease-out forwards;
 }
 
@@ -37,6 +37,9 @@
 
 .body {
   padding: 0 1.5rem 1.5rem;
+}
+
+.body p {
   font-size: 0.875rem;
   color: var(--accent-5);
   text-align: center;

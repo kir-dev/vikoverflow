@@ -19,25 +19,31 @@ export default function AnswerForm({ onSubmit }) {
       onSubmit={handleSubmit}
       validationSchema={validationSchema}
     >
-      {({ isSubmitting, isValid, dirty, errors, touched }) => (
+      {({ isSubmitting, isValid, dirty, errors, touched, values }) => (
         <Form className={styles.root}>
           <Field
             name="body"
-            placeholder="Küldd be saját válaszod a fenti kérdésre..."
+            placeholder="Írd be a válaszod..."
             as={Textarea}
+            maxRows={5}
             errored={errors.body && touched.body}
           />
+          <ErrorMessage name="body">
+            {(msg) => (
+              <span className={styles.error}>
+                <Error>{msg}</Error>
+              </span>
+            )}
+          </ErrorMessage>
           <Button
             type="submit"
             disabled={isSubmitting || !(isValid && dirty)}
             loading={isSubmitting}
             inverted
+            className={values.body ? styles.showOnMobile : null}
           >
             Válaszolás
           </Button>
-          <ErrorMessage name="body">
-            {(msg) => <Error>{msg}</Error>}
-          </ErrorMessage>
         </Form>
       )}
     </Formik>

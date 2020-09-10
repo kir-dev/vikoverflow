@@ -1,12 +1,43 @@
 .root {
   width: 100%;
   display: grid;
-  grid-template-columns: 1fr auto;
-  grid-column-gap: 1.5rem;
-  grid-row-gap: 0.5rem;
+  grid-template-columns: 1fr;
   align-items: center;
+  grid-template-areas: "textarea" "error" "button";
 }
 
 .root textarea {
   width: 100%;
+  grid-area: textarea;
+}
+
+.root button {
+  grid-area: button;
+  margin-top: 1rem;
+  display: none;
+}
+
+.root .error {
+  display: flex;
+  grid-area: error;
+  margin-top: 0.5rem;
+}
+
+.root button.showOnMobile {
+  display: block;
+}
+
+@media (min-width: 600px) {
+  .root {
+    grid-template-areas: "textarea button" "error .";
+    grid-template-columns: 1fr auto;
+    grid-template-rows: 2;
+    grid-column-gap: 1.5rem;
+    align-items: center;
+  }
+
+  .root button {
+    margin: 0;
+    display: block;
+  }
 }

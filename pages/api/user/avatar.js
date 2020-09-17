@@ -1,6 +1,7 @@
 import { uploadToS3, deleteFromS3 } from "lib/api/s3";
 import withUser from "lib/api/with-user";
 import db from "lib/api/db";
+import parseMultipart from "lib/api/parse-multipart";
 
 export default withUser(async function addCustomUserStuff(req, res) {
   try {
@@ -11,16 +12,25 @@ export default withUser(async function addCustomUserStuff(req, res) {
         .json({ error: `Method ${req.method} Not Allowed` });
     }
 
+    const { parsedFiles } = await parseMultipart(req);
     let key;
+    const file = parsedFiles[0];
 
-    try {
-      key = await uploadToS3(req);
-    } catch (e) {
-      return res.status(400).json({ error: e.message });
+    if (!file) {
+      return res.status(400).json({ error: "no file" });
     }
 
-    if (!key) {
-      throw new Error("something is fishy");
+    try {
+      key = await uploadToS3({
+        body: file.body,
+        contentType: file.contenctType,
+        metadata: {
+          creator: req.user.id,
+          createdAt: Date.now().toString(),
+        },
+      });
+    } catch (e) {
+      return res.status(400).json({ error: e.message });
     }
 
     const params = {

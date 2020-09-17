@@ -1,7 +1,8 @@
 import db from "lib/api/db";
 import { ACTIVITY } from "lib/constants";
+import withUser from "lib/api/with-user";
 
-export default async function getUserActivities(req, res) {
+export default withUser(async function getUserActivities(req, res) {
   try {
     if (req.method !== "GET") {
       res.setHeader("Allow", ["GET"]);
@@ -16,7 +17,7 @@ export default async function getUserActivities(req, res) {
       KeyConditionExpression: "creator = :creator",
       ScanIndexForward: false,
       ExpressionAttributeValues: {
-        ":creator": req.query.id,
+        ":creator": req.user.id,
       },
       Limit: 15,
       ProjectionExpression: "PK, SK, title, creator, createdAt",
@@ -24,7 +25,7 @@ export default async function getUserActivities(req, res) {
 
     if (req.query.cursorPK && req.query.cursorSK && req.query.cursorCreatedAt) {
       params.ExclusiveStartKey = {
-        creator: req.query.id,
+        creator: req.user.id,
         createdAt: parseInt(req.query.cursorCreatedAt),
         PK: decodeURIComponent(req.query.cursorPK),
         SK: decodeURIComponent(req.query.cursorSK),
@@ -136,4 +137,4 @@ export default async function getUserActivities(req, res) {
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
-}
+});

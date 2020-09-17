@@ -17,7 +17,7 @@ const QuestionPage = () => {
   const router = useRouter();
   const questionId = router.query.id;
   const { data, mutate } = useSWR(
-    questionId ? `/api/question/${questionId}` : null
+    questionId ? `/api/questions/${questionId}` : null
   );
   const { user } = useUser();
   const [deleteModal, setDeleteModal] = useState({
@@ -62,7 +62,7 @@ const QuestionPage = () => {
   };
 
   async function handleAnswer(values) {
-    const res = await fetch(`/api/question/${questionId}/answers`, {
+    const res = await fetch(`/api/questions/${questionId}/answers`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -96,7 +96,7 @@ const QuestionPage = () => {
 
   async function handleAnswerEdit(values) {
     const res = await fetch(
-      `/api/question/${questionId}/answer/${editingAnswer}`,
+      `/api/questions/${questionId}/answers/${editingAnswer}`,
       {
         method: "PATCH",
         headers: {
@@ -134,7 +134,7 @@ const QuestionPage = () => {
     try {
       setDeleteModal((deleteModal) => ({ ...deleteModal, loading: true }));
 
-      const res = await fetch(`/api/question/${questionId}`, {
+      const res = await fetch(`/api/questions/${questionId}`, {
         method: "DELETE",
       });
 
@@ -164,7 +164,7 @@ const QuestionPage = () => {
         };
       }, false);
 
-      const res = await fetch(`/api/question/${questionId}/vote`, {
+      const res = await fetch(`/api/questions/${questionId}/vote`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -210,7 +210,7 @@ const QuestionPage = () => {
         }, false);
 
         const res = await fetch(
-          `/api/question/${questionId}/answer/${answerId}/vote`,
+          `/api/questions/${questionId}/answers/${answerId}/vote`,
           {
             method: "PATCH",
             headers: {
@@ -240,7 +240,7 @@ const QuestionPage = () => {
       const answerId = answerDeleteModal.id;
 
       const res = await fetch(
-        `/api/question/${questionId}/answer/${answerId}`,
+        `/api/questions/${questionId}/answers/${answerId}`,
         {
           method: "DELETE",
         }

@@ -1,5 +1,6 @@
 import withUser from "lib/api/with-user";
 import { serialize } from "cookie";
+import { isSecureEnvironment } from "lib/utils";
 
 export default withUser(async function (req, res) {
   try {
@@ -14,15 +15,15 @@ export default withUser(async function (req, res) {
       serialize("token", "", {
         maxAge: 0,
         httpOnly: true,
-        // secure: process.env.NODE_ENV === 'production',
+        secure: isSecureEnvironment(req),
         path: "/",
-        sameSite: "lax",
+        sameSite: true,
       }),
       serialize("logged-in", "", {
         maxAge: 0,
-        // secure: process.env.NODE_ENV === 'production',
+        secure: isSecureEnvironment(req),
         path: "/",
-        sameSite: "lax",
+        sameSite: true,
       }),
     ]);
 

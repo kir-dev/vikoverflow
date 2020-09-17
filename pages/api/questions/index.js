@@ -3,6 +3,8 @@ import withUser from "lib/api/with-user";
 import { getQuestionSchema } from "lib/schemas";
 import { nanoid } from "nanoid";
 import { trimSpaces, trimLineBreaks } from "lib/utils";
+import parseMultipart from "lib/api/parse-multipart";
+import { uploadToS3 } from "lib/api/s3";
 
 async function getAllQuestions(req, res) {
   try {
@@ -124,26 +126,26 @@ async function getAllQuestions(req, res) {
 
 async function createQuestion(req, res) {
   try {
-    const id = nanoid();
+    const { parsedFields, parsedFiles } = await parseMultipart(req);
 
     const checkParams = {
       TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {
-        PK: `TOPIC#${req.body.topic}`,
-        SK: `TOPIC#${req.body.topic}`,
+        PK: `TOPIC#${parsedFields.topic}`,
+        SK: `TOPIC#${parsedFields.topic}`,
       },
     };
 
     const { Item } = await db.get(checkParams).promise();
 
     // a topicDescroption is required when the topic does not exists
-    const isValid = await getQuestionSchema(!Item).isValid(req.body);
+    const isValid = await getQuestionSchema(!Item).isValid(parsedFields);
 
     if (!isValid) {
       return res.status(400).json({ error: "request not in desired format" });
     }
 
-    const topic = req.body.topic;
+    const topic = parsedFields.topic;
 
     // we are upserting a topic so the transaction doesnt fail
     // but using if_not_exists s to make sure createdAt and stuff is not overwritten
@@ -166,9 +168,11 @@ async function createQuestion(req, res) {
         ":creator": req.user.id,
         ":createdAt": Date.now(),
         ":incr": 1,
-        ":description": req.body?.topicDescription ?? "",
+        ":description": parsedFields?.topicDescription ?? "",
       },
     };
+
+    const id = nanoid();
 
     const params = {
       TransactItems: [
@@ -183,11 +187,11 @@ async function createQuestion(req, res) {
               SK: `QUESTION#${id}`,
               GSI1PK: "QUESTION",
               GSI1SK: Date.now(),
-              title: trimSpaces(req.body.title),
-              body: trimLineBreaks(req.body.body),
+              title: trimSpaces(parsedFields.title),
+              body: trimLineBreaks(parsedFields.body),
               upvotes: 0,
               numberOfAnswers: 0,
-              topic: req.body.topic,
+              topic: parsedFields.topic,
               creator: req.user.id,
               createdAt: Date.now(),
             },
@@ -196,6 +200,26 @@ async function createQuestion(req, res) {
       ],
     };
 
+    if (parsedFiles.length) {
+      const file = parsedFiles[0];
+
+      const key = await uploadToS3({
+        body: file.body,
+        contentType: file.contentType,
+        metadata: {
+          questionId: id,
+          creator: req.user.id,
+          createdAt: Date.now().toString(),
+          originalName: file.originalName,
+        },
+      });
+
+      params.TransactItems[1].Put.Item.attachment = {
+        s3Key: key,
+        originalName: file.originalName,
+      };
+    }
+
     await db.transactWrite(params).promise();
 
     return res.json({ id });
@@ -203,6 +227,12 @@ async function createQuestion(req, res) {
     return res.status(500).json({ error: e.message });
   }
 }
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 export default function handler(req, res) {
   switch (req.method) {

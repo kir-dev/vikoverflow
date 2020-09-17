@@ -22,7 +22,7 @@ export default function TopicPage() {
   const { user } = useUser();
   const router = useRouter();
   const topicId = router.query.id;
-  const { data: topicData } = useSWR(topicId ? `/api/topic/${topicId}` : null);
+  const { data: topicData } = useSWR(topicId ? `/api/topics/${topicId}` : null);
   const { data, size, setSize } = useSWRInfinite((index, prevData) => {
     if ((prevData && !prevData.nextCursor) || !topicData?.topic?.id)
       return null;
@@ -51,7 +51,7 @@ export default function TopicPage() {
 
   async function handleDescriptionEdit(values) {
     setEditDescriptionModal((oldVal) => ({ ...oldVal, loading: true }));
-    const res = await fetch(`/api/topic/${topicId}`, {
+    const res = await fetch(`/api/topics/${topicId}`, {
       method: "PATCH",
       headers: {
         "Content-Type": "application/json",
@@ -61,7 +61,7 @@ export default function TopicPage() {
 
     if (res.ok) {
       mutate(
-        `/api/topic/${topicId}`,
+        `/api/topics/${topicId}`,
         (oldData) => ({
           topic: { ...oldData.topic, description: values.description },
         }),

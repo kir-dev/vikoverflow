@@ -1,6 +1,6 @@
 import styles from "./question.module.css";
 import Skeleton from "components/skeleton";
-import { ThumbsUp, MessageCircle } from "react-feather";
+import { ThumbsUp, MessageCircle, File } from "react-feather";
 import Link from "next/link";
 import cn from "classnames";
 import { forwardRef, memo } from "react";
@@ -26,6 +26,7 @@ function Question(
     allowActions,
     createdAt,
     creator,
+    attachment,
   },
   ref
 ) {
@@ -117,7 +118,17 @@ function Question(
             </span>
             <span className={styles.statCount}>{answers?.count}</span>
           </span>
-          <span className={styles.topic}>{topic}</span>
+          {attachment && (
+            <span className={styles.stat}>
+              <span className={styles.statIcon}>
+                <File size={18} />
+              </span>
+              <span className={styles.statCount}>
+                {attachment.originalName}
+              </span>
+            </span>
+          )}
+          <span className={styles.topic}>#{topic}</span>
         </div>
       </div>
     </div>

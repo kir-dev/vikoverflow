@@ -88,10 +88,6 @@
   margin-left: auto;
 }
 
-.topic:before {
-  content: "# ";
-}
-
 .statIcon {
   margin-left: -8px;
   padding: 8px;

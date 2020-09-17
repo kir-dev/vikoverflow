@@ -5,9 +5,11 @@ import Input from "components/input";
 import Textarea from "components/textarea";
 import StyledError from "components/error";
 import useSWR from "swr";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useRef } from "react";
 import Autocomplete from "components/autocomplete";
 import { getQuestionSchema } from "lib/schemas";
+import cn from "classnames";
+import { DELETE_CURRENT_FILE } from "lib/constants";
 
 const QuestionForm = ({
   initialValues,
@@ -21,6 +23,7 @@ const QuestionForm = ({
   const validationSchema = useMemo(() => getQuestionSchema(isTopicNew), [
     isTopicNew,
   ]);
+  const fileInputRef = useRef(null);
 
   const mappedInitialValues = {
     title: initialValues?.title ?? "",
@@ -28,12 +31,19 @@ const QuestionForm = ({
     topic: data?.topics?.find((e) => e.id === initialValues?.topic)
       ? initialValues.topic
       : "",
+    file: initialValues?.attachment
+      ? { name: initialValues?.attachment?.originalName }
+      : "",
   };
 
-  // iff onSubmit is async, then Formik will automatically
+  // if onSubmit is async, then Formik will automatically
   // set isSubmitting to false once it has resolved.
   async function handleSubmit(values) {
     await onSubmit(values);
+  }
+
+  function handleUploadButtonClick() {
+    fileInputRef.current.click();
   }
 
   return (
@@ -135,6 +145,52 @@ const QuestionForm = ({
                 <Error name="topicDescription" />
               </>
             )}
+
+            <label>
+              <span
+                className={cn(styles.fileLabel, {
+                  [styles.active]: values?.file?.name,
+                })}
+              >
+                csatolmány
+              </span>
+              {values?.file?.name ? (
+                <div className={cn(styles.fileRow, styles.active)}>
+                  <p className={styles.fileName}>{values.file.name}</p>
+                  <Button
+                    small
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setFieldValue("file", DELETE_CURRENT_FILE);
+                      fileInputRef.current.value = null;
+                    }}
+                  >
+                    Törlés
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <div className={styles.fileRow}>
+                    <p>Még nem adtál hozzá csatolmányt</p>
+                    <Button
+                      small
+                      type="button"
+                      onClick={handleUploadButtonClick}
+                      className={styles.addButton}
+                    >
+                      Hozzádaás
+                    </Button>
+                  </div>
+                </>
+              )}
+              <input
+                className={styles.fileInput}
+                ref={fileInputRef}
+                type="file"
+                onChange={(e) => setFieldValue("file", e.target.files[0])}
+              />
+            </label>
           </div>
           <div className={styles.footer}>
             {message && <span>{message}</span>}

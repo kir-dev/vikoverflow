@@ -1,0 +1,28 @@
+on: [push, pull_request]
+
+jobs:
+  run-all-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+
+      - uses: microsoft/playwright-github-action@v1
+
+      - name: Install dependencies and run tests
+        run: npm install && npm run build && npm run test
+        env:
+          ACCESS_KEY_ID: ${{ secrets.ACCESS_KEY_ID }}
+          SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
+          REGION: ${{ secrets.REGION }}
+          S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          DYNAMO_TABLE_NAME: ${{ secrets.DYNAMO_TABLE_NAME }}
+          OAUTH_SECRET: ${{ secrets.OAUTH_SECRET }}
+          OAUTH_PASS: ${{ secrets.OAUTH_PASS }}
+          OAUTH_ID: ${{ secrets.OAUTH_ID }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          TEST_OAUTH_USERNAME: ${{ secrets.TEST_OAUTH_USERNAME }}
+          TEST_OAUTH_PASSWORD: ${{ secrets.TEST_OAUTH_PASSWORD }}
+          TEST_OAUTH_PROFILE_NAME: ${{ secrets.TEST_OAUTH_PROFILE_NAME }}

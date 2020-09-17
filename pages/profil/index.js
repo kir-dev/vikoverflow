@@ -81,15 +81,14 @@ export default function ProfilePage() {
   const { user } = useUser("/belepes");
   const { data: userData } = useSWR(user?.id ? `/api/user/${user.id}` : "");
   const { data, size, setSize } = useSWRInfinite((index, prevData) => {
-    if (!user.id || (prevData && !prevData.nextCursor)) return null;
+    if (prevData && !prevData.nextCursor) return null;
 
-    if (index === 0) return `/api/user/activities/${user.id}`;
+    if (index === 0) return `/api/user/activities`;
 
-    return `/api/user/activities/${user.id}?cursorPK=${encodeURIComponent(
+    return `/api/user/activities?cursorPK=${encodeURIComponent(
       prevData.nextCursor.PK
-    )}&cursorSK=${encodeURIComponent(prevData.nextCursor.SK)}&cursorCreatedAt=${
-      prevData.nextCursor.createdAt
-    }`;
+    )}&cursorSK=${encodeURIComponent(prevData.nextCursor.SK)}&cursorCreatedAt=${prevData.nextCursor.createdAt
+      }`;
   });
   const { addToast } = useToasts();
 
@@ -144,8 +143,6 @@ export default function ProfilePage() {
           }}
         />
       </Head>
-
-      {user && <span style={{ display: "none" }} data-test="userIsLoggedIn" />}
 
       <Layout>
         <div className={styles.root}>

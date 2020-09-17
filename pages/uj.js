@@ -15,25 +15,27 @@ const AskPage = () => {
   const initialTopic = router.query.tema;
 
   const handleSubmit = async (values) => {
+    const formData = new FormData();
+
+    for (let key of Object.keys(values)) {
+      formData.append(key, values[key]);
+    }
+
     const res = await fetch("/api/questions", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
+      body: formData,
     });
 
     if (res.ok) {
       const { id } = await res.json();
-      const { title, body, ...rest } = values;
+      const { title, body } = values;
       mutate(
-        `/api/question/${id}`,
+        `/api/questions/${id}`,
         {
           question: {
             id,
             title: trimSpaces(title),
             body: trimLineBreaks(body),
-            ...rest,
             answers: {
               count: 0,
               list: [],

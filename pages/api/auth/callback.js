@@ -1,6 +1,7 @@
 import { serialize } from "cookie";
 import jwt from "jsonwebtoken";
 import db from "lib/api/db";
+import { isSecureEnvironment } from "lib/utils";
 
 export default async function handleCallbackFromOauth(req, res) {
   try {
@@ -80,16 +81,16 @@ export default async function handleCallbackFromOauth(req, res) {
         {
           maxAge: 60 * 60 * 24 * 7,
           httpOnly: true,
-          // secure: process.env.NODE_ENV === 'production',
+          secure: isSecureEnvironment(req),
           path: "/",
-          sameSite: "lax",
+          sameSite: true,
         }
       ),
       serialize("logged-in", "1", {
         maxAge: 60 * 60 * 24 * 7,
-        // secure: process.env.NODE_ENV === 'production',
+        secure: isSecureEnvironment(req),
         path: "/",
-        sameSite: "lax",
+        sameSite: true,
       }),
     ]);
 

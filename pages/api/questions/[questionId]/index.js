@@ -2,6 +2,9 @@ import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { getQuestionSchema } from "lib/schemas";
 import { trimSpaces, trimLineBreaks } from "lib/utils";
+import { uploadToS3, deleteFromS3 } from "lib/api/s3";
+import parseMultipart from "lib/api/parse-multipart";
+import { DELETE_CURRENT_FILE } from "lib/constants";
 
 // https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
 const BATCH_SIZE = 25;
@@ -76,6 +79,7 @@ async function getQuestion(req, res) {
           };
         }),
       },
+      attachment: metadata.attachment,
     };
 
     return res.json({ question });
@@ -86,9 +90,11 @@ async function getQuestion(req, res) {
 
 async function editQuestion(req, res) {
   try {
+    const { parsedFields, parsedFiles } = await parseMultipart(req);
+
     const isValid = await getQuestionSchema(
-      !!req.body.topicDescription
-    ).isValid(req.body);
+      !!parsedFields.topicDescription
+    ).isValid(parsedFields);
 
     if (!isValid) {
       return res.status(400).json({ error: "request not in desired format" });
@@ -96,7 +102,7 @@ async function editQuestion(req, res) {
 
     const allowedKeys = ["title", "body", "topic"];
 
-    const updates = Object.entries(req.body)
+    const updates = Object.entries(parsedFields)
       .filter(([key, _]) => allowedKeys.includes(key))
       .reduce((acc, [currKey, currVal]) => {
         acc[currKey] = currVal;
@@ -117,7 +123,7 @@ async function editQuestion(req, res) {
         PK: `QUESTION#${req.query.questionId}`,
         SK: `QUESTION#${req.query.questionId}`,
       },
-      ProjectionExpression: "topic",
+      ProjectionExpression: "topic, attachment",
     };
 
     const { Item } = await db.get(getParams).promise();
@@ -149,14 +155,14 @@ async function editQuestion(req, res) {
         },
       };
 
-      if (req.body.topicDescription) {
-        if (req.body.topicDescription.length > 64) {
+      if (parsedFields.topicDescription) {
+        if (parsedFields.topicDescription.length > 64) {
           return res.status(400).json({ error: "topicDescriotion too long" });
         }
 
         preparedUpdate.UpdateExpression += `, description = if_not_exists(description, :description)`;
         preparedUpdate.ExpressionAttributeValues[":description"] =
-          req.body.topicDescription;
+          parsedFields.topicDescription;
       }
 
       params.TransactItems.push(
@@ -211,9 +217,41 @@ async function editQuestion(req, res) {
       preparedUpdate.ExpressionAttributeValues[`:${key}`] = value;
     });
 
+    if (parsedFiles.length && parsedFields.file !== DELETE_CURRENT_FILE) {
+      const file = parsedFiles[0];
+
+      const key = await uploadToS3({
+        body: file.body,
+        contentType: file.contentType,
+        metadata: {
+          questionId: req.query.questionId,
+          creator: req.user.id,
+          createdAt: Date.now().toString(),
+          originalName: file.originalName,
+        },
+      });
+
+      preparedUpdate.UpdateExpression += `, attachment = :attachment`;
+      preparedUpdate.ExpressionAttributeValues[":attachment"] = {
+        s3Key: key,
+        originalName: file.originalName,
+      };
+    }
+
+    if (parsedFields.file === DELETE_CURRENT_FILE) {
+      preparedUpdate.UpdateExpression += " remove attachment";
+    }
+
     params.TransactItems.push({ Update: preparedUpdate });
 
     await db.transactWrite(params).promise();
+
+    if (
+      (parsedFiles.length || parsedFields.file === DELETE_CURRENT_FILE) &&
+      Item.attachment
+    ) {
+      await deleteFromS3(Item.attachment.s3Key);
+    }
 
     return res.json({ success: true });
   } catch (e) {
@@ -230,7 +268,7 @@ async function deleteQuestion(req, res) {
       const queryParams = {
         TableName: process.env.DYNAMO_TABLE_NAME,
         KeyConditionExpression: "PK = :PK",
-        ProjectionExpression: "SK, topic, creator",
+        ProjectionExpression: "SK, topic, creator, attachment",
         ExpressionAttributeValues: {
           ":PK": `QUESTION#${req.query.questionId}`,
         },
@@ -303,11 +341,21 @@ async function deleteQuestion(req, res) {
       batches.map((batch) => db.transactWrite(batch).promise())
     );
 
+    if (metadata?.attachment) {
+      await deleteFromS3(metadata.attachment.s3Key);
+    }
+
     return res.json({ success: true });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
 }
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 export default function handler(req, res) {
   switch (req.method) {

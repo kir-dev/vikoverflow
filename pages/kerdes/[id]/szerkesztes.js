@@ -13,7 +13,7 @@ const QuestionEditPage = () => {
   const router = useRouter();
   const questionId = router.query.id;
   const { data, mutate } = useSWR(
-    questionId ? `/api/question/${questionId}` : null
+    questionId ? `/api/questions/${questionId}` : null
   );
   const { user } = useUser("/belepes");
   const { addToast } = useToasts();
@@ -29,12 +29,15 @@ const QuestionEditPage = () => {
   }, [user, data]);
 
   const handleSubmit = async (values) => {
-    const res = await fetch(`/api/question/${questionId}`, {
+    const formData = new FormData();
+
+    for (let key of Object.keys(values)) {
+      formData.append(key, values[key]);
+    }
+
+    const res = await fetch(`/api/questions/${questionId}`, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(values),
+      body: formData,
     });
 
     if (res.ok) {

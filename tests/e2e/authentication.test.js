@@ -1,11 +1,14 @@
-require("dotenv").config();
+import dotenv from "dotenv";
+dotenv.config();
 
 describe("frontend authentication flow", () => {
   it("should not let non-authenticated users access the private routes", async () => {
     await page.goto("http://localhost:3000/profil");
-    expect(await page.textContent('[data-test="loginButton"]')).toBe(
-      "Belépés AuthSCH fiókkal"
-    );
+    const buttonText = await (
+      await page.textContent('[data-test="loginButton"]')
+    ).trim();
+
+    expect(buttonText).toBe("Belépés AuthSCH fiókkal");
   });
 
   it("should allow users to sing in with AuthSCH and recieve a token", async () => {

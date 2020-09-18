@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 
 describe("/api/questions", () => {
   it("should return a list of questions", async () => {

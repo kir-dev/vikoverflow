@@ -1,4 +1,4 @@
-const fetch = require("node-fetch");
+import fetch from "node-fetch";
 
 describe("/api/user", () => {
   it("should return 400 if no token is supplied", async () => {

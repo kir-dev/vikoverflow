@@ -87,8 +87,9 @@ export default function ProfilePage() {
 
     return `/api/user/activities?cursorPK=${encodeURIComponent(
       prevData.nextCursor.PK
-    )}&cursorSK=${encodeURIComponent(prevData.nextCursor.SK)}&cursorCreatedAt=${prevData.nextCursor.createdAt
-      }`;
+    )}&cursorSK=${encodeURIComponent(prevData.nextCursor.SK)}&cursorCreatedAt=${
+      prevData.nextCursor.createdAt
+    }`;
   });
   const { addToast } = useToasts();
 

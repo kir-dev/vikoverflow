@@ -19,7 +19,7 @@ describe("frontend authentication flow", () => {
     await page.click("text=Bejelentkezés");
 
     try {
-      await page.click("text=Engedélyezés", { timeout: 1000 * 5 });
+      await page.click("text=Engedélyezés", { timeout: 1000 * 3 });
     } catch (error) {
       // no-op, AuthSCH sometimes does not show the second confirmation button
     }

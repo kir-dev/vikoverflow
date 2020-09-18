@@ -5,7 +5,7 @@ describe("/api/user", () => {
     const res = await fetch("http://localhost:3000/api/user");
     const data = await res.json();
 
-    expect(res.status).toEqual(400);
+    expect(res.status).toBe(400);
     expect(data).toEqual({ error: "Missing token" });
   });
 });

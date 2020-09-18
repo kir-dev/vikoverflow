@@ -3,7 +3,7 @@ require("dotenv").config();
 describe("frontend authentication flow", () => {
   it("should not let non-authenticated users access the private routes", async () => {
     await page.goto("http://localhost:3000/profil");
-    expect(await page.textContent('[data-test="loginButton"]')).toEqual(
+    expect(await page.textContent('[data-test="loginButton"]')).toBe(
       "Belépés AuthSCH fiókkal"
     );
   });
@@ -26,12 +26,12 @@ describe("frontend authentication flow", () => {
     const loggedInCookie = cookies.find((c) => c.name === "logged-in");
 
     expect(tokenCookie.value).toBeTruthy();
-    expect(tokenCookie.httpOnly).toEqual(true);
-    expect(tokenCookie.sameSite).toEqual("Strict");
+    expect(tokenCookie.httpOnly).toBe(true);
+    expect(tokenCookie.sameSite).toBe("Strict");
 
-    expect(loggedInCookie.value).toEqual("1");
-    expect(loggedInCookie.httpOnly).toEqual(false);
-    expect(loggedInCookie.sameSite).toEqual("Strict");
+    expect(loggedInCookie.value).toBe("1");
+    expect(loggedInCookie.httpOnly).toBe(false);
+    expect(loggedInCookie.sameSite).toBe("Strict");
   });
 
   it("should allow authenticated users to access the private routes", async () => {

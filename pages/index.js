@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import TopicsSidebarBox from "components/home/topics";
 import { useDebounce } from "lib/utils";
 import { useInView } from "react-intersection-observer";
+import Head from "next/head";
 
 const HomePage = () => {
   const [search, setSearch] = useState("");
@@ -41,6 +42,15 @@ const HomePage = () => {
 
   return (
     <>
+      <Head>
+        <link
+          rel="preload"
+          href="/api/questions"
+          as="fetch"
+          crossOrigin="anonymous"
+        />
+      </Head>
+
       <Layout footer={false}>
         <div className={styles.root}>
           <div className={styles.sidebarWrapper}>

@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken";
 
 jest.mock("jsonwebtoken");
 
-describe("with-user hoc fn", () => {
+describe("with-user", () => {
   it("should send 400 when no token is provided", async () => {
     const fn = jest.fn();
     const req = {

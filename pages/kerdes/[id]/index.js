@@ -164,7 +164,7 @@ const QuestionPage = () => {
         };
       }, false);
 
-      const res = await fetch(`/api/questions/${questionId}/vote`, {
+      const res = await fetch(`/api/questions/${questionId}/votes`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -210,7 +210,7 @@ const QuestionPage = () => {
         }, false);
 
         const res = await fetch(
-          `/api/questions/${questionId}/answers/${answerId}/vote`,
+          `/api/questions/${questionId}/answers/${answerId}/votes`,
           {
             method: "PATCH",
             headers: {

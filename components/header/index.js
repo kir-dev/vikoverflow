@@ -6,7 +6,6 @@ import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Toggle from "./toggle";
 import Button from "components/button";
-import Head from "next/head";
 
 const ActiveLink = ({ href, children, className }) => {
   const router = useRouter();
@@ -32,14 +31,6 @@ const Header = () => {
 
   return (
     <>
-      <Head>
-        <link
-          rel="preload"
-          href="/api/user"
-          as="fetch"
-          crossOrigin="anonymous"
-        />
-      </Head>
       <header className={cn(styles.root, { [styles.active]: active })}>
         <div className={styles.content}>
           <Link href="/">
@@ -52,6 +43,7 @@ const Header = () => {
           >
             <Toggle active={active} />
           </div>
+          {isLoading}
 
           <nav className={styles.leftNav}>
             <ActiveLink

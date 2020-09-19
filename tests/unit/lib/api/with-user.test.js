@@ -3,41 +3,109 @@ import jwt from "jsonwebtoken";
 
 jest.mock("jsonwebtoken");
 
-describe("with-user helper fn", () => {
-  describe("options.throw: true (default)", () => {
-    it("should send 400 when no token is provided", async () => {
-      const fn = jest.fn();
-      const req = {
-        cookies: {},
-      };
-      const res = {};
-      res.status = jest.fn().mockReturnValue(res);
-      res.json = jest.fn().mockReturnValue(res);
+describe("with-user hoc fn", () => {
+  it("should send 400 when no token is provided", async () => {
+    const fn = jest.fn();
+    const req = {
+      cookies: {},
+    };
+    const res = {};
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
 
-      const handler = withUser(fn);
-      await handler(req, res);
+    const handler = withUser(fn);
+    await handler(req, res);
 
-      expect(jwt.verify).toHaveBeenCalledTimes(0);
-      expect(res.status).toHaveBeenCalledWith(400);
-      expect(res.json).toHaveBeenCalledWith({ error: "Missing token" });
-    });
+    expect(fn).toHaveBeenCalledTimes(0);
+    expect(jwt.verify).toHaveBeenCalledTimes(0);
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ error: "Missing token" });
   });
 
-  describe("options.throw: false", () => {
-    it("should call fn when no token is provided without checking jwt", async () => {
-      const fn = jest.fn();
-      const req = {
-        cookies: {},
-      };
-      const res = {};
-      res.status = jest.fn().mockReturnValue(res);
+  it("should call fn when no token is provided & options.throw = false", async () => {
+    const fn = jest.fn();
+    const req = {
+      cookies: {},
+    };
+    const res = {};
+    res.status = jest.fn().mockReturnValue(res);
 
-      const handler = withUser(fn, { throw: false });
-      await handler(req, res);
+    const handler = withUser(fn, { throw: false });
+    await handler(req, res);
 
-      expect(jwt.verify).toHaveBeenCalledTimes(0);
-      expect(res.status).toHaveBeenCalledTimes(0);
-      expect(fn).toHaveBeenCalledWith(req, res);
-    });
+    expect(req.user).toBe(null);
+    expect(jwt.verify).toHaveBeenCalledTimes(0);
+    expect(res.status).toHaveBeenCalledTimes(0);
+    expect(fn).toHaveBeenCalledWith(req, res);
+  });
+
+  it("should send 401 when a bad token is provided", async () => {
+    const fn = jest.fn();
+    const req = {
+      cookies: {
+        token: "abc123",
+      },
+    };
+    const res = {};
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
+
+    const handler = withUser(fn);
+    await handler(req, res);
+
+    expect(fn).toHaveBeenCalledTimes(0);
+    expect(jwt.verify).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledWith(401);
+    expect(res.json).toHaveBeenCalledWith({ error: "Bad token" });
+
+    // cleanup
+    jwt.verify.mockReset();
+  });
+
+  it("should call fn when a bad token is provided & options.throw = false", async () => {
+    const fn = jest.fn();
+    const req = {
+      cookies: {
+        token: "abcde123",
+      },
+    };
+    const res = {};
+    res.status = jest.fn().mockReturnValue(res);
+
+    const handler = withUser(fn, { throw: false });
+    await handler(req, res);
+
+    expect(req.user).toBe(null);
+    expect(jwt.verify).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledTimes(0);
+    expect(fn).toHaveBeenCalledWith(req, res);
+
+    // cleanup
+    jwt.verify.mockReset();
+  });
+
+  it("should set the req.user correctly and call fn if token is valid", async () => {
+    const user = { id: "user1" };
+    const fn = jest.fn();
+    const req = {
+      cookies: {
+        token: "abc123",
+      },
+    };
+    const res = {};
+    res.status = jest.fn().mockReturnValue(res);
+    res.json = jest.fn().mockReturnValue(res);
+    jwt.verify.mockReturnValue(user);
+
+    const handler = withUser(fn);
+    await handler(req, res);
+
+    expect(req.user).toEqual(user);
+    expect(jwt.verify).toHaveBeenCalledTimes(1);
+    expect(res.status).toHaveBeenCalledTimes(0);
+    expect(fn).toHaveBeenCalledWith(req, res);
+
+    // cleanup
+    jwt.verify.mockReset();
   });
 });

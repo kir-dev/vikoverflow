@@ -15,9 +15,6 @@ jobs:
       - name: Setup playwright
         uses: microsoft/playwright-github-action@v1
 
-      - name: Setup npm cache
-        uses: c-hive/gha-npm-cache@v1
-
       - name: Install dependencies
         run: npm install
 

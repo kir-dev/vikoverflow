@@ -4,6 +4,10 @@ import jwt from "jsonwebtoken";
 jest.mock("jsonwebtoken");
 
 describe("with-user", () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+  });
+
   it("should send 400 when no token is provided", async () => {
     const fn = jest.fn();
     const req = {
@@ -57,9 +61,6 @@ describe("with-user", () => {
     expect(jwt.verify).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledWith(401);
     expect(res.json).toHaveBeenCalledWith({ error: "Bad token" });
-
-    // cleanup
-    jwt.verify.mockReset();
   });
 
   it("should call fn when a bad token is provided & options.throw = false", async () => {
@@ -79,9 +80,6 @@ describe("with-user", () => {
     expect(jwt.verify).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledTimes(0);
     expect(fn).toHaveBeenCalledWith(req, res);
-
-    // cleanup
-    jwt.verify.mockReset();
   });
 
   it("should set the req.user correctly and call fn if token is valid", async () => {
@@ -104,8 +102,5 @@ describe("with-user", () => {
     expect(jwt.verify).toHaveBeenCalledTimes(1);
     expect(res.status).toHaveBeenCalledTimes(0);
     expect(fn).toHaveBeenCalledWith(req, res);
-
-    // cleanup
-    jwt.verify.mockReset();
   });
 });

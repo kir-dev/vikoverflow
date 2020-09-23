@@ -1,13 +1,14 @@
 module.exports = {
+  verbose: true,
   projects: [
     {
-      rootDir: "tests/e2e",
       displayName: "e2e",
       preset: "jest-playwright-preset",
+      testMatch: ["<rootDir>/tests/e2e/**/*.test.js"],
     },
     {
-      rootDir: "tests/unit",
       displayName: "unit",
+      testMatch: ["<rootDir>/tests/unit/**/*.test.js"],
     },
   ],
 };

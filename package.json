@@ -2,7 +2,7 @@
   "scripts": {
     "setup-aws": "node ./scripts/setup-aws.js",
     "dev": "next dev",
-    "test": "jest --runInBand --verbose",
+    "test": "jest",
     "build": "next build",
     "start": "next start"
   },

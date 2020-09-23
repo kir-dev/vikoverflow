@@ -1,6 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
+jest.setTimeout(30000);
+
 describe("frontend authentication flow", () => {
   it("should not let non-authenticated users access the private routes", async () => {
     await page.goto("http://localhost:3000/profil");

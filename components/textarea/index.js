@@ -1,5 +1,5 @@
 import styles from "./textarea.module.css";
-import cn from "classnames";
+import cn from "clsx";
 import Autosize from "react-textarea-autosize";
 
 const Textarea = ({

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import styles from "./footer.module.css";
-import cn from "classnames";
+import cn from "clsx";
 
 const Footer = ({ dark }) => (
   <>

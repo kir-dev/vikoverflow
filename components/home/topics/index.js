@@ -2,7 +2,7 @@ import useSWR from "swr";
 import Skeleton from "components/skeleton";
 import Link from "next/link";
 import styles from "./topics.module.css";
-import cn from "classnames";
+import cn from "clsx";
 import Head from "next/head";
 
 export default function Topics({ search }) {

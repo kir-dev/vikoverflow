@@ -1,5 +1,5 @@
 import styles from "./button.module.css";
-import cn from "classnames";
+import cn from "clsx";
 import { forwardRef, memo } from "react";
 import LoadingDots from "components/loading-dots";
 

@@ -1,5 +1,5 @@
 import styles from "./select.module.css";
-import cn from "classnames";
+import cn from "clsx";
 
 const Select = ({
   value,

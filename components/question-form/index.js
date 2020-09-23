@@ -8,7 +8,7 @@ import useSWR from "swr";
 import { useState, useMemo, useRef } from "react";
 import Autocomplete from "components/autocomplete";
 import { getQuestionSchema } from "lib/schemas";
-import cn from "classnames";
+import cn from "clsx";
 import { DELETE_CURRENT_FILE } from "lib/constants";
 
 const QuestionForm = ({

@@ -2,7 +2,7 @@ import styles from "./question.module.css";
 import Skeleton from "components/skeleton";
 import { ThumbsUp, MessageCircle, File } from "react-feather";
 import Link from "next/link";
-import cn from "classnames";
+import cn from "clsx";
 import { forwardRef, memo } from "react";
 import Avatar from "components/avatar";
 import { formatDistanceToNowStrict } from "date-fns";

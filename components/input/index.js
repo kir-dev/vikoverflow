@@ -1,5 +1,5 @@
 import styles from "./input.module.css";
-import cn from "classnames";
+import cn from "clsx";
 import { memo, forwardRef } from "react";
 
 function Input(

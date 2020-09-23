@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import cn from "classnames";
+import cn from "clsx";
 import styles from "./toasts.module.css";
 
 export default function Toast({ index, text, hovering, onRemove, errored }) {

@@ -12,7 +12,7 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useToasts } from "components/toasts";
 import { UserProfileSchema } from "lib/schemas";
 import Error from "components/error";
-import cn from "classnames";
+import cn from "clsx";
 import { trimSpaces } from "lib/utils";
 
 function stringifyActivity(a) {

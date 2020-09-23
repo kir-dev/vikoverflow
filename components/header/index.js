@@ -1,5 +1,5 @@
 import styles from "./header.module.css";
-import cn from "classnames";
+import cn from "clsx";
 import Link from "next/link";
 import { logout, useUser } from "lib/authenticate";
 import { useRouter } from "next/router";

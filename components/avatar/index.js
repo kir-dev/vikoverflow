@@ -2,7 +2,7 @@ import { useUser } from "lib/authenticate";
 import { useState, useRef, useEffect } from "react";
 import { useToasts } from "components/toasts";
 import styles from "./avatar.module.css";
-import cn from "classnames";
+import cn from "clsx";
 import LoadingDots from "components/loading-dots";
 import useSWR, { mutate } from "swr";
 

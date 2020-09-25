@@ -54,8 +54,6 @@ export default function QuestionForm({
 
   const { isSubmitting, isDirty, isValid } = formState;
 
-  const values = watch();
-
   return (
     <form onSubmit={handleSubmit(onSubmit)} className={styles.root}>
       <div className={styles.content}>
@@ -115,6 +113,7 @@ export default function QuestionForm({
             name="topicDescription"
             placeholder="Foglald össze miről szól az új témád..."
             rows={2}
+            ref={register}
             error={errors?.topicDescription?.message}
             disabled={isSubmitting || skeleton}
           />

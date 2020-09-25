@@ -42,3 +42,8 @@
 .root::placeholder {
   color: var(--accent-4);
 }
+
+.errorRoot {
+  display: flex;
+  margin-top: 0.5rem;
+}

@@ -88,32 +88,13 @@
 }
 
 .settings {
-  --form-gap: 0.5rem;
   display: flex;
   flex-direction: column;
   padding: 1.5rem 1.5rem 0;
 }
 
-.settings label:not(:first-of-type) {
+.settings > * + * {
   margin-top: 1.5rem;
-}
-
-.settings label > span {
-  font-weight: 500;
-}
-
-.settings label > span {
-  display: block;
-  margin-bottom: var(--form-gap);
-  text-transform: uppercase;
-  font-size: 0.875rem;
-  line-height: 1;
-  color: var(--accent-6);
-}
-
-.settings label,
-.settings label > * {
-  width: 100%;
 }
 
 .footer {

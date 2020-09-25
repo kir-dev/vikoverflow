@@ -1,6 +1,8 @@
 import styles from "./input.module.css";
 import cn from "clsx";
-import { memo, forwardRef } from "react";
+import { memo, forwardRef, Fragment } from "react";
+import Error from "components/error";
+import Label from "components/label";
 
 function Input(
   {
@@ -8,33 +10,44 @@ function Input(
     onChange,
     placeholder,
     className,
-    errored,
     type,
     disabled,
     prefix,
+    label,
+    error,
     ...props
   },
   ref
 ) {
+  const Wrapper = label ? Label : Fragment;
+  const wrapperProps = label ? { value: label } : {};
+
   return (
-    <div
-      className={cn(styles.container, {
-        [styles.hasPrefix]: prefix,
-        [styles.errored]: errored,
-      })}
-    >
-      <input
-        {...props}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-        placeholder={placeholder}
-        type={type ?? "text"}
-        className={cn(styles.input, className)}
-        ref={ref}
-      />
-      {prefix && <span>{prefix}</span>}
-    </div>
+    <Wrapper {...wrapperProps}>
+      <div
+        className={cn(styles.container, {
+          [styles.hasPrefix]: prefix,
+          [styles.errored]: error,
+        })}
+      >
+        <input
+          {...props}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          placeholder={placeholder}
+          type={type ?? "text"}
+          className={cn(styles.input, className)}
+          ref={ref}
+        />
+        {prefix && <span>{prefix}</span>}
+      </div>
+      {error && (
+        <div className={styles.errorRoot}>
+          <Error>{error}</Error>
+        </div>
+      )}
+    </Wrapper>
   );
 }
 

@@ -12,9 +12,9 @@ import Skeleton from "components/skeleton";
 import Modal from "components/modal";
 import Textarea from "components/textarea";
 import { useToasts } from "components/toasts";
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import Error from "components/error";
 import { TopicDescriptionSchema } from "lib/schemas";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers";
 
 // TODO az empty text containerje rossz szelessegu es mobilon is van borderje
 
@@ -85,6 +85,12 @@ export default function TopicPage() {
       ? [].concat(...data.map((page) => page.questions))
       : null;
 
+  const { register, handleSubmit, errors, formState, reset } = useForm({
+    resolver: yupResolver(TopicDescriptionSchema),
+    mode: "onChange",
+  });
+  const { isDirty, isValid, isSubmitting } = formState;
+
   useEffect(() => {
     if (inView && !isReachingEnd) {
       setSize(size + 1);
@@ -97,6 +103,8 @@ export default function TopicPage() {
     if (!topicData.topic) {
       router.push("/404");
     }
+
+    reset({ description: topicData.topic.description ?? "" });
   }, [topicData]);
 
   return (
@@ -105,52 +113,36 @@ export default function TopicPage() {
         open={editDescriptionModal.open}
         onClose={closeEditDescriptionModal}
       >
-        <Formik
-          initialValues={{ description: topicData?.topic?.description }}
-          enableReinitialize
-          onSubmit={handleDescriptionEdit}
-          validationSchema={TopicDescriptionSchema}
-        >
-          {({ isSubmitting, isValid, dirty, errors, touched }) => (
-            <Form>
-              <Modal.Header>Téma leírásának módosítása</Modal.Header>
-              <Modal.Body>
-                <div className={styles.modalBody}>
-                  <p>
-                    Mivel te voltál ennek a témának a létrehozója lehetőséged
-                    van módosítani a téma leírását.
-                  </p>
-                  <Field
-                    name="description"
-                    minRows={3}
-                    placeholder="Add meg a téma új leírását..."
-                    as={Textarea}
-                    errored={errors.description && touched.description}
-                  />
-                  <ErrorMessage name="description">
-                    {(msg) => (
-                      <div className={styles.error}>
-                        <Error>{msg}</Error>
-                      </div>
-                    )}
-                  </ErrorMessage>
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Modal.Action onClick={closeEditDescriptionModal} type="button">
-                  Mégsem
-                </Modal.Action>
-                <Modal.Action
-                  disabled={isSubmitting || !(isValid && dirty)}
-                  loading={isSubmitting}
-                  type="submit"
-                >
-                  Mentés
-                </Modal.Action>
-              </Modal.Footer>
-            </Form>
-          )}
-        </Formik>
+        <form onSubmit={handleSubmit(handleDescriptionEdit)}>
+          <Modal.Header>Téma leírásának módosítása</Modal.Header>
+          <Modal.Body>
+            <div className={styles.modalBody}>
+              <p>
+                Mivel te voltál ennek a témának a létrehozója lehetőséged van
+                módosítani a téma leírását.
+              </p>
+              <Textarea
+                name="description"
+                rows={3}
+                placeholder="Add meg a téma új leírását..."
+                error={errors?.description?.message}
+                ref={register}
+              />
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <Modal.Action onClick={closeEditDescriptionModal} type="button">
+              Mégsem
+            </Modal.Action>
+            <Modal.Action
+              disabled={isSubmitting || !(isValid && isDirty)}
+              loading={isSubmitting}
+              type="submit"
+            >
+              Mentés
+            </Modal.Action>
+          </Modal.Footer>
+        </form>
       </Modal>
 
       <Layout footer={false}>

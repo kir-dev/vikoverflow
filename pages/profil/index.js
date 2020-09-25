@@ -8,74 +8,13 @@ import Input from "components/input";
 import Button from "components/button";
 import Link from "next/link";
 import { ACTIVITY } from "lib/constants";
-import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useToasts } from "components/toasts";
 import { UserProfileSchema } from "lib/schemas";
-import Error from "components/error";
 import cn from "clsx";
 import { trimSpaces } from "lib/utils";
-
-function stringifyActivity(a) {
-  switch (a.type) {
-    case ACTIVITY.QUESTION:
-      return (
-        <>
-          Létrehoztad a(z){" "}
-          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
-            <a>{a.title}</a>
-          </Link>{" "}
-          című kérdést
-        </>
-      );
-
-    case ACTIVITY.TOPIC:
-      return (
-        <>
-          Új témát hoztál létre{" "}
-          <Link href="/tema/[id]" as={`/tema/${a.name}`}>
-            <a>{a.name}</a>
-          </Link>{" "}
-          néven
-        </>
-      );
-
-    case ACTIVITY.QUESTION_UPVOTE:
-      return (
-        <>
-          Tetszett a{" "}
-          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
-            <a>{a.title}</a>
-          </Link>{" "}
-          című kérdés
-        </>
-      );
-
-    case ACTIVITY.ANSWER:
-      return (
-        <>
-          Válaszoltál a{" "}
-          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
-            <a>{a.title}</a>
-          </Link>{" "}
-          című kérdésre
-        </>
-      );
-
-    case ACTIVITY.ANSWER_UPVOTE:
-      return (
-        <>
-          Tetszett egy válasz a{" "}
-          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
-            <a>{a.title}</a>
-          </Link>{" "}
-          című kérdésre
-        </>
-      );
-
-    default:
-      throw new Error("unknown activity type");
-  }
-}
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers";
+import { useEffect } from "react";
 
 export default function ProfilePage() {
   const { user } = useUser("/belepes");
@@ -93,7 +32,20 @@ export default function ProfilePage() {
   });
   const { addToast } = useToasts();
 
-  async function handleSubmit(values) {
+  const { register, handleSubmit, reset, errors, formState } = useForm({
+    resolver: yupResolver(UserProfileSchema),
+    mode: "onChange",
+  });
+
+  const { isDirty, isValid, isSubmitting } = formState;
+
+  useEffect(() => {
+    if (userData?.user) {
+      reset({ bio: userData.user.bio ?? "" });
+    }
+  }, [userData]);
+
+  async function onSubmit(values) {
     const res = await fetch(`/api/user/${user.id}`, {
       method: "PATCH",
       headers: {
@@ -159,76 +111,54 @@ export default function ProfilePage() {
           <div className={styles.main}>
             <div className={styles.mainContent}>
               <div className={styles.left}>
-                <Formik
-                  enableReinitialize
-                  initialValues={{ bio: userData?.user?.bio ?? "" }}
-                  onSubmit={handleSubmit}
-                  validationSchema={UserProfileSchema}
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className={styles.settingsContainer}
                 >
-                  {({ isSubmitting, isValid, dirty, errors, touched }) => (
-                    <Form>
-                      <div className={styles.settingsContainer}>
-                        <div className={styles.settings}>
-                          <label>
-                            <span>név</span>
-                            <Input
-                              disabled
-                              value={userData?.user?.name}
-                              placeholder="Neved..."
-                            />
-                          </label>
-                          <label>
-                            <span>e-mail</span>
-                            <Input
-                              disabled
-                              value={userData?.user?.email}
-                              placeholder="E-mail címed..."
-                            />
-                          </label>
-                          <label>
-                            <span>bemutatkozás</span>
-                            <Field
-                              name="bio"
-                              as={Input}
-                              disabled={!userData?.user}
-                              placeholder="Rövid bemutatkozás, mely a profilodon fog megjelenni..."
-                              errored={errors.bio && touched.bio}
-                            />
-                          </label>
-                          <ErrorMessage name="bio">
-                            {(msg) => (
-                              <>
-                                <span className={styles.gap} />
-                                <Error>{msg}</Error>
-                              </>
-                            )}
-                          </ErrorMessage>
-                        </div>
-                        <div className={styles.footer}>
-                          <p>
-                            Néhány mezőt csak az{" "}
-                            <a
-                              href="https://auth.sch.bme.hu/"
-                              target="_blank"
-                              rel="noopener"
-                            >
-                              AuthSCH
-                            </a>
-                            -ban módosíthatsz.
-                          </p>
-                          <Button
-                            type="submit"
-                            disabled={isSubmitting || !(isValid && dirty)}
-                            loading={isSubmitting}
-                            inverted
-                          >
-                            Mentés
-                          </Button>
-                        </div>
-                      </div>
-                    </Form>
-                  )}
-                </Formik>
+                  <div className={styles.settings}>
+                    <Input
+                      disabled
+                      value={userData?.user?.name}
+                      placeholder="Neved..."
+                      label="név"
+                    />
+                    <Input
+                      disabled
+                      value={userData?.user?.email}
+                      placeholder="E-mail címed..."
+                      label="e-mail"
+                    />
+                    <Input
+                      name="bio"
+                      ref={register}
+                      disabled={!userData?.user || isSubmitting}
+                      placeholder="Rövid bemutatkozás, mely a profilodon fog megjelenni..."
+                      label="bemutatkozás"
+                      error={errors?.bio?.message}
+                    />
+                  </div>
+                  <div className={styles.footer}>
+                    <p>
+                      Néhány mezőt csak az{" "}
+                      <a
+                        href="https://auth.sch.bme.hu/"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        AuthSCH
+                      </a>
+                      -ban módosíthatsz.
+                    </p>
+                    <Button
+                      type="submit"
+                      disabled={isSubmitting || !(isValid && isDirty)}
+                      loading={isSubmitting}
+                      inverted
+                    >
+                      Mentés
+                    </Button>
+                  </div>
+                </form>
               </div>
               <div className={styles.right}>
                 <h2>Legutóbbi tevékenységeid</h2>
@@ -255,4 +185,66 @@ export default function ProfilePage() {
       </Layout>
     </>
   );
+}
+
+function stringifyActivity(a) {
+  switch (a.type) {
+    case ACTIVITY.QUESTION:
+      return (
+        <>
+          Létrehoztad a(z){" "}
+          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
+            <a>{a.title}</a>
+          </Link>{" "}
+          című kérdést
+        </>
+      );
+
+    case ACTIVITY.TOPIC:
+      return (
+        <>
+          Új témát hoztál létre{" "}
+          <Link href="/tema/[id]" as={`/tema/${a.name}`}>
+            <a>{a.name}</a>
+          </Link>{" "}
+          néven
+        </>
+      );
+
+    case ACTIVITY.QUESTION_UPVOTE:
+      return (
+        <>
+          Tetszett a{" "}
+          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
+            <a>{a.title}</a>
+          </Link>{" "}
+          című kérdés
+        </>
+      );
+
+    case ACTIVITY.ANSWER:
+      return (
+        <>
+          Válaszoltál a{" "}
+          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
+            <a>{a.title}</a>
+          </Link>{" "}
+          című kérdésre
+        </>
+      );
+
+    case ACTIVITY.ANSWER_UPVOTE:
+      return (
+        <>
+          Tetszett egy válasz a{" "}
+          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
+            <a>{a.title}</a>
+          </Link>{" "}
+          című kérdésre
+        </>
+      );
+
+    default:
+      throw new Error("unknown activity type");
+  }
 }

@@ -10,6 +10,7 @@ import cn from "clsx";
 import { DELETE_CURRENT_FILE } from "lib/constants";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers";
+import Error from "components/error";
 
 export default function QuestionForm({
   initialValues,
@@ -31,7 +32,8 @@ export default function QuestionForm({
     errors,
     control,
     reset,
-    watch,
+    setError,
+    clearErrors,
   } = useForm({
     resolver: yupResolver(validationSchema),
     mode: "onChange",
@@ -123,7 +125,7 @@ export default function QuestionForm({
           name="file"
           control={control}
           render={({ value, onChange }) => (
-            <label>
+            <div className={styles.fileWrapper}>
               <span
                 className={cn(styles.fileLabel, {
                   [styles.active]: value?.name,
@@ -138,11 +140,12 @@ export default function QuestionForm({
                     disabled={isSubmitting}
                     small
                     type="button"
-                    onClick={() =>
+                    onClick={() => {
+                      fileInputRef.current.value = null;
                       onChange(
                         initialValues.attachment ? DELETE_CURRENT_FILE : ""
-                      )
-                    }
+                      );
+                    }}
                   >
                     Törlés
                   </Button>
@@ -165,9 +168,28 @@ export default function QuestionForm({
                 className={styles.fileInput}
                 ref={fileInputRef}
                 type="file"
-                onChange={(e) => onChange(e.target.files[0])}
+                onChange={(e) => {
+                  const file = e.target.files[0];
+
+                  if (!file) {
+                    clearErrors("fileSize");
+                    onChange("");
+                  } else if (file.size > 1024 * 1024 * 5) {
+                    setError("fileSize", {
+                      type: "manual",
+                      message: "5 MB a maximális fájlméret",
+                    });
+                  } else {
+                    onChange(e.target.files[0]);
+                  }
+                }}
               />
-            </label>
+              {errors?.fileSize?.message && (
+                <div className={styles.fileError}>
+                  <Error>{errors.fileSize.message}</Error>
+                </div>
+              )}
+            </div>
           )}
         />
       </div>

@@ -14,24 +14,28 @@
   align-items: flex-start;
 }
 
-.content label:not(:first-of-type) {
+.content label:not(:first-of-type),
+.fileWrapper {
   margin-top: 1.5rem;
 }
 
-.content label > span {
-  font-weight: 500;
-}
-
-.content label > span {
+.fileLabel {
   display: block;
   margin-bottom: var(--form-gap);
   text-transform: uppercase;
   font-size: 0.875rem;
   line-height: 1;
   color: var(--accent-6);
+  font-weight: 500;
+}
+
+.fileError {
+  margin-top: 0.5rem;
+  display: flex;
 }
 
 .content label,
+.fileWrapper,
 .content label > * {
   width: 100%;
 }

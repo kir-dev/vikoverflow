@@ -32,8 +32,6 @@ export default function TopicPage() {
     return `/api/questions?topic=${topicData.topic.id}&cursor=${prevData.nextCursor}&cursorCreatedAt=${prevData.nextCursorCreatedAt}`;
   });
   const [loaderRef, inView] = useInView({ rootMargin: "400px 0px" });
-  // keeping a loading state here too (not just in formik:isSubmitting) to
-  // be able to stop accidental/early closes of the modal
   const [editDescriptionModal, setEditDescriptionModal] = useState({
     open: false,
     loading: false,

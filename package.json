@@ -13,7 +13,6 @@
     "clsx": "^1.1.1",
     "cookie": "^0.4.1",
     "date-fns": "^2.15.0",
-    "formik": "^2.1.5",
     "jsonwebtoken": "^8.5.1",
     "ksuid": "^1.2.0",
     "linkifyjs": "^2.1.9",

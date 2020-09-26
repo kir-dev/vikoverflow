@@ -25,6 +25,7 @@ export default function AnswerForm({ onSubmit }) {
       <Textarea
         name="body"
         placeholder="Írd be a válaszod..."
+        minRows={1}
         maxRows={5}
         ref={register}
         error={errors?.body?.message}

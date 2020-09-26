@@ -180,6 +180,7 @@ export default function QuestionForm({
                       message: "5 MB a maximális fájlméret",
                     });
                   } else {
+                    clearErrors("fileSize");
                     onChange(e.target.files[0]);
                   }
                 }}

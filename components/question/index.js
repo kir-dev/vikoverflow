@@ -100,6 +100,21 @@ function Question(
         <p>
           <Linkify>{body}</Linkify>
         </p>
+        {attachment && (
+          <div className={styles.attachments}>
+            <a
+              href={`${process.env.NEXT_PUBLIC_S3_URL}/${attachment.s3Key}`}
+              target="_blank"
+              rel="noopener"
+              className={styles.attachment}
+            >
+              <File size={20} />
+              <span className={styles.attachmentName}>
+                {attachment.originalName}
+              </span>
+            </a>
+          </div>
+        )}
         <div className={styles.stats}>
           <span className={styles.stat}>
             <span
@@ -118,16 +133,6 @@ function Question(
             </span>
             <span className={styles.statCount}>{answers?.count}</span>
           </span>
-          {attachment && (
-            <span className={styles.stat}>
-              <span className={styles.statIcon}>
-                <File size={18} />
-              </span>
-              <span className={styles.statCount}>
-                {attachment.originalName}
-              </span>
-            </span>
-          )}
           <span className={styles.topic}>#{topic}</span>
         </div>
       </div>

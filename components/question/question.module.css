@@ -5,6 +5,10 @@
   position: relative;
 }
 
+.root svg {
+  stroke-width: 1.75px;
+}
+
 .root:first-of-type {
   border-top: 1px solid var(--accent-2);
 }
@@ -109,10 +113,34 @@
   background: rgba(0, 0, 0, 0.05);
 }
 
-.stat svg {
-  stroke-width: 1.75px;
-}
-
 .stat + .stat {
   margin-left: 1rem;
+}
+
+.attachment {
+  margin-top: 12px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  height: 2.5rem;
+  display: inline-flex;
+  align-items: center;
+  color: var(--accent-5);
+  border: 1px solid var(--accent-2);
+  border-radius: var(--radius);
+  padding: 0 0.65rem 0 0.5rem;
+  user-select: none;
+  cursor: pointer;
+  transition-property: color, border-color;
+  transition-duration: 200ms;
+  transition-timing-function: ease;
+  text-decoration: none;
+}
+
+.attachmentName {
+  margin-left: 0.5rem;
+}
+
+.attachment:hover {
+  color: var(--foreground);
+  border-color: var(--foreground);
 }

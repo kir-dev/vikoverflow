@@ -1,5 +1,6 @@
 import { getFromS3 } from "lib/api/s3";
 import sharp from "sharp";
+import { CACHE_CONTROL } from "lib/constants";
 
 export default async function getUserAvatar(req, res) {
   try {
@@ -25,10 +26,7 @@ export default async function getUserAvatar(req, res) {
       .toFormat("jpeg")
       .toBuffer();
 
-    res.setHeader(
-      "Cache-Control",
-      "public, immutable, max-age=31536000, must-revalidate"
-    );
+    res.setHeader("Cache-Control", CACHE_CONTROL);
     res.setHeader("Content-Type", "image/jpeg");
     return res.send(optimizedImage);
   } catch (e) {

@@ -147,27 +147,16 @@ const chalk = require("chalk");
 
     const createParams = {
       Bucket: process.env.S3_BUCKET_NAME,
-      ACL: "private",
+      ACL: "public-read",
     };
 
     const waitForParams = {
       Bucket: process.env.S3_BUCKET_NAME,
     };
 
-    const accessParams = {
-      Bucket: process.env.S3_BUCKET_NAME,
-      PublicAccessBlockConfiguration: {
-        BlockPublicAcls: true,
-        BlockPublicPolicy: true,
-        IgnorePublicAcls: true,
-        RestrictPublicBuckets: true,
-      },
-    };
-
     try {
       await s3.createBucket(createParams).promise();
       await s3.waitFor("bucketExists", waitForParams).promise();
-      await s3.putPublicAccessBlock(accessParams).promise();
 
       console.info(chalk.blue("s3 - setup successfull"));
     } catch (e) {

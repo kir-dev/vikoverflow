@@ -14,3 +14,11 @@
 
 - `npm run build` - ezt nem kell minden alkalommal lefuttadnod, csak akkor ha változtattál valamit a `tests` mappán kívül is
 - `npm run test`
+
+### Futtatás Docker-ben
+
+Az alábbi parancs kiadásával elindítható az alkalmazás:
+
+```sh
+docker-compose up
+```

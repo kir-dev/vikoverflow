@@ -1,18 +1,5 @@
 module.exports = {
-  devIndicators: {
-    autoPrerender: false,
-  },
-  async headers() {
-    return [
-      {
-        source: "/static/:path*",
-        headers: [
-          {
-            key: "Cache-Control",
-            value: "public, immutable, max-age=31536000, must-revalidate",
-          },
-        ],
-      },
-    ];
-  },
+  compress: false,
+  generateEtags: false,
+  poweredByHeader: false,
 };

@@ -3,7 +3,7 @@ import Button from "components/button";
 import styles from "./answer-form.module.css";
 import { getAnswerSchema } from "lib/schemas";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 const validationSchema = getAnswerSchema();
 

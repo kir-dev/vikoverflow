@@ -13,7 +13,7 @@ import { UserProfileSchema } from "lib/schemas";
 import cn from "clsx";
 import { trimSpaces } from "lib/utils";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 
 export default function ProfilePage() {

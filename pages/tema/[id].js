@@ -14,7 +14,7 @@ import Textarea from "components/textarea";
 import { useToasts } from "components/toasts";
 import { TopicDescriptionSchema } from "lib/schemas";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers";
+import { yupResolver } from "@hookform/resolvers/yup";
 
 // TODO az empty text containerje rossz szelessegu es mobilon is van borderje
 

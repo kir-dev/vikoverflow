@@ -11,7 +11,7 @@ import { formatDistanceToNowStrict } from "date-fns";
 import { hu } from "date-fns/locale";
 import Linkify from "components/linkify";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 
 const validationSchema = getAnswerSchema(true);

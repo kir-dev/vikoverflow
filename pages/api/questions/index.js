@@ -212,6 +212,7 @@ async function createQuestion(req, res) {
           createdAt: Date.now().toString(),
           originalName: file.originalName,
         },
+        contentDisposition: `attachment; filename="${file.originalName}"`,
       });
 
       params.TransactItems[1].Put.Item.attachment = {

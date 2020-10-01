@@ -33,6 +33,9 @@
   --shadow: 0 5px 10px rgba(0, 0, 0, 0.12);
   --page: 1000px;
   --page-with-padding: calc(var(--page) + 2 * 1.5rem);
+
+  /* https://reach.tech/styling/ */
+  --reach-tooltip: 1;
 }
 
 * {

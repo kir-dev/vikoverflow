@@ -229,7 +229,7 @@ async function editQuestion(req, res) {
           createdAt: Date.now().toString(),
           originalName: file.originalName,
         },
-        contentDisposition: `attachment; filename="${file.originalName}"`,
+        contentDisposition: `inline; filename="${file.originalName}"`,
       });
 
       preparedUpdate.UpdateExpression += `, attachment = :attachment`;

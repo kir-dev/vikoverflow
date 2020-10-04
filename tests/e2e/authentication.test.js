@@ -1,7 +1,7 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-jest.setTimeout(1000 * 60 * 3);
+jest.setTimeout(1000 * 60 * 2);
 
 describe("frontend authentication flow", () => {
   it("should allow users to log in and get an auth token to access private routes", async () => {
@@ -16,10 +16,10 @@ describe("frontend authentication flow", () => {
     await page.fill("#LoginForm_username", process.env.TEST_OAUTH_USERNAME);
     await page.fill("#LoginForm_password", process.env.TEST_OAUTH_PASSWORD);
 
-    await page.click("text=Bejelentkezés", { timeout: 1000 * 60 * 1 });
+    await page.click("text=Bejelentkezés");
 
     try {
-      await page.click("text=Engedélyezés", { timeout: 1000 * 60 * 1 });
+      await page.click("text=Engedélyezés", { timeout: 1000 * 30 });
     } catch (error) {
       // no-op, AuthSCH sometimes does not show the second confirmation button
     }

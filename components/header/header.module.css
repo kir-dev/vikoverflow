@@ -1,10 +1,9 @@
 .root {
-  height: 4rem;
+  height: 40px;
   position: sticky;
   top: 0;
   width: 100%;
-  background: var(--background);
-  box-shadow: inset 0 -1px 0 0 var(--accent-2);
+  background: var(--brand);
   font-size: 0.875rem;
   z-index: 999;
 }
@@ -19,11 +18,12 @@
 }
 
 .logo {
-  font-weight: bold;
-  font-size: 1.5rem;
-  letter-spacing: -1px;
   text-decoration: none;
-  color: currentColor;
+  color: var(--background);
+  font-weight: 600;
+  font-size: 22px;
+  line-height: 27px;
+  letter-spacing: -0.04em;
 }
 
 .root nav {
@@ -31,24 +31,21 @@
   justify-content: center;
   align-items: center;
   /* if the last element is an a with 0.5rem padding this is needed */
-  margin-right: -0.5rem;
 }
 
 .root nav > a {
-  color: var(--accent-5);
+  color: var(--background);
   text-decoration: none;
-  padding: 0 0.5rem;
   cursor: pointer;
-  transition: color 200ms ease;
 }
 
 .root nav > a.active {
-  color: var(--foreground);
+  color: var(--background);
   cursor: not-allowed;
 }
 
 .root nav > a:hover {
-  color: var(--foreground);
+  color: var(--background);
 }
 
 .leftNav {
@@ -79,7 +76,6 @@
   padding: 0 0.875rem;
   line-height: 2;
   border-radius: 5px;
-  transition: color 200ms ease, border-color 200ms ease, opacity 200ms ease-out;
   opacity: 0;
   pointer-events: none;
 }
@@ -114,13 +110,13 @@
   .mobileNav.active {
     display: block;
     background: var(--background);
-    height: calc(100vh - 4rem);
+    height: calc(100vh - 40px);
     position: fixed;
-    top: 4rem;
+    top: 40px;
     width: 100%;
     overflow-y: auto;
     z-index: 2;
-    padding: 0.5rem 1.5rem 3rem;
+    padding: 20px 1.5rem 3rem;
   }
 
   .mobileNav a {
@@ -128,8 +124,7 @@
     text-decoration: none;
     display: flex;
     align-items: center;
-    height: 48px;
-    font-size: 1rem;
+    height: 40px;
     border-bottom: 1px solid var(--accent-2);
     cursor: pointer;
   }
@@ -138,4 +133,57 @@
     width: 100%;
     margin-bottom: 20px;
   }
+}
+
+.menuWrapper {
+  position: relative;
+  height: 100%;
+}
+
+.menuButton {
+  composes: reset from global;
+}
+
+.menuButton > * {
+  border-color: var(--brand-hover) !important;
+}
+
+.menuItems {
+  position: absolute;
+  width: 242px;
+  background: var(--background);
+  border: 1px solid #dddddd;
+  box-sizing: border-box;
+  box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08);
+  border-radius: 3px;
+  right: 0;
+  padding: var(--gap-small) 0;
+  outline: none;
+}
+
+.menuItems .separator {
+  margin: var(--gap-small) 0;
+  background: #dddddd;
+  height: 1px;
+  width: 100%;
+  display: block;
+}
+
+.menuItem {
+  composes: reset from global;
+  width: 100%;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  padding: 0 var(--gap);
+  outline: none;
+  cursor: pointer;
+}
+
+.menuItem.active {
+  background: #f3f3f3;
+}
+
+.menuItem svg {
+  margin-right: var(--gap);
 }

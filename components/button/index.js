@@ -1,54 +1,20 @@
 import styles from "./button.module.css";
 import cn from "clsx";
-import { forwardRef, memo } from "react";
-import LoadingDots from "components/loading-dots";
 
-function Button(
-  {
-    small,
-    medium,
-    inverted,
-    loading,
-    disabled,
-    className,
-    children,
-    onClick,
-    ...props
-  },
-  ref
-) {
-  const handleClick = (e) => {
-    if (disabled) {
-      return;
-    }
+export const KIND = {
+  secondary: "secondary",
+};
 
-    if (onClick) {
-      onClick(e);
-    }
-  };
+export default function Button({ disabled, children, onClick, kind }) {
+  const kindClassName = kind ? styles[kind] : false;
 
   return (
     <button
-      className={cn(styles.root, className, {
-        [styles.inverted]: inverted,
-        [styles.small]: small,
-        [styles.medium]: medium,
-        [styles.loading]: loading,
-        [styles.disabled]: disabled,
-      })}
-      ref={ref}
+      className={cn(styles.root, kindClassName)}
       disabled={disabled}
-      onClick={handleClick}
-      {...props}
+      onClick={onClick}
     >
-      <span className={styles.text}>{children}</span>
-      {loading && (
-        <span className={styles.loadingDots}>
-          <LoadingDots size="big" />
-        </span>
-      )}
+      {children}
     </button>
   );
 }
-
-export default memo(forwardRef(Button));

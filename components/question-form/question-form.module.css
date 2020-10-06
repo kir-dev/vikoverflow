@@ -88,10 +88,6 @@
   }
 }
 
-.fileInput {
-  composes: visually-hidden from global;
-}
-
 .fileRow {
   display: flex;
   flex-direction: column;
@@ -154,4 +150,8 @@
   .fileLabel {
     margin: 0 !important;
   }
+}
+
+.fileInput {
+  composes: visuallyHidden from global;
 }

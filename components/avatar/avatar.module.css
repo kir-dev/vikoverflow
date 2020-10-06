@@ -11,17 +11,12 @@
   border-radius: 100%;
   display: block;
   overflow: hidden;
-  border: 1px solid var(--accent-2);
+  border: 1px solid var(--input-border);
   background: var(--background);
-  transition: filter 200ms ease;
 }
 
 .avatar:not(.disabled) {
   cursor: pointer;
-}
-
-.avatarInput {
-  composes: visually-hidden from global;
 }
 
 .avatar:not(.disabled):hover {
@@ -46,4 +41,8 @@
   bottom: 0;
   left: 0;
   right: 0;
+}
+
+.avatarInput {
+  composes: visuallyHidden from global;
 }

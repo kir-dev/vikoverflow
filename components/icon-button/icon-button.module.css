@@ -1,0 +1,22 @@
+.root {
+  appearance: none;
+  border: none;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+
+  color: var(--accent-4);
+  background: var(--background);
+  border-radius: var(--radius);
+}
+
+.root:hover:not(:disabled) {
+  color: var(--foreground);
+  background: var(--accent-2);
+}
+
+.root:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

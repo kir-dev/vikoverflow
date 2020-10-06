@@ -1,6 +1,6 @@
 import styles from "./input.module.css";
 import cn from "clsx";
-import { memo, forwardRef, Fragment } from "react";
+import { forwardRef, Fragment } from "react";
 import Error from "components/error";
 import Label from "components/label";
 
@@ -51,4 +51,4 @@ function Input(
   );
 }
 
-export default memo(forwardRef(Input));
+export default forwardRef(Input);

@@ -14,11 +14,8 @@ export function ToastsProvider({ children }) {
   const [hovering, setHovering] = useState(false);
   const [messages, setMessages] = useState([]);
 
-  function addToast(message, options = {}) {
-    setMessages([
-      ...messages,
-      { key: nanoid(), text: message, errored: options.errored },
-    ]);
+  function addToast(message) {
+    setMessages([...messages, { key: nanoid(), text: message }]);
   }
 
   function handleRemove(key) {
@@ -39,14 +36,13 @@ export function ToastsProvider({ children }) {
           onMouseLeave={() => setHovering(false)}
           onTouchEnd={() => setHovering(false)}
         >
-          {messages.map(({ key, text, errored }, i) => (
+          {messages.map(({ key, text }, i) => (
             <Toast
               index={messages.length - 1 - i}
               key={key}
               hovering={hovering}
               onRemove={() => handleRemove(key)}
               text={text}
-              errored={errored}
             />
           ))}
         </div>

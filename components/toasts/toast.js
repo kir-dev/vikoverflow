@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import cn from "clsx";
 import styles from "./toasts.module.css";
 
-export default function Toast({ index, text, hovering, onRemove, errored }) {
+export default function Toast({ index, text, hovering, onRemove }) {
   const [visible, setVisible] = useState(false);
   const [hiding, setHiding] = useState(false);
   const timeoutRef = useRef(null);
@@ -24,7 +24,7 @@ export default function Toast({ index, text, hovering, onRemove, errored }) {
         setTimeout(() => {
           onRemove();
         }, 200);
-      }, 3500 - index * 200);
+      }, 5000 - index * 200);
     }
   }, [hovering]);
 
@@ -36,7 +36,7 @@ export default function Toast({ index, text, hovering, onRemove, errored }) {
       })}
       style={{ "--index": index }}
     >
-      <div className={cn(styles.toast, { [styles.errored]: errored })}>
+      <div className={styles.toast}>
         <span>{text}</span>
       </div>
     </div>

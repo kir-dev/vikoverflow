@@ -1,49 +1,43 @@
 .root {
-  --textarea-bg: var(--background);
-  --textarea-fg: var(--foreground);
-  --textarea-border: var(--accent-2);
-
-  appearance: none;
+  composes: reset from global;
   resize: none;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
-  height: 100%;
+  font-size: var(--font);
+  line-height: var(--line-height);
 
-  background: var(--textarea-bg);
-  color: var(--textarea-fg);
-  border: 1px solid var(--textarea-border);
+  background: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--input-border);
   border-radius: var(--radius);
-  padding: 7px 0.75rem;
-  vertical-align: middle;
-
-  transition: color 200ms ease, border-color 200ms ease;
-}
-
-.root:focus {
-  outline: 0;
-  --textarea-border: var(--foreground);
-}
-
-.root.errored {
-  --textarea-fg: var(--error);
-  --textarea-border: var(--error);
-}
-
-.root.disabled {
-  --textarea-bg: var(--accent-1);
-  --textarea-border: var(--accent-2);
-  --textarea-fg: var(--accent-4);
-  -webkit-text-fill-color: var(--accent-4);
-  cursor: not-allowed;
-  opacity: 1;
+  padding: 9px 10px;
 }
 
 .root::placeholder {
   color: var(--accent-4);
 }
 
+.root:focus:not(.disabled):not(.errored) {
+  color: var(--foreground);
+  border-color: var(--foreground);
+}
+
+.root.disabled {
+  -webkit-text-fill-color: var(--input-disabled-color);
+  color: var(--input-disabled-color);
+  cursor: not-allowed;
+  opacity: 1;
+  background: var(--accent-1);
+}
+
+.root.errored {
+  border-color: var(--error);
+  color: var(--error);
+}
+
+.root.errored::placeholder {
+  color: var(--input-errored-placeholder-color);
+}
+
 .errorRoot {
   display: flex;
-  margin-top: 0.5rem;
+  margin-top: 4px;
 }

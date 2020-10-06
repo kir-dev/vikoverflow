@@ -14,9 +14,7 @@ import Textarea from "components/textarea";
 import { useToasts } from "components/toasts";
 import { TopicDescriptionSchema } from "lib/schemas";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup/yup";
-
-// TODO az empty text containerje rossz szelessegu es mobilon is van borderje
+import { yupResolver } from "@hookform/resolvers/yup";
 
 export default function TopicPage() {
   const { user } = useUser();
@@ -69,7 +67,6 @@ export default function TopicPage() {
       addToast("Sikeresen módosítottad a téma leírását.");
     } else {
       setEditDescriptionModal((oldVal) => ({ ...oldVal, loading: false }));
-      // TODO itt a modalban mutatni a hibat inkabb
       addToast("Hiba lépett fel a téma leírás módosítása közben.", {
         errored: true,
       });
@@ -102,7 +99,7 @@ export default function TopicPage() {
       router.push("/404");
     }
 
-    reset({ description: topicData.topic.description ?? "" });
+    reset({ description: topicData?.topic?.description ?? "" });
   }, [topicData]);
 
   return (

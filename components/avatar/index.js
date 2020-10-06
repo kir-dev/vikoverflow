@@ -88,7 +88,6 @@ export function UploadAvatar({ className, size }) {
       addToast("Hiba lépett fel a profilképed feltöltése közben", {
         errored: true,
       });
-      // TODO clear inputs value to allow retrys
     }
     setUploading(false);
   }

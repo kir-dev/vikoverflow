@@ -1,9 +1,9 @@
 .root {
   display: block;
-  margin-bottom: 0.5rem;
-  text-transform: uppercase;
-  font-size: 0.875rem;
-  line-height: 1;
+  margin-bottom: 4px;
+  font: inherit;
   color: var(--accent-6);
+  font-size: var(--font);
+  line-height: var(--line-height);
   font-weight: 500;
 }

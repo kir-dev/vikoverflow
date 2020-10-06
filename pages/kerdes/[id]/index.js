@@ -123,7 +123,6 @@ const QuestionPage = () => {
       setEditingAnswer(null);
       addToast("A válaszod sikeresen szerkesztve.");
     } else {
-      // TODO a toast nem latszik ha a modal még nyitva van, inkabb a modalba irni a hibat.
       addToast("Hiba lépett fel a válaszod szerkesztése közben.", {
         errored: true,
       });
@@ -265,7 +264,6 @@ const QuestionPage = () => {
         throw new Error("request failed");
       }
     } catch (e) {
-      // TODO a toast nem latszik ha a modal még nyitva van, inkabb a modalba irni a hibat.
       addToast("Hiba lépett fel a válaszod törlése közben.", {
         errored: true,
       });

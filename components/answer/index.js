@@ -7,12 +7,11 @@ import cn from "clsx";
 import Avatar from "components/avatar";
 import useSWR from "swr";
 import { useRouter } from "next/router";
-import { formatDistanceToNowStrict } from "date-fns";
-import { hu } from "date-fns/locale";
 import Linkify from "components/linkify";
 import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup/yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
+import dayjs from "lib/dayjs";
 
 const validationSchema = getAnswerSchema(true);
 
@@ -135,10 +134,7 @@ export default function Answer({
             />
             {createdAt && (
               <span className={styles.date}>
-                {`· ${formatDistanceToNowStrict(new Date(createdAt), {
-                  locale: hu,
-                  addSuffix: true,
-                })}`}
+                {dayjs(new Date(createdAt)).fromNow()}
               </span>
             )}
           </>

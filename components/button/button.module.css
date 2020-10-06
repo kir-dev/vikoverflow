@@ -1,90 +1,37 @@
 .root {
-  --button-bg: var(--background);
-  --button-fg: var(--accent-5);
-  --button-border: var(--accent-2);
-  --button-hover-bg: var(--background);
-  --button-hover-fg: var(--foreground);
-  --button-hover-border: var(--foreground);
-
-  position: relative;
+  composes: reset from global;
   display: inline-flex;
-  align-items: center;
   justify-content: center;
-  appearance: none;
-  padding: 0 1rem;
-  border-radius: 5px;
+  align-items: center;
   cursor: pointer;
-  background-color: var(--button-bg);
-  border: 1px solid var(--button-border);
-  color: var(--button-fg);
-  transition-property: color, background-color, border-color;
-  transition-duration: 200ms;
-  transition-timing-function: ease;
-  font-family: inherit;
-  font-size: 0.875rem;
-  font-weight: 500;
-  text-decoration: none;
-  line-height: 38px;
-  height: 40px;
+
+  color: var(--background);
+  background: var(--brand);
+  border-radius: var(--radius);
+  height: 35px;
+  border: 1px solid var(--brand);
+  padding: 0 15px;
+  font: inherit;
+  font-size: var(--font-regular);
 }
 
-.root:focus {
-  outline: 0;
+.root:hover:not(:disabled) {
+  background: var(--brand-hover);
+  border-color: var(--brand-hover);
 }
 
-.root:hover,
-.root:active {
-  border-color: var(--button-hover-border);
-  color: var(--button-hover-fg);
-  background: var(--button-hover-bg);
-}
-
-.root.inverted {
-  --button-fg: var(--background);
-  --button-bg: var(--foreground);
-  --button-border: var(--foreground);
-  --button-hover-bg: var(--background);
-  --button-hover-fg: var(--foreground);
-  --button-hover-border: var(--foreground);
-}
-
-.root.small {
-  height: 24px;
-  line-height: 22px;
-  padding: 0px 10px;
-}
-
-.root.medium {
-  height: 32px;
-  line-height: 30px;
-  padding: 0px 12px;
-  min-width: 80px;
-}
-
-.root.disabled,
-.root.loading {
-  --button-fg: var(--accent-4);
-  --button-bg: var(--accent-1);
-  --button-border: var(--accent-2);
-  --button-hover-fg: var(--accent-4);
-  --button-hover-bg: var(--accent-1);
-  --button-hover-border: var(--accent-2);
-}
-
-.root.disabled {
+.root:disabled {
+  opacity: 0.5;
   cursor: not-allowed;
 }
 
-.root.loading {
-  cursor: default;
-  pointer-events: none;
+.root.secondary {
+  background: var(--background);
+  border-color: var(--accent-3);
+  color: var(--foreground);
 }
 
-.root.loading .text {
-  visibility: hidden;
-}
-
-.root.loading .loadingDots {
-  position: absolute;
-  display: inline-flex;
+.root.secondary:hover:not(:disabled) {
+  background-color: var(--accent-2);
+  border-color: var(--accent-3);
 }

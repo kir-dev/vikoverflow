@@ -9,12 +9,11 @@
   order: 0;
   flex-shrink: 0;
   position: relative;
-  height: 2.5rem;
-  width: 2.5rem;
+  height: 35px;
+  width: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 200ms ease, border-color 200ms ease;
   pointer-events: none;
   position: absolute;
 }
@@ -24,45 +23,40 @@
   border-color: var(--error);
 }
 
+.container.errored .input::placeholder {
+  color: var(--input-errored-placeholder-color);
+}
+
 .input {
+  composes: reset from global;
   order: 1;
-  appearance: none;
-  outline: none;
-  border: 0;
-  font: inherit;
-  vertical-align: baseline;
-  outline: 0;
 
   width: 100%;
-  height: 2.5rem;
-  padding: 0 0.75rem;
+  height: 35px;
+  padding: 0 10px;
 
   background: var(--background);
   color: var(--foreground);
-  border: 1px solid var(--accent-2);
+  border: 1px solid var(--input-border);
   border-radius: var(--radius);
-  transition: color 200ms ease, border-color 200ms ease;
 }
 
 .container.hasPrefix .input {
-  padding: 0 0.75rem 0 2.5rem;
+  padding: 0 10px 0 35px;
 }
 
 .input:focus,
 .container.hasPrefix .input:focus + * {
   border-color: var(--foreground);
-}
-
-.container.hasPrefix .input:focus + * {
   color: var(--foreground);
 }
 
-.input[disabled] {
-  background: var(--accent-1);
-  color: var(--accent-4);
+.input:disabled {
+  -webkit-text-fill-color: var(--input-disabled-color);
+  color: var(--input-disabled-color);
   cursor: not-allowed;
   opacity: 1;
-  -webkit-text-fill-color: var(--accent-4);
+  background: var(--accent-1);
 }
 
 .input::placeholder,
@@ -79,5 +73,5 @@
 
 .errorRoot {
   display: flex;
-  margin-top: 0.5rem;
+  margin-top: 4px;
 }

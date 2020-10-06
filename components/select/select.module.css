@@ -1,66 +1,57 @@
 .root {
-  --select-bg: var(--background);
-  --select-fg: var(--foreground);
-  --select-border: var(--accent-2);
-
   position: relative;
   display: inline-flex;
-  background: var(--select-bg);
-  color: var(--select-fg);
-  border: 1px solid var(--select-border);
+  background: var(--background);
+  color: var(--foreground);
+  border: 1px solid var(--input-border);
   border-radius: var(--radius);
-  height: 2.5rem;
-  transition: color 200ms ease, border-color 200ms ease;
+  height: 35px;
   overflow: hidden;
-  min-width: 10rem;
+  width: 100%;
+  font: inherit;
+  font-size: var(--font-size);
+  line-height: var(--line-height);
 }
 
 .select {
-  appearance: none;
-  border: none;
-  background: transparent;
-  font-family: inherit;
-  font-size: inherit;
-  line-height: inherit;
+  composes: reset from global;
   color: inherit;
-  padding: 0 calc(0.75rem + 2rem) 0 0.75rem;
+  padding: 0 calc(24px + 2 * 4px) 0 10px;
   user-select: none;
   width: 100%;
-  background: var(--select-bg);
-  color: var(--select-fg);
-}
-
-.select:focus {
-  outline: none;
 }
 
 .arrow {
   pointer-events: none;
-  background: var(--select-bg);
   height: 100%;
   position: absolute;
   right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 2rem;
+  width: 24px;
+  margin-right: 4px;
 }
 
 .root:focus-within:not(.disabled):not(.errored) {
-  --select-border: var(--foreground);
+  border-color: var(--foreground);
+}
+
+.root:focus-within:not(.disabled):not(.errored) .arrow {
+  color: var(--foreground);
 }
 
 .root.errored {
-  --select-fg: var(--error);
-  --select-border: var(--error);
+  color: var(--error);
+  border-color: var(--error);
 }
 
 .root.disabled {
-  --select-bg: var(--accent-1);
-  --select-border: var(--accent-2);
-  --select-fg: var(--accent-4);
+  background: var(--accent-1);
+  border-color: var(--input-border);
+  color: var(--input-disabled-color);
   opacity: 1;
-  -webkit-text-fill-color: var(--accent-4);
+  -webkit-text-fill-color: var(--input-disabled-color);
 }
 
 .root.disabled .select {
@@ -68,11 +59,12 @@
 }
 
 /* if first option has value="" and the select element is required we can have a nice "placeholder" style */
-.select:invalid {
-  --select-fg: var(--accent-4);
+.select:invalid,
+.select:invalid + .arrow {
+  color: var(--input-disabled-color);
 }
 
 .errorRoot {
   display: flex;
-  margin-top: 0.5rem;
+  margin-top: 4px;
 }

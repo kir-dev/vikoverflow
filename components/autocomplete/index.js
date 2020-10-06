@@ -1,9 +1,9 @@
 import Select from "react-select/creatable";
-import LoadingDots from "components/loading-dots";
 import Label from "components/label";
 import Error from "components/error";
 import moduleStyles from "./autocomplete.module.css";
 import { ChevronDown } from "react-feather";
+import { Fragment } from "react";
 
 export default function Autocomplete({
   value,
@@ -12,7 +12,6 @@ export default function Autocomplete({
   options,
   disabled,
   error,
-  loading,
   onCreate,
   placeholder,
   noOptionsMessage,
@@ -29,8 +28,7 @@ export default function Autocomplete({
         onChange={onChange}
         options={options}
         onCreateOption={onCreate}
-        isDisabled={disabled || loading}
-        isLoading={loading}
+        isDisabled={disabled}
         onBlur={onBlur}
         placeholder={placeholder}
         formatCreateLabel={formatCreateLabel}
@@ -40,11 +38,6 @@ export default function Autocomplete({
         maxMenuHeight={200}
         components={{
           DropdownIndicator: () => <ChevronDown strokeWidth={1} size={18} />,
-          LoadingIndicator: () => (
-            <div style={{ padding: "0 1rem" }}>
-              <LoadingDots />
-            </div>
-          ),
         }}
       />
       {error && (
@@ -56,14 +49,17 @@ export default function Autocomplete({
   );
 }
 
+// CSS-in-JS is a beauty, isn't it? :)
+
 const styles = {
   container: (provided) => ({
     ...provided,
     pointerEvents: "unset",
+    font: "inherit",
   }),
   control: (provided, state) => ({
     ...provided,
-    transition: "color 200ms ease, border-color 200ms ease",
+    font: "inherit",
     border: `1px solid ${
       state.selectProps.error
         ? "var(--error)"
@@ -71,7 +67,8 @@ const styles = {
         ? "var(--foreground)"
         : "var(--accent-2)"
     }`,
-    height: "2.5rem",
+    height: 35,
+    minHeight: "unset",
     color: state?.selectProps?.error
       ? "var(--error) !important"
       : state.isDisabled
@@ -90,43 +87,57 @@ const styles = {
     padding: "0 0 0 calc(0.75rem - 2px)",
   }),
   indicatorSeparator: () => ({ display: "none" }),
-  placeholder: (provided) => ({ ...provided, color: "var(--accent-4)" }),
   indicatorsContainer: (provided) => ({
     ...provided,
     color: "inherit",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: "0 0.75rem",
+    marginRight: "4px",
+    width: 24,
+    padding: 0,
   }),
   singleValue: (provided) => ({
     ...provided,
+    font: "inherit",
     color: "inherit",
+  }),
+  placeholder: (provided, state) => ({
+    ...provided,
+    font: "inherit",
+    color: state?.selectProps?.error
+      ? "var(--input-errored-placeholder-color)"
+      : "var(--accent-4)",
   }),
   input: (provided) => ({
     ...provided,
+    font: "inherit",
     color: "inherit",
+    "& input": {
+      font: "inherit",
+    },
   }),
   menu: (provided) => ({
     ...provided,
     background: "var(--background)",
     borderRadius: "var(--radius)",
-    boxShadow: "var(--shadow)",
+    boxShadow: "0 1px 8px 0 rgba(0,0,0,.08), 0 0 1px 0 rgba(0,0,0,.3);",
     border: "none",
     lineHeight: 1,
     overflow: "hidden",
+    font: "inherit",
+    margin: "4px 0 0 0",
   }),
   option: (provided, state) => ({
     ...provided,
     color: "inherit",
-    padding: "0.75rem",
+    padding: "0 10px",
+    minHeight: 32,
+    display: "flex",
+    alignItems: "center",
     fontSize: "inherit",
     lineHeight: "inherit",
-    background: state.isFocused
-      ? "var(--accent-1)"
-      : state.isSelected
-      ? "var(--accent-2)"
-      : "transparent",
+    background: state.isFocused || state.isSelected ? "#f3f3f3" : "transparent",
     "&:hover": {
       background: "var(--accent-2)",
     },
@@ -135,8 +146,12 @@ const styles = {
   noOptionsMessage: (provided) => ({
     ...provided,
     color: "inherit",
-    padding: "0.75rem",
+    minHeight: 32,
+    padding: "0 10px",
+    display: "flex",
+    alignItems: "center",
     fontSize: "inherit",
     lineHeight: "inherit",
+    textAlign: "left",
   }),
 };

@@ -9,7 +9,7 @@ import { getQuestionSchema } from "lib/schemas";
 import cn from "clsx";
 import { DELETE_CURRENT_FILE } from "lib/constants";
 import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup/yup";
+import { yupResolver } from "@hookform/resolvers/yup";
 import Error from "components/error";
 
 export default function QuestionForm({
@@ -164,6 +164,7 @@ export default function QuestionForm({
                   </Button>
                 </div>
               )}
+
               <input
                 className={styles.fileInput}
                 ref={fileInputRef}
@@ -185,6 +186,7 @@ export default function QuestionForm({
                   }
                 }}
               />
+
               {errors?.fileSize?.message && (
                 <div className={styles.fileError}>
                   <Error>{errors.fileSize.message}</Error>

@@ -5,11 +5,10 @@ import Link from "next/link";
 import cn from "clsx";
 import { forwardRef, memo } from "react";
 import Avatar from "components/avatar";
-import { formatDistanceToNowStrict } from "date-fns";
-import { hu } from "date-fns/locale";
 import useSWR from "swr";
 import { useRouter } from "next/router";
 import Linkify from "components/linkify";
+import dayjs from "lib/dayjs";
 
 function Question(
   {
@@ -33,7 +32,6 @@ function Question(
   const { data } = useSWR(creator ? `/api/user/${creator}` : null);
   const router = useRouter();
 
-  // TODO cleanup :p, also make responsible and use css module
   if (skeleton) {
     return (
       <div ref={ref} className={styles.root}>
@@ -90,10 +88,7 @@ function Question(
           />
           {createdAt && (
             <span className={styles.date}>
-              {`· ${formatDistanceToNowStrict(new Date(createdAt), {
-                locale: hu,
-                addSuffix: true,
-              })}`}
+              {dayjs(new Date(createdAt)).fromNow()}
             </span>
           )}
         </div>

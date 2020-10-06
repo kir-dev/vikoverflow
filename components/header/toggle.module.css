@@ -9,22 +9,21 @@
 
 .top,
 .bottom {
-  height: 1px;
+  height: 2px;
   width: 22px;
-  background-color: var(--foreground);
-  transition: transform 0.15s ease;
+  background-color: var(--background);
 }
 
 .top {
-  transform: translateY(-4px) rotate(0deg);
+  transform: translateY(-3px) rotate(0deg);
 }
 
 .bottom {
-  transform: translateY(4px) rotate(0deg);
+  transform: translateY(3px) rotate(0deg);
 }
 
 .root.active .top {
-  transform: translateY(1px) rotate(45deg);
+  transform: translateY(2px) rotate(45deg);
 }
 
 .root.active .bottom {

@@ -1,5 +1,5 @@
 import db from "lib/api/db";
-import ksuid from "ksuid";
+import { nanoid } from "nanoid";
 import withUser from "lib/api/with-user";
 import { getAnswerSchema } from "lib/schemas";
 import { trimLineBreaks } from "lib/utils";
@@ -12,7 +12,7 @@ export default withUser(async function createAnswer(req, res) {
       return res.status(400).json({ error: "request not in desired format" });
     }
 
-    const id = ksuid.randomSync().string;
+    const id = `${Date.now()}-${nanoid(6)}`;
 
     const params = {
       TransactItems: [

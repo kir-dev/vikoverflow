@@ -9,7 +9,7 @@ import { getQuestionSchema } from "lib/schemas";
 import cn from "clsx";
 import { DELETE_CURRENT_FILE } from "lib/constants";
 import { useForm, Controller } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { yupResolver } from "@hookform/resolvers/yup/yup";
 import Error from "components/error";
 
 export default function QuestionForm({

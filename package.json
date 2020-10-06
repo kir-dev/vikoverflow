@@ -7,7 +7,7 @@
     "start": "next start"
   },
   "dependencies": {
-    "@hookform/resolvers": "^0.1.1",
+    "@hookform/resolvers": "^1.0.0",
     "@reach/portal": "^0.11.2",
     "aws-sdk": "^2.767.0",
     "busboy": "^0.3.1",

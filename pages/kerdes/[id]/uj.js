@@ -10,6 +10,166 @@ import { useUser } from "lib/authenticate";
 import dayjs from "lib/dayjs";
 import Layout from "components/layout";
 
+export default function QuestionPage() {
+  const router = useRouter();
+  const questionId = router.query.id;
+  const { data } = useSWR(questionId ? `/api/questions/${questionId}` : null);
+  const { user, isLoading: isUserLoading } = useUser();
+
+  if (!data) {
+    return null;
+  }
+
+  return (
+    <Layout>
+      <div className={styles.root}>
+        <Question {...data.question} />
+
+        {data.question.answers.list.map((a) => (
+          <Answer {...a} />
+        ))}
+
+        <form className={styles.answerForm}>
+          <div className={styles.answerFormContent}>
+            <Avatar
+              loading={isUserLoading}
+              id={user?.avatar}
+              size={32}
+              className={styles.avatar}
+              onClick={() => router.push("/profil/[id]", `/profil/${user.id}`)}
+            />
+            <Textarea placeholder="Írd be a saját válaszod..." rows={5} />
+          </div>
+          <div className={styles.answerFormActions}>
+            <Button>Küldés</Button>
+          </div>
+        </form>
+      </div>
+    </Layout>
+  );
+}
+
+function Question({
+  title,
+  body,
+  attachment,
+  upvotes,
+  answers,
+  topic,
+  createdAt,
+  creator,
+}) {
+  const { data: creatorData } = useSWR(creator ? `/api/user/${creator}` : null);
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.creator}>
+          <Avatar
+            loading={!creatorData?.user}
+            id={creatorData?.user?.avatar}
+            size={32}
+            onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
+          />
+          <div className={styles.creatorInfo}>
+            <p>{creatorData?.user?.name}</p>
+            <p>{dayjs(new Date(createdAt)).fromNow()}</p>
+          </div>
+        </div>
+        <div className={styles.headerActions}>
+          <IconButton tooltip="Kérdés szerkesztése">
+            <EditIcon />
+          </IconButton>
+          <IconButton tooltip="Kérdés törlése">
+            <TrashIcon />
+          </IconButton>
+        </div>
+      </div>
+
+      <div className={styles.body}>
+        <h1>{title}</h1>
+        <p>
+          <Linkify>{body}</Linkify>
+        </p>
+        {attachment && (
+          <a
+            href={`${process.env.NEXT_PUBLIC_S3_URL}/${attachment.s3Key}`}
+            target="_blank"
+            rel="noopener"
+            className={styles.attachment}
+          >
+            <AttachmentIcon />
+            <span>{attachment.originalName}</span>
+          </a>
+        )}
+      </div>
+
+      <div className={styles.footer}>
+        <div className={styles.actions}>
+          <div className={styles.action}>
+            <IconButton
+              tooltip={`Eddig ${upvotes.count} embernek tetszett a kérdés`}
+            >
+              <HearthIcon />
+            </IconButton>
+            <span>{upvotes.count}</span>
+          </div>
+          <div className={styles.action}>
+            <IconButton
+              tooltip={`Eddig ${answers.count} válasz érkezett a kérdésre`}
+            >
+              <CommentIcon />
+            </IconButton>
+
+            <span>{answers.count}</span>
+          </div>
+        </div>
+        <p className={styles.topic}>#{topic}</p>
+      </div>
+    </div>
+  );
+}
+
+function Answer({ id, creator, createdAt, body, upvotes }) {
+  const { data: creatorData } = useSWR(creator ? `/api/user/${creator}` : null);
+
+  return (
+    <div key={id} className={styles.container}>
+      <div className={styles.header}>
+        <div className={styles.creator}>
+          <Avatar
+            loading={!creatorData?.user}
+            id={creatorData?.user?.avatar}
+            size={32}
+            onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
+          />
+          <div className={styles.creatorInfo}>
+            <p>{creatorData?.user?.name}</p>
+            <p>{dayjs(new Date(createdAt)).fromNow()}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.body}>
+        <p>{body}</p>
+      </div>
+
+      <div className={styles.footer}>
+        <div className={styles.actions}>
+          <div className={styles.action}>
+            <IconButton
+              tooltip={`Eddig ${upvotes.count} embernek tetszett a kérdés`}
+            >
+              <HearthIcon />
+            </IconButton>
+            <span>{upvotes.count}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function EditIcon() {
   return (
     <svg
@@ -114,150 +274,5 @@ function CommentIcon() {
         fill="currentColor"
       />
     </svg>
-  );
-}
-
-export default function QuestionPage() {
-  const router = useRouter();
-  const questionId = router.query.id;
-  const { data } = useSWR(questionId ? `/api/questions/${questionId}` : null);
-  const { data: creatorData } = useSWR(
-    data?.question?.creator ? `/api/user/${data.question.creator}` : null
-  );
-  const { user, isLoading: isUserLoading } = useUser();
-
-  if (!data) {
-    return null;
-  }
-
-  const {
-    title,
-    body,
-    creator,
-    createdAt,
-    attachment,
-    topic,
-    upvotes,
-    answers,
-  } = data.question;
-
-  return (
-    <Layout>
-      <div className={styles.root}>
-        <div className={styles.container}>
-          <div className={styles.header}>
-            <div className={styles.creator}>
-              <Avatar
-                loading={!creatorData?.user}
-                id={creatorData?.user?.avatar}
-                size={32}
-                onClick={() =>
-                  router.push("/profil/[id]", `/profil/${creator}`)
-                }
-              />
-              <div className={styles.creatorInfo}>
-                <p>{creatorData?.user?.name}</p>
-                <p>{dayjs(new Date(createdAt)).fromNow()}</p>
-              </div>
-            </div>
-            <div className={styles.headerActions}>
-              <IconButton tooltip="Kérdés szerkesztése">
-                <EditIcon />
-              </IconButton>
-              <IconButton tooltip="Kérdés törlése">
-                <TrashIcon />
-              </IconButton>
-            </div>
-          </div>
-
-          <div className={styles.body}>
-            <h1>{title}</h1>
-            <p>
-              <Linkify>{body}</Linkify>
-            </p>
-            {attachment && (
-              <a
-                href={`${process.env.NEXT_PUBLIC_S3_URL}/${attachment.s3Key}`}
-                target="_blank"
-                rel="noopener"
-                className={styles.attachment}
-              >
-                <AttachmentIcon />
-                <span>{attachment.originalName}</span>
-              </a>
-            )}
-          </div>
-
-          <div className={styles.footer}>
-            <div className={styles.actions}>
-              <div className={styles.action}>
-                <IconButton
-                  tooltip={`Eddig ${upvotes.count} embernek tetszett a kérdés`}
-                >
-                  <HearthIcon />
-                </IconButton>
-                <span>{upvotes.count}</span>
-              </div>
-              <div className={styles.action}>
-                <IconButton
-                  tooltip={`Eddig ${answers.count} válasz érkezett a kérdésre`}
-                >
-                  <CommentIcon />
-                </IconButton>
-
-                <span>{answers.count}</span>
-              </div>
-            </div>
-            <p className={styles.topic}>#{topic}</p>
-          </div>
-        </div>
-
-        {answers.list.map((a) => (
-          <div key={a.id} className={styles.container}>
-            <div className={styles.header}>
-              <div className={styles.creator}>
-                <img
-                  src="/static/default-avatar-20200904.svg"
-                  className={styles.avatar}
-                />
-                <div className={styles.creatorInfo}>
-                  <p>{a.creator}</p>
-                  <p>{dayjs(new Date(a.createdAt)).fromNow()}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className={styles.body}>
-              <p>{a.body}</p>
-            </div>
-
-            <div className={styles.footer}>
-              <div className={styles.actions}>
-                <div className={styles.action}>
-                  <HearthIcon />
-                  <span>{a.upvotes.count}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        ))}
-
-        <form className={styles.answerForm}>
-          <div className={styles.answerFormContent}>
-            <Avatar
-              loading={isUserLoading}
-              id={user?.avatar}
-              size={32}
-              className={styles.avatar}
-              onClick={() => router.push("/profil/[id]", `/profil/${user.id}`)}
-            />
-            <Textarea placeholder="Írd be a saját válaszod..." rows={5} />
-          </div>
-          <div className={styles.answerFormActions}>
-            <Button>Küldés</Button>
-          </div>
-        </form>
-      </div>
-    </Layout>
   );
 }

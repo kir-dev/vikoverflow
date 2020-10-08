@@ -14,7 +14,6 @@ export default function QuestionPage() {
   const router = useRouter();
   const questionId = router.query.id;
   const { data } = useSWR(questionId ? `/api/questions/${questionId}` : null);
-  const { user, isLoading: isUserLoading } = useUser();
 
   if (!data) {
     return null;
@@ -29,21 +28,7 @@ export default function QuestionPage() {
           <Answer {...a} />
         ))}
 
-        <form className={styles.answerForm}>
-          <div className={styles.answerFormContent}>
-            <Avatar
-              loading={isUserLoading}
-              id={user?.avatar}
-              size={32}
-              className={styles.avatar}
-              onClick={() => router.push("/profil/[id]", `/profil/${user.id}`)}
-            />
-            <Textarea placeholder="Írd be a saját válaszod..." rows={5} />
-          </div>
-          <div className={styles.answerFormActions}>
-            <Button>Küldés</Button>
-          </div>
-        </form>
+        <AnswerForm />
       </div>
     </Layout>
   );
@@ -59,6 +44,7 @@ function Question({
   createdAt,
   creator,
 }) {
+  const router = useRouter();
   const { data: creatorData } = useSWR(creator ? `/api/user/${creator}` : null);
 
   return (
@@ -131,6 +117,7 @@ function Question({
 }
 
 function Answer({ id, creator, createdAt, body, upvotes }) {
+  const router = useRouter();
   const { data: creatorData } = useSWR(creator ? `/api/user/${creator}` : null);
 
   return (
@@ -167,6 +154,32 @@ function Answer({ id, creator, createdAt, body, upvotes }) {
         </div>
       </div>
     </div>
+  );
+}
+
+function AnswerForm() {
+  const router = useRouter();
+  const { user, isLoading: isUserLoading } = useUser();
+  const { data: userData } = useSWR(
+    !isUserLoading ? `/api/user/${user.id}` : null
+  );
+
+  return (
+    <form className={styles.answerForm}>
+      <div className={styles.answerFormContent}>
+        <Avatar
+          loading={!userData?.user}
+          id={userData?.user?.avatar}
+          size={32}
+          className={styles.avatar}
+          onClick={() => router.push("/profil/[id]", `/profil/${user.id}`)}
+        />
+        <Textarea placeholder="Írd be a saját válaszod..." rows={5} />
+      </div>
+      <div className={styles.answerFormActions}>
+        <Button>Küldés</Button>
+      </div>
+    </form>
   );
 }
 

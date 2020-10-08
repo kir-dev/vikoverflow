@@ -5,6 +5,7 @@ import styles from "./avatar.module.css";
 import cn from "clsx";
 import LoadingDots from "components/loading-dots";
 import useSWR, { mutate } from "swr";
+import Tooltip from "components/tooltip";
 
 export default function Avatar({
   className,
@@ -13,6 +14,7 @@ export default function Avatar({
   loading,
   onClick,
   disabled,
+  label = "Profil megtekintése",
 }) {
   const imgRef = useRef(null);
   const [ready, setReady] = useState(false);
@@ -22,30 +24,32 @@ export default function Avatar({
   }, []);
 
   return (
-    <div
-      className={cn(styles.avatar, className, {
-        [styles.disabled]: disabled,
-      })}
-      onClick={onClick}
-      style={{ "--size": size }}
-    >
-      {!loading && (
-        <img
-          decoding="async"
-          loading="lazy"
-          importance="low"
-          alt="User's avatar"
-          className={cn({ [styles.ready]: ready })}
-          onLoad={() => setReady(true)}
-          ref={imgRef}
-          src={
-            id
-              ? `/api/user/avatar/${id}?size=${size * 2}`
-              : "/static/default-avatar-20200904.svg"
-          }
-        />
-      )}
-    </div>
+    <Tooltip label={label}>
+      <div
+        className={cn(styles.avatar, className, {
+          [styles.disabled]: disabled,
+        })}
+        onClick={onClick}
+        style={{ "--size": size }}
+      >
+        {!loading && (
+          <img
+            decoding="async"
+            loading="lazy"
+            importance="low"
+            alt="User's avatar"
+            className={cn({ [styles.ready]: ready })}
+            onLoad={() => setReady(true)}
+            ref={imgRef}
+            src={
+              id
+                ? `/api/user/avatar/${id}?size=${size * 2}`
+                : "/static/default-avatar-20200904.svg"
+            }
+          />
+        )}
+      </div>
+    </Tooltip>
   );
 }
 
@@ -100,6 +104,7 @@ export function UploadAvatar({ className, size }) {
         onClick={handleClick}
         size={size}
         disabled={uploading}
+        label="Új profilkép feltöltése"
       />
       {uploading && (
         <div className={styles.loadingOverlay}>

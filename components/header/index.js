@@ -8,6 +8,7 @@ import Toggle from "./toggle";
 import Button from "components/button";
 import Avatar from "components/avatar";
 import { Menu } from "@headlessui/react";
+import SearchInput from "./search-input";
 
 const Header = () => {
   const router = useRouter();
@@ -26,6 +27,8 @@ const Header = () => {
           <Link href="/">
             <a className={styles.logo}>vikoverflow</a>
           </Link>
+
+          <SearchInput />
 
           <div
             onClick={() => setActive(!active)}

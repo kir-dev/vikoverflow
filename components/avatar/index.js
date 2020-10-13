@@ -1,5 +1,5 @@
 import { useUser } from "lib/authenticate";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, Fragment } from "react";
 import { useToasts } from "components/toasts";
 import styles from "./avatar.module.css";
 import cn from "clsx";
@@ -16,6 +16,8 @@ export default function Avatar({
   disabled,
   label = "Profil megtekintése",
 }) {
+  const Wrapper = label ? Tooltip : Fragment;
+  const wrapperProps = label ? { label } : {};
   const imgRef = useRef(null);
   const [ready, setReady] = useState(false);
 
@@ -24,7 +26,7 @@ export default function Avatar({
   }, []);
 
   return (
-    <Tooltip label={label}>
+    <Wrapper {...wrapperProps}>
       <div
         className={cn(styles.avatar, className, {
           [styles.disabled]: disabled,
@@ -49,7 +51,7 @@ export default function Avatar({
           />
         )}
       </div>
-    </Tooltip>
+    </Wrapper>
   );
 }
 

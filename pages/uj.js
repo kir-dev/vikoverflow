@@ -3,7 +3,6 @@ import Form from "components/question-form";
 import Layout from "components/layout";
 import Head from "next/head";
 import { useUser } from "lib/authenticate";
-import styles from "styles/pages/ask.module.css";
 import { mutate } from "swr";
 import { useToasts } from "components/toasts";
 import { trimSpaces, trimLineBreaks } from "lib/utils";
@@ -73,17 +72,13 @@ const AskPage = () => {
         />
       </Head>
 
-      <div className={styles.root}>
-        <div className={styles.inner}>
-          <Form
-            buttonText="Küldés"
-            onSubmit={handleSubmit}
-            skeleton={!user}
-            message="Később van lehetőség módosításokra."
-            initialValues={{ topic: initialTopic }}
-          />
-        </div>
-      </div>
+      <Form
+        buttonText="Küldés"
+        onSubmit={handleSubmit}
+        skeleton={!user}
+        message="Később van lehetőség módosításokra."
+        initialValues={{ topic: initialTopic }}
+      />
     </Layout>
   );
 };

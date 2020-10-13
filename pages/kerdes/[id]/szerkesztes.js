@@ -5,7 +5,6 @@ import Layout from "components/layout";
 import { useUser } from "lib/authenticate";
 import Head from "next/head";
 import { useEffect } from "react";
-import styles from "styles/pages/ask.module.css";
 import { useToasts } from "components/toasts";
 import { trimSpaces, trimLineBreaks } from "lib/utils";
 
@@ -76,16 +75,12 @@ const QuestionEditPage = () => {
         />
       </Head>
 
-      <div className={styles.root}>
-        <div className={styles.inner}>
-          <Form
-            initialValues={data?.question}
-            onSubmit={handleSubmit}
-            buttonText="Szerkesztés"
-            skeleton={loading}
-          />
-        </div>
-      </div>
+      <Form
+        initialValues={data?.question}
+        onSubmit={handleSubmit}
+        buttonText="Szerkesztés"
+        skeleton={loading}
+      />
     </Layout>
   );
 };

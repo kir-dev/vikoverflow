@@ -1,4 +1,5 @@
 .root {
+  composes: reset from global;
   appearance: none;
   border: none;
   display: inline-flex;

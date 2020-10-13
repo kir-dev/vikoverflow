@@ -40,8 +40,6 @@ const SEO = ({ title, description, image }) => (
 const Layout = ({
   children,
   header = true,
-  footer = true,
-  footerDark = false,
   title = "vikoverflow",
   description = "description",
   image = "",
@@ -50,7 +48,6 @@ const Layout = ({
     <SEO title={title} description={description} image={image} />
     {header && <Header />}
     {children}
-    {footer && <Footer dark={footerDark} />}
   </>
 );
 

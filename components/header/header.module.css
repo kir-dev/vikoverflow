@@ -138,6 +138,9 @@
 .menuWrapper {
   position: relative;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .menuButton {
@@ -186,4 +189,20 @@
 
 .menuItem svg {
   margin-right: var(--gap);
+}
+
+.plusButton {
+  composes: reset from global;
+  height: 28px;
+  width: 28px;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: var(--gap-large);
+  cursor: pointer;
+}
+
+.plusButton:hover {
+  background: rgba(255, 255, 255, 0.2);
 }

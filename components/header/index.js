@@ -57,7 +57,7 @@ const Header = () => {
                   <Menu>
                     <>
                       <Menu.Button className={styles.menuButton}>
-                        <Avatar size={28} />
+                        <Avatar label={false} size={28} />
                       </Menu.Button>
 
                       <Menu.Items className={styles.menuItems}>

@@ -16,6 +16,9 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 
+// TODO use optional catch all routes instead of 2 different profile pages
+// https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes
+
 export default function ProfilePage() {
   const { user } = useUser("/belepes");
   const { data: userData } = useSWR(user?.id ? `/api/user/${user.id}` : "");
@@ -120,43 +123,74 @@ export default function ProfilePage() {
                       disabled
                       value={userData?.user?.name}
                       placeholder="Neved..."
-                      label="név"
+                      label="Név"
                     />
                     <Input
                       disabled
                       value={userData?.user?.email}
                       placeholder="E-mail címed..."
-                      label="e-mail"
+                      label="Email"
                     />
                     <Input
                       name="bio"
                       ref={register}
                       disabled={!userData?.user || isSubmitting}
                       placeholder="Rövid bemutatkozás, mely a profilodon fog megjelenni..."
-                      label="bemutatkozás"
+                      label="Bemutatkozás"
                       error={errors?.bio?.message}
                     />
-                  </div>
-                  <div className={styles.footer}>
-                    <p>
-                      Néhány mezőt csak az{" "}
-                      <a
-                        href="https://auth.sch.bme.hu/"
-                        target="_blank"
-                        rel="noopener"
+
+                    <div className={styles.submitRow}>
+                      <div className={styles.warning}>
+                        <svg
+                          width="12"
+                          height="12"
+                          viewBox="0 0 12 12"
+                          fill="none"
+                          xmlns="http://www.w3.org/2000/svg"
+                        >
+                          <path
+                            d="M5.9497 11C8.68334 11 10.8994 8.76142 10.8994 6C10.8994 3.23858 8.68334 1 5.9497 1C3.21606 1 1 3.23858 1 6C1 8.76142 3.21606 11 5.9497 11Z"
+                            stroke="#7B7B7B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M5.94971 8V6"
+                            stroke="#7B7B7B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                          <path
+                            d="M5.94971 4H5.95471"
+                            stroke="#7B7B7B"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                          />
+                        </svg>
+
+                        <p>
+                          Néhány mezőt csak az{" "}
+                          <a
+                            href="https://auth.sch.bme.hu/"
+                            target="_blank"
+                            rel="noopener"
+                          >
+                            AuthSCH
+                          </a>
+                          -ban módosíthatsz.
+                        </p>
+                      </div>
+
+                      <Button
+                        type="submit"
+                        disabled={isSubmitting || !(isValid && isDirty)}
+                        loading={isSubmitting}
+                        inverted
                       >
-                        AuthSCH
-                      </a>
-                      -ban módosíthatsz.
-                    </p>
-                    <Button
-                      type="submit"
-                      disabled={isSubmitting || !(isValid && isDirty)}
-                      loading={isSubmitting}
-                      inverted
-                    >
-                      Mentés
-                    </Button>
+                        Mentés
+                      </Button>
+                    </div>
                   </div>
                 </form>
               </div>

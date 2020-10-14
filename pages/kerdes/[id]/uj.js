@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import styles from "styles/pages/question.module.css";
 import Avatar from "components/avatar";
 import IconButton from "components/icon-button";
@@ -9,6 +9,21 @@ import Textarea from "components/textarea";
 import { useUser } from "lib/authenticate";
 import dayjs from "lib/dayjs";
 import Layout from "components/layout";
+import Tooltip from "components/tooltip";
+import Modal from "components/modal";
+import { useState } from "react";
+import { useToasts } from "components/toasts";
+import { getAnswerSchema } from "lib/schemas";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { trimLineBreaks } from "lib/utils";
+
+// TODO answer delete modal ne legyen minden egyes answernel..
+// TODO answer form errors
+// TODO answer edit inline
+// TODO 404 page redirect on wrong question id
+
+const validationSchema = getAnswerSchema();
 
 export default function QuestionPage() {
   const router = useRouter();
@@ -25,16 +40,17 @@ export default function QuestionPage() {
         <Question {...data.question} />
 
         {data.question.answers.list.map((a) => (
-          <Answer {...a} />
+          <Answer questionId={questionId} {...a} />
         ))}
 
-        <AnswerForm />
+        <AnswerForm questionId={questionId} />
       </div>
     </Layout>
   );
 }
 
 function Question({
+  id,
   title,
   body,
   attachment,
@@ -45,127 +61,429 @@ function Question({
   creator,
 }) {
   const router = useRouter();
+  const { addToast } = useToasts();
+  const { user } = useUser();
   const { data: creatorData } = useSWR(creator ? `/api/user/${creator}` : null);
+  const [deleteModal, setDeleteModal] = useState({
+    open: false,
+    loading: false,
+  });
+
+  const openDeleteModal = () => {
+    setDeleteModal({
+      open: true,
+    });
+  };
+
+  const closeDeleteModal = () => {
+    if (deleteModal.loading) return;
+    setDeleteModal({ open: false, loading: false });
+  };
+
+  const handleDeleteModalSubmit = async () => {
+    try {
+      setDeleteModal((deleteModal) => ({ ...deleteModal, loading: true }));
+
+      const res = await fetch(`/api/questions/${id}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        router.push("/");
+      }
+    } catch (e) {
+      addToast("Hiba lépett fel a kérdésed törlése közben.");
+    } finally {
+      setDeleteModal((deleteModal) => ({ ...deleteModal, loading: false }));
+    }
+  };
+
+  const handleVote = (upvote) => async () => {
+    try {
+      mutate(
+        `/api/questions/${id}`,
+        ({ question: oldQuestion }) => {
+          return {
+            question: {
+              ...oldQuestion,
+              upvotes: {
+                count: oldQuestion.upvotes.count + (upvote ? 1 : -1),
+                currentUserUpvoted: upvote,
+              },
+            },
+          };
+        },
+        false
+      );
+
+      const res = await fetch(`/api/questions/${id}/votes`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ upvote }),
+      });
+
+      if (!res.ok) {
+        mutate(`/api/questions/${id}`);
+        throw new Error("request failed");
+      }
+    } catch (e) {
+      addToast("Hiba lépett fel a szavazatod leadása közben.", {
+        errored: true,
+      });
+      mutate(`/api/questions/${id}`);
+    }
+  };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.creator}>
-          <Avatar
-            loading={!creatorData?.user}
-            id={creatorData?.user?.avatar}
-            size={32}
-            onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
-          />
-          <div className={styles.creatorInfo}>
-            <p>{creatorData?.user?.name}</p>
-            <p>{dayjs(new Date(createdAt)).fromNow()}</p>
-          </div>
-        </div>
-        <div className={styles.headerActions}>
-          <IconButton tooltip="Kérdés szerkesztése">
-            <EditIcon />
-          </IconButton>
-          <IconButton tooltip="Kérdés törlése">
-            <TrashIcon />
-          </IconButton>
-        </div>
-      </div>
-
-      <div className={styles.body}>
-        <h1>{title}</h1>
-        <p>
-          <Linkify>{body}</Linkify>
-        </p>
-        {attachment && (
-          <a
-            href={`${process.env.NEXT_PUBLIC_S3_URL}/${attachment.s3Key}`}
-            target="_blank"
-            rel="noopener"
-            className={styles.attachment}
+    <>
+      <Modal open={deleteModal.open} onClose={closeDeleteModal}>
+        <Modal.Header>Kérdés törlése</Modal.Header>
+        <Modal.Body>
+          <p>
+            Biztosan törlöd a(z) "<b>{title}</b>" című kérdésedet?
+            <br />A kérdés és a válaszok sem lesznek később visszaállíthatóak.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Modal.Action onClick={closeDeleteModal}>Nem</Modal.Action>
+          <Modal.Action
+            loading={deleteModal.loading}
+            onClick={handleDeleteModalSubmit}
           >
-            <AttachmentIcon />
-            <span>{attachment.originalName}</span>
-          </a>
-        )}
-      </div>
-
-      <div className={styles.footer}>
-        <div className={styles.actions}>
-          <div className={styles.action}>
-            <IconButton
-              tooltip={`Eddig ${upvotes.count} embernek tetszett a kérdés`}
-            >
-              <HearthIcon />
-            </IconButton>
-            <span>{upvotes.count}</span>
+            Igen
+          </Modal.Action>
+        </Modal.Footer>
+      </Modal>
+      <div className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.creator}>
+            <Avatar
+              loading={!creatorData?.user}
+              id={creatorData?.user?.avatar}
+              size={32}
+              onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
+            />
+            <div className={styles.creatorInfo}>
+              <p>{creatorData?.user?.name}</p>
+              <p>{dayjs(new Date(createdAt)).fromNow()}</p>
+            </div>
           </div>
-          <div className={styles.action}>
-            <IconButton
-              tooltip={`Eddig ${answers.count} válasz érkezett a kérdésre`}
-            >
-              <CommentIcon />
-            </IconButton>
-
-            <span>{answers.count}</span>
-          </div>
+          {user?.id === creator && (
+            <div className={styles.headerActions}>
+              <IconButton
+                tooltip="Kérdés szerkesztése"
+                onClick={() => router.push(`/kerdes/${id}/szerkesztes`)}
+              >
+                <EditIcon />
+              </IconButton>
+              <IconButton tooltip="Kérdés törlése" onClick={openDeleteModal}>
+                <TrashIcon />
+              </IconButton>
+            </div>
+          )}
         </div>
-        <p className={styles.topic}>#{topic}</p>
+
+        <div className={styles.body}>
+          <h1>{title}</h1>
+          <p>
+            <Linkify>{body}</Linkify>
+          </p>
+          {attachment && (
+            <Tooltip label="Csatolmány megtekintése">
+              <a
+                href={`${process.env.NEXT_PUBLIC_S3_URL}/${attachment.s3Key}`}
+                target="_blank"
+                rel="noopener"
+                className={styles.attachment}
+              >
+                <AttachmentIcon />
+                <span>{attachment.originalName}</span>
+              </a>
+            </Tooltip>
+          )}
+        </div>
+
+        <div className={styles.footer}>
+          <div className={styles.actions}>
+            <div className={styles.action}>
+              <IconButton
+                tooltip={`Eddig ${upvotes.count} embernek tetszett`}
+                onClick={handleVote(!upvotes.currentUserUpvoted)}
+              >
+                <HearthIcon fill={upvotes.currentUserUpvoted} />
+              </IconButton>
+              <span>{upvotes.count}</span>
+            </div>
+            <div className={styles.action}>
+              <IconButton tooltip={`Eddig ${answers.count} válasz érkezett`}>
+                <CommentIcon />
+              </IconButton>
+
+              <span>{answers.count}</span>
+            </div>
+          </div>
+          <p className={styles.topic}>#{topic}</p>
+        </div>
       </div>
-    </div>
+    </>
   );
 }
 
-function Answer({ id, creator, createdAt, body, upvotes }) {
+function Answer({ questionId, id, creator, createdAt, body, upvotes }) {
   const router = useRouter();
+  const { addToast } = useToasts();
+  const { user } = useUser();
   const { data: creatorData } = useSWR(creator ? `/api/user/${creator}` : null);
 
+  const [answerDeleteModal, setAnswerDeleteModal] = useState({
+    id: null,
+    open: false,
+    loading: false,
+  });
+
+  async function handleAnswerDelete() {
+    try {
+      setAnswerDeleteModal((oldVal) => ({ ...oldVal, loading: true }));
+
+      const answerId = answerDeleteModal.id;
+
+      const res = await fetch(
+        `/api/questions/${questionId}/answers/${answerId}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (res.ok) {
+        mutate(
+          `/api/questions/${questionId}`,
+          ({ question: oldQuestion }) => {
+            return {
+              question: {
+                ...oldQuestion,
+                answers: {
+                  count: oldQuestion.answers.count - 1,
+                  list: oldQuestion.answers.list.filter(
+                    (a) => a.id !== answerId
+                  ),
+                },
+              },
+            };
+          },
+          false
+        );
+        addToast("A válaszod sikeresen törlésre került.");
+        closeAnswerDeleteModal();
+      } else {
+        mutate();
+        throw new Error("request failed");
+      }
+    } catch (e) {
+      addToast("Hiba lépett fel a válaszod törlése közben.", {
+        errored: true,
+      });
+    } finally {
+      setAnswerDeleteModal((oldVal) => ({ ...oldVal, loading: false }));
+    }
+  }
+
+  const openAnswerDeleteModal = (id) => () => {
+    setAnswerDeleteModal({ open: true, id });
+  };
+
+  const closeAnswerDeleteModal = () => {
+    if (answerDeleteModal.loading) return;
+
+    setAnswerDeleteModal({ open: false, loading: false, id: null });
+  };
+
+  function handleAnswerVote(upvote) {
+    return async function answerVoteCallback() {
+      try {
+        mutate(
+          `/api/questions/${questionId}`,
+          ({ question: oldQuestion }) => {
+            return {
+              question: {
+                ...oldQuestion,
+                answers: {
+                  count: oldQuestion.answers.count,
+                  list: oldQuestion.answers.list.map((a) => {
+                    if (a.id !== id) return a;
+
+                    return {
+                      ...a,
+                      upvotes: {
+                        count: a.upvotes.count + (upvote ? 1 : -1),
+                        currentUserUpvoted: upvote,
+                      },
+                    };
+                  }),
+                },
+              },
+            };
+          },
+          false
+        );
+
+        const res = await fetch(
+          `/api/questions/${questionId}/answers/${id}/votes`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ upvote }),
+          }
+        );
+
+        if (!res.ok) {
+          mutate();
+          throw new Error("request failed");
+        }
+      } catch (e) {
+        addToast("Hiba lépett fel a szavazatod leadása közben.", {
+          errored: true,
+        });
+        mutate();
+      }
+    };
+  }
+
   return (
-    <div key={id} className={styles.container}>
-      <div className={styles.header}>
-        <div className={styles.creator}>
-          <Avatar
-            loading={!creatorData?.user}
-            id={creatorData?.user?.avatar}
-            size={32}
-            onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
-          />
-          <div className={styles.creatorInfo}>
-            <p>{creatorData?.user?.name}</p>
-            <p>{dayjs(new Date(createdAt)).fromNow()}</p>
+    <>
+      <Modal open={answerDeleteModal.open} onClose={closeAnswerDeleteModal}>
+        <Modal.Header>Válasz törlése</Modal.Header>
+        <Modal.Body>
+          <p>
+            Biztosan törlöd a válaszodat?
+            <br />A válasz nem lesz visszaállítható.
+          </p>
+        </Modal.Body>
+        <Modal.Footer>
+          <Modal.Action onClick={closeAnswerDeleteModal}>Nem</Modal.Action>
+          <Modal.Action
+            loading={answerDeleteModal.loading}
+            onClick={handleAnswerDelete}
+          >
+            Igen
+          </Modal.Action>
+        </Modal.Footer>
+      </Modal>
+      <div key={id} className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.creator}>
+            <Avatar
+              loading={!creatorData?.user}
+              id={creatorData?.user?.avatar}
+              size={32}
+              onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
+            />
+            <div className={styles.creatorInfo}>
+              <p>{creatorData?.user?.name}</p>
+              <p>{dayjs(new Date(createdAt)).fromNow()}</p>
+            </div>
+          </div>
+          {user?.id === creator && (
+            <div className={styles.headerActions}>
+              <IconButton
+                tooltip="Válasz szerkesztése"
+                onClick={() => alert("todo")}
+              >
+                <EditIcon />
+              </IconButton>
+              <IconButton
+                tooltip="Válasz törlése"
+                onClick={openAnswerDeleteModal(id)}
+              >
+                <TrashIcon />
+              </IconButton>
+            </div>
+          )}
+        </div>
+
+        <div className={styles.body}>
+          <p>{body}</p>
+        </div>
+
+        <div className={styles.footer}>
+          <div className={styles.actions}>
+            <div className={styles.action}>
+              <IconButton
+                tooltip={`Eddig ${upvotes.count} embernek tetszett`}
+                onClick={handleAnswerVote(!upvotes.currentUserUpvoted)}
+              >
+                <HearthIcon fill={upvotes.currentUserUpvoted} />
+              </IconButton>
+              <span>{upvotes.count}</span>
+            </div>
           </div>
         </div>
       </div>
-
-      <div className={styles.body}>
-        <p>{body}</p>
-      </div>
-
-      <div className={styles.footer}>
-        <div className={styles.actions}>
-          <div className={styles.action}>
-            <IconButton
-              tooltip={`Eddig ${upvotes.count} embernek tetszett a kérdés`}
-            >
-              <HearthIcon />
-            </IconButton>
-            <span>{upvotes.count}</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   );
 }
 
-function AnswerForm() {
+function AnswerForm({ questionId }) {
   const router = useRouter();
+  const { addToast } = useToasts();
   const { user, isLoading: isUserLoading } = useUser();
   const { data: userData } = useSWR(
     !isUserLoading ? `/api/user/${user.id}` : null
   );
 
+  const { register, handleSubmit, errors, formState, reset } = useForm({
+    defaultValues: { body: "" },
+    resolver: yupResolver(validationSchema),
+    mode: "onChange",
+  });
+  const { isDirty, isValid, isSubmitting } = formState;
+
+  async function submitThenReset(values) {
+    await handleAnswer(values);
+    reset();
+  }
+
+  async function handleAnswer(values) {
+    const res = await fetch(`/api/questions/${questionId}/answers`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(values),
+    });
+
+    if (res.ok) {
+      mutate(`/api/questions/${questionId}`, (oldData) => ({
+        question: {
+          ...oldData.question,
+          answers: {
+            count: oldData.question.answers.count + 1,
+            list: [
+              {
+                body: trimLineBreaks(values.body),
+                upvotes: { count: 0, currentUserUpvoted: false },
+                creator: user.id,
+              },
+              ...oldData.question.answers.list,
+            ],
+          },
+        },
+      }));
+    } else {
+      addToast("Hiba lépett fel a válaszod beküldése közben.", {
+        errored: true,
+      });
+    }
+  }
+
   return (
-    <form className={styles.answerForm}>
+    <form
+      onSubmit={handleSubmit(submitThenReset)}
+      className={styles.answerForm}
+    >
       <div className={styles.answerFormContent}>
         <Avatar
           loading={!userData?.user}
@@ -174,10 +492,23 @@ function AnswerForm() {
           className={styles.avatar}
           onClick={() => router.push("/profil/[id]", `/profil/${user.id}`)}
         />
-        <Textarea placeholder="Írd be a saját válaszod..." rows={5} />
+        <Textarea
+          name="body"
+          placeholder="Írd be a válaszod..."
+          rows={5}
+          ref={register}
+          error={errors?.body?.message}
+        />
       </div>
       <div className={styles.answerFormActions}>
-        <Button>Küldés</Button>
+        <Button
+          type="submit"
+          disabled={isSubmitting || !(isValid && isDirty)}
+          loading={isSubmitting}
+          inverted
+        >
+          Küldés
+        </Button>
       </div>
     </form>
   );
@@ -254,14 +585,14 @@ function AttachmentIcon() {
   );
 }
 
-function HearthIcon() {
+function HearthIcon({ fill }) {
   return (
     <svg
       width="24"
       height="24"
       viewBox="0 0 24 24"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      fill={fill ? "currentColor" : "none"}
     >
       <path
         d="M19.2584 5.74144L19.2586 5.7416C19.6521 6.13499 19.9643 6.60207 20.1774 7.11615C20.3904 7.63023 20.5 8.18124 20.5 8.73771C20.5 9.29417 20.3904 9.84518 20.1774 10.3593C19.9643 10.8733 19.6521 11.3404 19.2586 11.7338L19.2585 11.7339L18.3457 12.6467L11.9998 18.9926L5.65384 12.6467L4.74106 11.7339C3.94642 10.9393 3.5 9.8615 3.5 8.73771C3.5 7.61392 3.94642 6.53616 4.74106 5.74152C5.5357 4.94688 6.61346 4.50046 7.73725 4.50046C8.86104 4.50046 9.9388 4.94688 10.7334 5.74152L11.6462 6.6543C11.8415 6.84957 12.1581 6.84957 12.3533 6.6543L13.2661 5.74152L13.2662 5.74144C13.6596 5.34787 14.1267 5.03566 14.6407 4.82265C15.1548 4.60964 15.7058 4.5 16.2623 4.5C16.8188 4.5 17.3698 4.60964 17.8839 4.82265C18.3979 5.03566 18.865 5.34787 19.2584 5.74144Z"

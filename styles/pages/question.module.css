@@ -102,6 +102,12 @@
   flex-shrink: 0;
 }
 
+.attachment:hover {
+  color: var(--foreground);
+  border-color: var(--foreground);
+  background: var(--accent-2);
+}
+
 .footer {
   margin-left: var(--indent);
   min-height: 32px;

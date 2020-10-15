@@ -11,7 +11,7 @@ import dayjs from "lib/dayjs";
 import Layout from "components/layout";
 import Tooltip from "components/tooltip";
 import Modal from "components/modal";
-import { useState } from "react";
+import { useState, useRef, forwardRef } from "react";
 import { useToasts } from "components/toasts";
 import { getAnswerSchema } from "lib/schemas";
 import { useForm } from "react-hook-form";
@@ -29,6 +29,12 @@ export default function QuestionPage() {
   const router = useRouter();
   const questionId = router.query.id;
   const { data } = useSWR(questionId ? `/api/questions/${questionId}` : null);
+  const answerFormRef = useRef(null);
+
+  function handleCommentButtonClick() {
+    answerFormRef?.current?.scrollIntoView();
+    answerFormRef?.current?.focus();
+  }
 
   if (!data) {
     return null;
@@ -37,13 +43,16 @@ export default function QuestionPage() {
   return (
     <Layout>
       <div className={styles.root}>
-        <Question {...data.question} />
+        <Question
+          onCommentButtonClick={handleCommentButtonClick}
+          {...data.question}
+        />
 
         {data.question.answers.list.map((a) => (
           <Answer questionId={questionId} {...a} />
         ))}
 
-        <AnswerForm questionId={questionId} />
+        <AnswerForm ref={answerFormRef} questionId={questionId} />
       </div>
     </Layout>
   );
@@ -59,6 +68,7 @@ function Question({
   topic,
   createdAt,
   creator,
+  onCommentButtonClick,
 }) {
   const router = useRouter();
   const { addToast } = useToasts();
@@ -209,7 +219,7 @@ function Question({
           <div className={styles.actions}>
             <div className={styles.action}>
               <IconButton
-                tooltip={`Eddig ${upvotes.count} embernek tetszett`}
+                tooltip={upvotes.currentUserUpvoted ? "Nem tetszik" : "Tetszik"}
                 onClick={handleVote(!upvotes.currentUserUpvoted)}
               >
                 <HearthIcon fill={upvotes.currentUserUpvoted} />
@@ -217,7 +227,10 @@ function Question({
               <span>{upvotes.count}</span>
             </div>
             <div className={styles.action}>
-              <IconButton tooltip={`Eddig ${answers.count} válasz érkezett`}>
+              <IconButton
+                tooltip={"Válasz írása"}
+                onClick={onCommentButtonClick}
+              >
                 <CommentIcon />
               </IconButton>
 
@@ -412,7 +425,7 @@ function Answer({ questionId, id, creator, createdAt, body, upvotes }) {
           <div className={styles.actions}>
             <div className={styles.action}>
               <IconButton
-                tooltip={`Eddig ${upvotes.count} embernek tetszett`}
+                tooltip={upvotes.currentUserUpvoted ? "Nem tetszik" : "Tetszik"}
                 onClick={handleAnswerVote(!upvotes.currentUserUpvoted)}
               >
                 <HearthIcon fill={upvotes.currentUserUpvoted} />
@@ -426,7 +439,7 @@ function Answer({ questionId, id, creator, createdAt, body, upvotes }) {
   );
 }
 
-function AnswerForm({ questionId }) {
+const AnswerForm = forwardRef(({ questionId }, ref) => {
   const router = useRouter();
   const { addToast } = useToasts();
   const { user, isLoading: isUserLoading } = useUser();
@@ -472,6 +485,8 @@ function AnswerForm({ questionId }) {
           },
         },
       }));
+
+      scrollTo({ top: 0, behavior: "smooth" });
     } else {
       addToast("Hiba lépett fel a válaszod beküldése közben.", {
         errored: true,
@@ -496,7 +511,10 @@ function AnswerForm({ questionId }) {
           name="body"
           placeholder="Írd be a válaszod..."
           rows={5}
-          ref={register}
+          ref={(innerRef) => {
+            ref.current = innerRef;
+            register(innerRef);
+          }}
           error={errors?.body?.message}
         />
       </div>
@@ -512,7 +530,7 @@ function AnswerForm({ questionId }) {
       </div>
     </form>
   );
-}
+});
 
 function EditIcon() {
   return (

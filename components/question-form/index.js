@@ -73,7 +73,7 @@ export default function QuestionForm({
           <Textarea
             name="body"
             ref={register}
-            rows={7}
+            rows={10}
             label="Törzs"
             placeholder="A kérdésed törzse..."
             error={errors?.body?.message}

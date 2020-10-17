@@ -151,6 +151,12 @@
   flex-direction: column;
 }
 
+.answerForm:not(:last-of-type) {
+  padding-bottom: var(--gap-large);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--gap-large);
+}
+
 .answerFormContent {
   display: flex;
   margin-bottom: 8px;
@@ -169,5 +175,13 @@
 .answerFormActions {
   display: flex;
   align-items: center;
-  justify-content: flex-end;
+  margin-left: var(--indent);
+}
+
+.answerFormActions button:first-of-type {
+  margin-left: auto;
+}
+
+.answerFormActions button + button {
+  margin-left: 10px;
 }

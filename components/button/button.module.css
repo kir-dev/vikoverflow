@@ -35,3 +35,22 @@
   background-color: var(--accent-2);
   border-color: var(--accent-3);
 }
+
+.root.icon {
+  height: unset;
+  padding: 0;
+  color: var(--accent-4);
+  background: var(--background);
+  border-radius: var(--radius);
+  border: 0;
+}
+
+.root.icon:hover:not(:disabled) {
+  color: var(--foreground);
+  background: var(--accent-2);
+}
+
+.root.icon:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

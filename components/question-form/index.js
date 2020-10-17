@@ -1,22 +1,19 @@
 import styles from "./question-form.module.css";
-import Button from "components/button";
+import Button, { KIND } from "components/button";
 import Input from "components/input";
 import Textarea from "components/textarea";
 import useSWR from "swr";
 import { useState, useMemo, useRef, useEffect } from "react";
 import Autocomplete from "components/autocomplete";
 import { getQuestionSchema } from "lib/schemas";
-import cn from "clsx";
 import { DELETE_CURRENT_FILE } from "lib/constants";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Error from "components/error";
-import IconButton from "components/icon-button";
 
 export default function QuestionForm({
   initialValues,
   onSubmit,
-  message,
   buttonText,
   skeleton,
 }) {
@@ -134,7 +131,8 @@ export default function QuestionForm({
                 {value?.name && (
                   <div className={styles.attachment}>
                     <p className={styles.fileName}>{value.name}</p>
-                    <IconButton
+                    <Button
+                      kind={KIND.icon}
                       disabled={isSubmitting}
                       small
                       type="button"
@@ -146,7 +144,7 @@ export default function QuestionForm({
                       }}
                     >
                       <X />
-                    </IconButton>
+                    </Button>
                   </div>
                 )}
 
@@ -177,14 +175,15 @@ export default function QuestionForm({
 
           <div className={styles.submitRow}>
             <div className={styles.fileButtonContainer}>
-              <IconButton
+              <Button
+                kind={KIND.icon}
                 type="button"
                 onClick={handleUploadButtonClick}
                 tooltip="Csatolmány hozzáadása"
                 disabled={watchFile && watchFile !== DELETE_CURRENT_FILE}
               >
                 <AttachmentIcon />
-              </IconButton>
+              </Button>
               {errors?.fileSize?.message && (
                 <div className={styles.fileError}>
                   <Error>{errors.fileSize.message}</Error>

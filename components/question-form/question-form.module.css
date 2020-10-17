@@ -38,9 +38,9 @@
 }
 
 .attachment {
-  padding: 0 10px;
+  padding: 4px 10px;
   margin-top: 24px;
-  height: 32px;
+  min-height: 32px;
   width: 100%;
   background: #eaeaea;
   border-radius: var(--radius);

@@ -2,9 +2,8 @@ import { useRouter } from "next/router";
 import useSWR, { mutate } from "swr";
 import styles from "styles/pages/question.module.css";
 import Avatar from "components/avatar";
-import IconButton from "components/icon-button";
 import Linkify from "components/linkify";
-import Button from "components/button";
+import Button, { KIND } from "components/button";
 import Textarea from "components/textarea";
 import { useUser } from "lib/authenticate";
 import dayjs from "lib/dayjs";
@@ -182,15 +181,20 @@ function Question({
           </div>
           {user?.id === creator && (
             <div className={styles.headerActions}>
-              <IconButton
+              <Button
+                kind={KIND.icon}
                 tooltip="Kérdés szerkesztése"
                 onClick={() => router.push(`/kerdes/${id}/szerkesztes`)}
               >
                 <EditIcon />
-              </IconButton>
-              <IconButton tooltip="Kérdés törlése" onClick={openDeleteModal}>
+              </Button>
+              <Button
+                kind={KIND.icon}
+                tooltip="Kérdés törlése"
+                onClick={openDeleteModal}
+              >
                 <TrashIcon />
-              </IconButton>
+              </Button>
             </div>
           )}
         </div>
@@ -218,21 +222,23 @@ function Question({
         <div className={styles.footer}>
           <div className={styles.actions}>
             <div className={styles.action}>
-              <IconButton
+              <Button
+                kind={KIND.icon}
                 tooltip={upvotes.currentUserUpvoted ? "Nem tetszik" : "Tetszik"}
                 onClick={handleVote(!upvotes.currentUserUpvoted)}
               >
                 <HearthIcon fill={upvotes.currentUserUpvoted} />
-              </IconButton>
+              </Button>
               <span>{upvotes.count}</span>
             </div>
             <div className={styles.action}>
-              <IconButton
+              <Button
+                kind={KIND.icon}
                 tooltip={"Válasz írása"}
                 onClick={onCommentButtonClick}
               >
                 <CommentIcon />
-              </IconButton>
+              </Button>
 
               <span>{answers.count}</span>
             </div>
@@ -401,18 +407,20 @@ function Answer({ questionId, id, creator, createdAt, body, upvotes }) {
           </div>
           {user?.id === creator && (
             <div className={styles.headerActions}>
-              <IconButton
+              <Button
+                kind={KIND.icon}
                 tooltip="Válasz szerkesztése"
                 onClick={() => alert("todo")}
               >
                 <EditIcon />
-              </IconButton>
-              <IconButton
+              </Button>
+              <Button
+                kind={KIND.icon}
                 tooltip="Válasz törlése"
                 onClick={openAnswerDeleteModal(id)}
               >
                 <TrashIcon />
-              </IconButton>
+              </Button>
             </div>
           )}
         </div>
@@ -424,12 +432,13 @@ function Answer({ questionId, id, creator, createdAt, body, upvotes }) {
         <div className={styles.footer}>
           <div className={styles.actions}>
             <div className={styles.action}>
-              <IconButton
+              <Button
+                kind={KIND.icon}
                 tooltip={upvotes.currentUserUpvoted ? "Nem tetszik" : "Tetszik"}
                 onClick={handleAnswerVote(!upvotes.currentUserUpvoted)}
               >
                 <HearthIcon fill={upvotes.currentUserUpvoted} />
-              </IconButton>
+              </Button>
               <span>{upvotes.count}</span>
             </div>
           </div>

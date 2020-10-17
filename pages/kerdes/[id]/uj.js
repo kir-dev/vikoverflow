@@ -10,7 +10,7 @@ import dayjs from "lib/dayjs";
 import Layout from "components/layout";
 import Tooltip from "components/tooltip";
 import Modal from "components/modal";
-import { useState, useRef, forwardRef } from "react";
+import { useState, useRef, forwardRef, useEffect } from "react";
 import { useToasts } from "components/toasts";
 import { getAnswerSchema } from "lib/schemas";
 import { useForm } from "react-hook-form";
@@ -20,7 +20,7 @@ import { trimLineBreaks } from "lib/utils";
 // TODO answer delete modal ne legyen minden egyes answernel..
 // TODO answer form errors
 // TODO answer edit inline
-// TODO 404 page redirect on wrong question id
+// TODO skeleton
 
 const validationSchema = getAnswerSchema();
 
@@ -35,8 +35,16 @@ export default function QuestionPage() {
     answerFormRef?.current?.focus();
   }
 
+  useEffect(() => {
+    if (!data) return;
+
+    if (!data.question) {
+      router.push("/404");
+    }
+  }, [data]);
+
   if (!data) {
-    return null;
+    return <Layout />;
   }
 
   return (
@@ -150,7 +158,7 @@ function Question({
       <Modal open={deleteModal.open} onClose={closeDeleteModal}>
         <Modal.Body>
           <p>
-            Biztosan törlöd a(z) "<b>{title}</b>" című kérdésedet?
+            Biztosan törlöd a kérdésedet?
             <br />A kérdés és a válaszok sem lesznek később visszaállíthatóak.
           </p>
         </Modal.Body>

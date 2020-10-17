@@ -1,4 +1,6 @@
 .root {
+  --modal-border-radius: var(--radius-large);
+
   position: fixed;
   left: 0;
   right: 0;
@@ -7,67 +9,47 @@
   justify-content: center;
   align-items: center;
   z-index: 999;
+
+  animation: fadeIn 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .backdrop {
-  background: var(--foreground);
+  background: rgba(0, 0, 0, 0.5);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  animation: backdropFadeStrong 200ms ease-out forwards;
 }
 
 .content {
   position: relative;
   background: var(--background);
-  border-top-left-radius: var(--radius-large);
-  border-top-right-radius: var(--radius-large);
+  border-top-left-radius: var(--modal-border-radius);
+  border-top-right-radius: var(--modal-border-radius);
   width: 100%;
   animation: up 200ms ease-out forwards;
-}
-
-.header {
-  padding: 1.5rem 1.5rem 0;
-  text-align: center;
-  margin-bottom: 0.5rem;
-  font-weight: 500;
+  box-shadow: 0 2px 8px 0 rgba(0, 0, 0, 0.16);
 }
 
 .body {
-  padding: 0 1.5rem 1.5rem;
+  padding: 48px 24px;
 }
 
 .body p {
-  font-size: 0.875rem;
   color: var(--accent-5);
-  text-align: center;
 }
 
 .footer {
   display: flex;
-  border-top: 1px solid var(--accent-2);
+  border-top: 1px solid #ddd;
+  padding: 12px 24px;
+  align-content: center;
+  justify-content: flex-end;
 }
 
-.footer button {
-  font-weight: normal;
-  flex: 1;
-  text-transform: uppercase;
-  padding: 1.5rem 0;
-  border-radius: initial;
-  border: 0;
-  font-size: 0.75rem;
-  line-height: 1;
-  height: auto;
-}
-
-.footer button:hover {
-  background: var(--accent-1);
-}
-
-.footer button:not(:only-child):not(:first-child) {
-  border-left: 1px solid var(--accent-2);
+.footer > * + * {
+  margin-left: 10px;
 }
 
 @media (min-width: 600px) {
@@ -75,64 +57,32 @@
     top: 0;
   }
 
-  .backdrop {
-    animation: backdropFade 200ms ease-out forwards;
+  .content {
+    animation: non;
+    align-self: flex-start;
+    margin-top: 10vh;
   }
 
   .content {
-    animation: down 200ms ease-out forwards;
-    width: 25rem;
-    border-bottom-left-radius: var(--radius-large);
-    border-bottom-right-radius: var(--radius-large);
-  }
-
-  .footer button:not(:only-child):first-child {
-    border-bottom-left-radius: 8px;
-  }
-
-  .footer button:not(:only-child):last-child {
-    border-bottom-right-radius: 8px;
-  }
-
-  .footer .action:only-child {
-    border-bottom-right-radius: 8px;
-    border-bottom-left-radius: 8px;
+    width: 400px;
+    border-bottom-left-radius: var(--modal-border-radius);
+    border-bottom-right-radius: var(--modal-border-radius);
   }
 }
 
-@keyframes backdropFade {
+@keyframes fadeIn {
   from {
     opacity: 0;
   }
 
   to {
-    opacity: 0.5;
-  }
-}
-
-@keyframes backdropFadeStrong {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 0.7;
+    opacity: 1;
   }
 }
 
 @keyframes up {
   from {
     transform: translate3d(0, 100%, 0);
-  }
-
-  to {
-    transform: translate3d(0, 0, 0);
-  }
-}
-
-@keyframes down {
-  from {
-    transform: translate3d(0, -20%, 0);
   }
 
   to {

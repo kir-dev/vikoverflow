@@ -148,7 +148,6 @@ function Question({
   return (
     <>
       <Modal open={deleteModal.open} onClose={closeDeleteModal}>
-        <Modal.Header>Kérdés törlése</Modal.Header>
         <Modal.Body>
           <p>
             Biztosan törlöd a(z) "<b>{title}</b>" című kérdésedet?
@@ -156,13 +155,10 @@ function Question({
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Modal.Action onClick={closeDeleteModal}>Nem</Modal.Action>
-          <Modal.Action
-            loading={deleteModal.loading}
-            onClick={handleDeleteModalSubmit}
-          >
-            Igen
-          </Modal.Action>
+          <Button kind={KIND.secondary} onClick={closeDeleteModal}>
+            Nem
+          </Button>
+          <Button onClick={handleDeleteModalSubmit}>Igen</Button>
         </Modal.Footer>
       </Modal>
       <div className={styles.container}>
@@ -374,7 +370,6 @@ function Answer({ questionId, id, creator, createdAt, body, upvotes }) {
   return (
     <>
       <Modal open={answerDeleteModal.open} onClose={closeAnswerDeleteModal}>
-        <Modal.Header>Válasz törlése</Modal.Header>
         <Modal.Body>
           <p>
             Biztosan törlöd a válaszodat?
@@ -382,13 +377,10 @@ function Answer({ questionId, id, creator, createdAt, body, upvotes }) {
           </p>
         </Modal.Body>
         <Modal.Footer>
-          <Modal.Action onClick={closeAnswerDeleteModal}>Nem</Modal.Action>
-          <Modal.Action
-            loading={answerDeleteModal.loading}
-            onClick={handleAnswerDelete}
-          >
-            Igen
-          </Modal.Action>
+          <Button kind={KIND.secondary} onClick={closeAnswerDeleteModal}>
+            Nem
+          </Button>
+          <Button onClick={handleAnswerDelete}>Igen</Button>
         </Modal.Footer>
       </Modal>
       <div key={id} className={styles.container}>

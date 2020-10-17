@@ -1,6 +1,5 @@
 import styles from "./modal.module.css";
 import { useEffect } from "react";
-import Button from "components/button";
 import Portal from "@reach/portal";
 
 const Modal = ({ children, open, onClose }) => {
@@ -30,24 +29,10 @@ const Modal = ({ children, open, onClose }) => {
   );
 };
 
-Modal.Header = ({ children }) => <h2 className={styles.header}>{children}</h2>;
-
 Modal.Body = ({ children }) => <div className={styles.body}>{children}</div>;
 
 Modal.Footer = ({ children }) => (
   <div className={styles.footer}>{children}</div>
-);
-
-Modal.Action = ({ children, onClick, disabled, loading, ...rest }) => (
-  <Button
-    loading={loading}
-    disabled={disabled}
-    onClick={onClick}
-    className={styles.action}
-    {...rest}
-  >
-    {children}
-  </Button>
 );
 
 export default Modal;

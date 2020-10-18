@@ -10,7 +10,7 @@ import dayjs from "lib/dayjs";
 import Layout from "components/layout";
 import Tooltip from "components/tooltip";
 import Modal from "components/modal";
-import { useState, useRef, forwardRef, useEffect } from "react";
+import { useState, useRef, forwardRef, useEffect, useMemo } from "react";
 import { useToasts } from "components/toasts";
 import { getAnswerSchema } from "lib/schemas";
 import { useForm } from "react-hook-form";
@@ -19,8 +19,6 @@ import { trimLineBreaks } from "lib/utils";
 import Error from "components/error";
 
 // TODO skeleton
-
-const validationSchema = getAnswerSchema();
 
 export default function QuestionPage() {
   const router = useRouter();
@@ -484,6 +482,11 @@ const AnswerForm = forwardRef(
     const { user, isLoading: isUserLoading } = useUser();
     const { data: userData } = useSWR(
       !isUserLoading ? `/api/user/${user.id}` : null
+    );
+
+    const validationSchema = useMemo(
+      () => getAnswerSchema(Boolean(initialValues)),
+      [initialValues]
     );
 
     const { register, handleSubmit, errors, formState, reset } = useForm({

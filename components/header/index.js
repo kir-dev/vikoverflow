@@ -10,12 +10,13 @@ import Avatar from "components/avatar";
 import { Menu } from "@headlessui/react";
 import SearchInput from "./search-input";
 import Tooltip from "components/tooltip";
-import { Tool } from "react-feather";
+import useSWR from "swr";
 
 const Header = () => {
   const router = useRouter();
 
   const { isLoading, user } = useUser();
+  const { data: userData } = useSWR(user?.id ? `/api/user/${user.id}` : null);
   const [active, setActive] = useState(false);
 
   useEffect(() => {
@@ -57,7 +58,12 @@ const Header = () => {
                   <Menu>
                     <>
                       <Menu.Button className={styles.menuButton}>
-                        <Avatar label={false} size={28} />
+                        <Avatar
+                          label={false}
+                          size={28}
+                          loading={!userData?.user}
+                          id={userData?.user?.avatar}
+                        />
                       </Menu.Button>
 
                       <Menu.Items className={styles.menuItems}>

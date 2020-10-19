@@ -20,7 +20,7 @@
     "linkifyjs": "^2.1.9",
     "nanoid": "^3.1.12",
     "next": "^9.5.3",
-    "react": "^16.13.1",
+    "react": "^16.14.0",
     "react-dom": "^16.13.1",
     "react-feather": "^2.0.8",
     "react-hook-form": "^6.9.4",

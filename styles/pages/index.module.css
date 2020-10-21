@@ -1,48 +1,43 @@
 .root {
   composes: container from global;
   composes: screen from global;
+  padding-top: 40px;
+  padding-bottom: 40px;
   display: grid;
-  grid-template-columns: 1fr;
-  grid-gap: 1.5rem;
+  grid-template-columns: 220px 1fr;
+  grid-column-gap: 80px;
+  grid-template-areas: "aside main";
 }
 
-@media (min-width: 768px) {
-  .root {
-    grid-template-columns: 0.4fr minmax(0, 1fr);
-  }
+.aside {
+  grid-area: aside;
+  position: relative;
 }
 
-.sidebarWrapper {
-  padding: 1.5rem 0 4rem;
-  height: 100%;
-}
-
-.sidebar {
+.topicStats {
   position: sticky;
-  top: calc(4rem + 1.5rem);
+  top: 80px;
+  left: 0;
 }
 
-.searchInput {
-  width: 100%;
+.topicStats h1 {
+  font-size: 14px;
+  margin-bottom: 8px;
 }
 
-.questionList {
-  padding: 1.5rem 0 4rem;
-  border-left: 1px solid var(--accent-2);
-  border-right: 1px solid var(--accent-2);
-  height: 100%;
+.topicStats ul {
+  list-style: none;
 }
 
-.empty {
-  border-left: 1px solid var(--accent-2);
-  border-right: 1px solid var(--accent-2);
+.topicStats li {
+  min-height: 41px;
+  border-bottom: 1px solid var(--input-border);
   display: flex;
-  width: 100%;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
 }
 
-.empty h1 {
-  font-size: 1.125rem;
-  font-weight: 500;
+
+.main {
+  grid-area: main;
 }

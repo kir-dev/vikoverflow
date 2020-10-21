@@ -5,6 +5,8 @@ import Avatar from "components/avatar";
 import dayjs from "lib/dayjs";
 import tempQuestionStyles from "styles/pages/newindexquestion.module.css";
 import Link from "next/link";
+import { useInView } from "react-intersection-observer";
+import { useEffect } from "react";
 
 export default function HomePage() {
   const { data, size, setSize } = useSWRInfinite((index, prevData) => {
@@ -16,12 +18,20 @@ export default function HomePage() {
   });
   const { data: topicsData } = useSWR("/api/topics");
 
+  const [loaderRef, inView] = useInView({ rootMargin: "400px 0px" });
+
   const isErrored = data?.some((p) => !!p.error);
   const isReachingEnd = data && !data[data.length - 1]?.nextCursor;
   const questions =
     data && !isErrored
       ? [].concat(...data.map((page) => page.questions))
       : null;
+
+  useEffect(() => {
+    if (inView && !isReachingEnd) {
+      setSize(size + 1);
+    }
+  }, [inView, isReachingEnd]);
 
   if (!questions || !topicsData) {
     return <Layout />;
@@ -50,6 +60,7 @@ export default function HomePage() {
           {questions.map((q) => (
             <Question {...q} />
           ))}
+          {!isReachingEnd && <div ref={loaderRef}>loader div</div>}
         </main>
       </div>
     </Layout>

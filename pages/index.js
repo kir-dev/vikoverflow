@@ -36,6 +36,9 @@ export default function HomePage() {
             <ul>
               {topicsData.topics.map((t) => (
                 <li key={t.id}>
+                  <Link href={"/tema/[id]"} as={`/tema/${t.id}`}>
+                    <a></a>
+                  </Link>
                   <span>#{t.id}</span>
                   <span>{t.numberOfQuestions}</span>
                 </li>

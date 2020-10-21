@@ -22,7 +22,7 @@
 }
 
 .container:hover {
-  background: var(--accent-2);
+  background: var(--accent-1);
 }
 
 .header {

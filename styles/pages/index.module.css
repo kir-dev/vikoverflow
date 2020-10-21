@@ -35,8 +35,24 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  position: relative;
 }
 
+.topicStats li a {
+  position: absolute;
+  display: inline-block;
+  height: 100%;
+  width: 100%;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+  z-index: 2;
+}
+
+.topicStats li:hover {
+  background: var(--accent-1);
+}
 
 .main {
   grid-area: main;

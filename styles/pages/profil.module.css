@@ -69,11 +69,11 @@
 .right h2 {
   font-size: 1.2rem;
   text-align: center;
-  font-weight: 700;
+  font-weight: 500;
 }
 
 .loadMore {
-  font-weight: 700;
+  font-weight: 500;
   font-size: 0.875rem;
   text-align: center;
   display: block;

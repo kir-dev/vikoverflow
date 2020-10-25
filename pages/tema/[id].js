@@ -1,17 +1,19 @@
-import useSWR, { useSWRInfinite, mutate } from "swr";
-import { useRouter } from "next/router";
 import Layout from "components/layout";
-import { useState, useEffect } from "react";
 import styles from "styles/pages/tema.module.css";
-import Question from "components/question";
-import Button from "components/button";
+import useSWR, { useSWRInfinite, mutate } from "swr";
+import Avatar from "components/avatar";
+import dayjs from "lib/dayjs";
+import tempQuestionStyles from "styles/pages/newindexquestion.module.css";
 import Link from "next/link";
-import { useUser } from "lib/authenticate";
 import { useInView } from "react-intersection-observer";
-import Skeleton from "components/skeleton";
+import { useState, useEffect } from "react";
+import { Comment, Hearth } from "components/icons";
+import Button, { KIND } from "components/button";
+import { Edit, Plus } from "components/icons";
+import { useRouter } from "next/router";
+import { useUser } from "lib/authenticate";
 import Modal from "components/modal";
 import Textarea from "components/textarea";
-import { useToasts } from "components/toasts";
 import { TopicDescriptionSchema } from "lib/schemas";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -22,31 +24,40 @@ export default function TopicPage() {
   const topicId = router.query.id;
   const { data: topicData } = useSWR(topicId ? `/api/topics/${topicId}` : null);
   const { data, size, setSize } = useSWRInfinite((index, prevData) => {
-    if ((prevData && !prevData.nextCursor) || !topicData?.topic?.id)
-      return null;
+    if (prevData && !prevData.nextCursor) return null;
 
-    if (index === 0) return `/api/questions?topic=${topicData.topic.id}`;
+    if (index === 0) return `/api/questions`;
 
-    return `/api/questions?topic=${topicData.topic.id}&cursor=${prevData.nextCursor}&cursorCreatedAt=${prevData.nextCursorCreatedAt}`;
+    return `/api/questions?cursor=${prevData.nextCursor}&cursor2=${prevData.nextCursor2}`;
   });
+
   const [loaderRef, inView] = useInView({ rootMargin: "400px 0px" });
-  const [editDescriptionModal, setEditDescriptionModal] = useState({
+
+  const [editModal, setEditModal] = useState({
     open: false,
     loading: false,
   });
-  const { addToast } = useToasts();
 
-  function openEditDescriptionModal() {
-    setEditDescriptionModal({ open: true, loading: false });
-  }
+  const { register, handleSubmit, errors, formState, reset } = useForm({
+    resolver: yupResolver(TopicDescriptionSchema),
+    mode: "onChange",
+  });
+  const { isDirty, isValid, isSubmitting } = formState;
 
-  function closeEditDescriptionModal() {
-    if (editDescriptionModal.loading) return;
-    setEditDescriptionModal({ open: false, loading: false });
-  }
+  const openEditModal = () => {
+    setEditModal({
+      open: true,
+      loading: false,
+    });
+  };
+
+  const closeEditModal = () => {
+    if (editModal.loading) return;
+    setEditModal({ open: false, loading: false });
+  };
 
   async function handleDescriptionEdit(values) {
-    setEditDescriptionModal((oldVal) => ({ ...oldVal, loading: true }));
+    setEditModal((oldVal) => ({ ...oldVal, loading: true }));
     const res = await fetch(`/api/topics/${topicId}`, {
       method: "PATCH",
       headers: {
@@ -63,34 +74,17 @@ export default function TopicPage() {
         }),
         false
       );
-      closeEditDescriptionModal();
-      addToast("Sikeresen módosítottad a téma leírását.");
+      setEditModal({ open: false, loading: false });
+      // TODO show error in modal
+      // addToast("Sikeresen módosítottad a téma leírását.");
     } else {
-      setEditDescriptionModal((oldVal) => ({ ...oldVal, loading: false }));
-      addToast("Hiba lépett fel a téma leírás módosítása közben.", {
-        errored: true,
-      });
+      setEditModal((oldVal) => ({ ...oldVal, loading: false }));
+      // TODO show error in modal
+      // addToast("Hiba lépett fel a téma leírás módosítása közben.", {
+      //   errored: true,
+      // });
     }
   }
-
-  const isErrored = data?.some((p) => !!p.error);
-  const isReachingEnd = data && !data[data.length - 1]?.nextCursor;
-  const questions =
-    data && !isErrored
-      ? [].concat(...data.map((page) => page.questions))
-      : null;
-
-  const { register, handleSubmit, errors, formState, reset } = useForm({
-    resolver: yupResolver(TopicDescriptionSchema),
-    mode: "onChange",
-  });
-  const { isDirty, isValid, isSubmitting } = formState;
-
-  useEffect(() => {
-    if (inView && !isReachingEnd) {
-      setSize(size + 1);
-    }
-  }, [inView, isReachingEnd]);
 
   useEffect(() => {
     if (!topicData) return;
@@ -102,14 +96,27 @@ export default function TopicPage() {
     reset({ description: topicData?.topic?.description ?? "" });
   }, [topicData]);
 
+  const isErrored = data?.some((p) => !!p.error);
+  const isReachingEnd = data && !data[data.length - 1]?.nextCursor;
+  const questions =
+    data && !isErrored
+      ? [].concat(...data.map((page) => page.questions))
+      : null;
+
+  useEffect(() => {
+    if (inView && !isReachingEnd) {
+      setSize(size + 1);
+    }
+  }, [inView, isReachingEnd]);
+
+  if (!questions) {
+    return <Layout />;
+  }
+
   return (
     <>
-      <Modal
-        open={editDescriptionModal.open}
-        onClose={closeEditDescriptionModal}
-      >
+      <Modal open={editModal.open} onClose={closeEditModal}>
         <form onSubmit={handleSubmit(handleDescriptionEdit)}>
-          <Modal.Header>Téma leírásának módosítása</Modal.Header>
           <Modal.Body>
             <div className={styles.modalBody}>
               <p>
@@ -126,79 +133,115 @@ export default function TopicPage() {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Modal.Action onClick={closeEditDescriptionModal} type="button">
+            <Button
+              type="button"
+              disabled={editModal.loading || isSubmitting}
+              kind={KIND.secondary}
+              onClick={closeEditModal}
+            >
               Mégsem
-            </Modal.Action>
-            <Modal.Action
+            </Button>
+            <Button
+              disabled={editModal.loading}
+              onClick={handleDescriptionEdit}
               disabled={isSubmitting || !(isValid && isDirty)}
               loading={isSubmitting}
               type="submit"
             >
               Mentés
-            </Modal.Action>
+            </Button>
           </Modal.Footer>
         </form>
       </Modal>
-
-      <Layout footer={false}>
+      <Layout>
         <div className={styles.root}>
           <header className={styles.header}>
             <div className={styles.headerContent}>
-              {topicData?.topic ? (
-                <>
-                  <h1>{topicData?.topic?.id}</h1>
-                  <p>{topicData?.topic?.description}</p>
-                </>
-              ) : (
-                <>
-                  <Skeleton
-                    style={{ height: 47, marginBottom: 10, width: 200 }}
-                  />
-                  <Skeleton style={{ height: 18, width: 250 }} />
-                </>
-              )}
+              <h1>{topicData?.topic?.id}</h1>
+              <h2>{topicData?.topic?.description}</h2>
             </div>
             <div className={styles.headerActions}>
+              <Button
+                kind={KIND.icon}
+                onClick={() => router.push(`/uj?tema=${topicData?.topic?.id}`)}
+                tooltip="Új kérdés hozzáadása a témához"
+              >
+                <Plus />
+              </Button>
               {user && topicData?.topic?.creator === user.id && (
-                <Button small onClick={openEditDescriptionModal}>
-                  Téma leírásának módosítása
+                <Button
+                  kind={KIND.icon}
+                  tooltip="A téma leírásának szerkesztése"
+                  onClick={openEditModal}
+                >
+                  <Edit />
                 </Button>
               )}
-
-              <Link href={`/uj?tema=${topicData?.topic?.id}`}>
-                <Button small disabled={!(user && topicData?.topic?.id)}>
-                  Új kérdés ehhez a témához
-                </Button>
-              </Link>
             </div>
           </header>
-
-          {isErrored ? (
-            <div className={styles.empty}>
-              <h1>Hiba lépett fel</h1>
-            </div>
-          ) : !questions ? (
-            <div className={styles.questions}>
-              <Question skeleton />
-              <Question skeleton />
-              <Question skeleton />
-              <Question skeleton />
-              <Question skeleton />
-            </div>
-          ) : questions.length > 0 ? (
-            <div className={styles.questions}>
-              {questions.map((q) => (
-                <Question clickable key={q.id} {...q} />
-              ))}
-              {!isReachingEnd && <Question ref={loaderRef} skeleton />}
-            </div>
-          ) : (
-            <div className={styles.empty}>
-              <h1>Nem találtunk kérdéseket</h1>
-            </div>
-          )}
+          <main className={styles.main}>
+            {questions.map((q) => (
+              <Question {...q} />
+            ))}
+            {!isReachingEnd && <div ref={loaderRef}>loader div</div>}
+          </main>
         </div>
       </Layout>
     </>
+  );
+}
+
+function Question({
+  id,
+  title,
+  body,
+  upvotes,
+  answers,
+  topic,
+  createdAt,
+  creator,
+}) {
+  const { data: creatorData } = useSWR(creator ? `/api/user/${creator}` : null);
+
+  return (
+    <div className={tempQuestionStyles.container}>
+      <Link href="/kerdes/[id]" as={`/kerdes/${id}`}>
+        <a className={tempQuestionStyles.overlay}></a>
+      </Link>
+      <div className={tempQuestionStyles.header}>
+        <div className={tempQuestionStyles.creator}>
+          <Avatar
+            loading={!creatorData?.user}
+            id={creatorData?.user?.avatar}
+            size={32}
+            onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
+          />
+          <div className={tempQuestionStyles.creatorInfo}>
+            <p>{creatorData?.user?.name}</p>
+            <p>{dayjs(new Date(createdAt)).fromNow()}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className={tempQuestionStyles.body}>
+        <h1>{title}</h1>
+        <p>{body}</p>
+      </div>
+
+      <div className={tempQuestionStyles.footer}>
+        <div className={tempQuestionStyles.actions}>
+          <div className={tempQuestionStyles.action}>
+            <Hearth fill={upvotes.currentUserUpvoted} />
+            <span>{upvotes.count}</span>
+          </div>
+          <div className={tempQuestionStyles.action}>
+            <Comment />
+
+            <span>{answers.count}</span>
+          </div>
+        </div>
+        <p className={tempQuestionStyles.topic}>#{topic}</p>
+      </div>
+    </div>
   );
 }

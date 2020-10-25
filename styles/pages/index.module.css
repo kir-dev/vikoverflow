@@ -1,7 +1,7 @@
 .root {
   composes: container from global;
   composes: screen from global;
-  padding-top: 40px;
+  padding-top: 24px;
   padding-bottom: 40px;
   display: grid;
   grid-template-columns: 220px 1fr;
@@ -16,7 +16,7 @@
 
 .topicStats {
   position: sticky;
-  top: 80px;
+  top: calc(40px + 24px);
   left: 0;
 }
 

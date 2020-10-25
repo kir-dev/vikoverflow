@@ -1,80 +1,56 @@
 .root {
+  composes: container from global;
   composes: screen from global;
-  display: flex;
-  flex-direction: column;
+  padding-bottom: 40px;
+}
+
+.header,
+.main {
+  width: 700px;
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .header {
-  border-bottom: 1px solid var(--accent-2);
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--input-border);
+  position: sticky;
+  padding-top: 24px;
+  top: calc(40px);
+  background: var(--background);
+  z-index: 1;
 }
 
-.headerContent {
-  composes: container from global;
-  padding-top: 3rem;
+.headerContent h1,
+.headerContent h2 {
+  line-height: 1;
+}
+
+.headerContent h1 {
+  font-weight: 500;
+  font-size: var(--font-large);
+}
+
+.headerContent h2 {
+  font-weight: 400;
+  font-size: var(--font);
+  margin: 8px 0 12px;
 }
 
 .headerActions {
-  composes: container from global;
-  padding-top: 1.5rem;
-  padding-bottom: 1.5rem;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
 
-.headerActions * + * {
-  margin-left: 0.625rem;
+.headerActions > * + * {
+  margin-left: var(--gap);
 }
 
-.headerContent h1 {
-  font-weight: 500;
-  font-size: 2.25rem;
-}
-
-.headerContent p {
-  font-size: 0.875rem;
-  word-break: break-all;
-}
-
-.questions {
-  padding-bottom: 4rem;
-  width: 100%;
-  max-width: calc(var(--page) * (4 / 5));
-  margin: 0 auto;
-  border-left: 1px solid var(--accent-2);
-  border-right: 1px solid var(--accent-2);
-  flex: 1;
-}
-
-.questions > *:first-child {
-  border-top: none !important;
-}
-
-.empty {
-  composes: container from global;
-  border-left: 1px solid var(--accent-2);
-  border-right: 1px solid var(--accent-2);
-  display: flex;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-}
-
-.empty h1 {
-  font-size: 1.125rem;
-  font-weight: 500;
-}
-
-.modalBody,
 .modalBody textarea {
+  margin-top: var(--gap-large);
   width: 100%;
-  width: 100%;
-}
-
-.modalBody p {
-  margin-bottom: 1rem;
-}
-
-.error {
-  margin-top: 0.5rem;
 }

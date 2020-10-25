@@ -1,7 +1,7 @@
 .root {
   width: calc(800px + 2 * 24px);
   max-width: 100%;
-  padding: 40px 24px;
+  padding: 24px;
   margin: 0 auto;
 
   --gray: #888888;

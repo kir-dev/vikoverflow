@@ -201,6 +201,7 @@
   justify-content: center;
   margin-right: var(--gap-large);
   cursor: pointer;
+  color: var(--background);
 }
 
 .plusButton:hover {

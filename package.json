@@ -23,7 +23,7 @@
     "react": "^16.14.0",
     "react-dom": "^16.13.1",
     "react-feather": "^2.0.8",
-    "react-hook-form": "^6.9.5",
+    "react-hook-form": "^6.9.6",
     "react-intersection-observer": "^8.29.1",
     "react-select": "^3.1.0",
     "sharp": "^0.26.2",

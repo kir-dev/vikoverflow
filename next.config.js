@@ -3,6 +3,9 @@ module.exports = {
   generateEtags: false,
   poweredByHeader: false,
   images: {
-    domains: ['staging-dev-vikoverflow-user-objects.s3-us-west-1.amazonaws.com']
-  }
+    domains: [
+      "staging-dev-vikoverflow-user-objects.s3-us-west-1.amazonaws.com",
+      "vikoverflow-user-objects.s3-us-west-1.amazonaws.com",
+    ],
+  },
 };

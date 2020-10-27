@@ -482,7 +482,7 @@ const AnswerForm = forwardRef(
     const { addToast } = useToasts();
     const { user, isLoading: isUserLoading } = useUser();
     const { data: userData } = useSWR(
-      !isUserLoading ? `/api/user/${user.id}` : null
+      !isUserLoading && user ? `/api/user/${user.id}` : null
     );
 
     const validationSchema = useMemo(

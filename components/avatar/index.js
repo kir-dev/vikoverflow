@@ -6,6 +6,7 @@ import cn from "clsx";
 import LoadingDots from "components/loading-dots";
 import useSWR, { mutate } from "swr";
 import Tooltip from "components/tooltip";
+import Image from "next/image";
 
 export default function Avatar({
   className,
@@ -35,17 +36,16 @@ export default function Avatar({
         style={{ "--size": size }}
       >
         {!loading && (
-          <img
-            decoding="async"
-            loading="lazy"
-            importance="low"
+          <Image
+            width={size}
+            height={size}
             alt="User's avatar"
             className={cn({ [styles.ready]: ready })}
             onLoad={() => setReady(true)}
             ref={imgRef}
             src={
               id
-                ? `/api/user/avatar/${id}?size=${size * 2}`
+                ? `${process.env.NEXT_PUBLIC_S3_URL}/${id}`
                 : "/static/default-avatar-20200904.svg"
             }
           />

@@ -205,7 +205,7 @@ function Question({
 
   return (
     <div className={tempQuestionStyles.container}>
-      <Link href="/kerdes/[id]" as={`/kerdes/${id}`}>
+      <Link href={`/kerdes/${id}`}>
         <a className={tempQuestionStyles.overlay}></a>
       </Link>
       <div className={tempQuestionStyles.header}>

@@ -227,7 +227,7 @@ function stringifyActivity(a) {
       return (
         <>
           Létrehoztad a(z){" "}
-          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
+          <Link href={`/kerdes/${a.id}`}>
             <a>{a.title}</a>
           </Link>{" "}
           című kérdést
@@ -238,7 +238,7 @@ function stringifyActivity(a) {
       return (
         <>
           Új témát hoztál létre{" "}
-          <Link href="/tema/[id]" as={`/tema/${a.name}`}>
+          <Link href={`/tema/${a.name}`}>
             <a>{a.name}</a>
           </Link>{" "}
           néven
@@ -249,7 +249,7 @@ function stringifyActivity(a) {
       return (
         <>
           Tetszett a{" "}
-          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
+          <Link href={`/kerdes/${a.id}`}>
             <a>{a.title}</a>
           </Link>{" "}
           című kérdés
@@ -260,7 +260,7 @@ function stringifyActivity(a) {
       return (
         <>
           Válaszoltál a{" "}
-          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
+          <Link href={`/kerdes/${a.id}`}>
             <a>{a.title}</a>
           </Link>{" "}
           című kérdésre
@@ -271,7 +271,7 @@ function stringifyActivity(a) {
       return (
         <>
           Tetszett egy válasz a{" "}
-          <Link href="/kerdes/[id]" as={`/kerdes/${a.id}`}>
+          <Link href={`/kerdes/${a.id}`}>
             <a>{a.title}</a>
           </Link>{" "}
           című kérdésre

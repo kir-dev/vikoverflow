@@ -25,7 +25,7 @@ export default function Topics({ search }) {
             data.topics.length ? (
               data.topics.map((topic) => (
                 <li className={styles.topic} key={topic.id}>
-                  <Link href={"/tema/[id]"} as={`/tema/${topic.id}`}>
+                  <Link href={`/tema/${topic.id}`}>
                     <a></a>
                   </Link>
                   <span>{topic.id}</span>

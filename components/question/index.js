@@ -72,7 +72,7 @@ function Question(
       })}
     >
       {clickable && (
-        <Link href="/kerdes/[id]" as={`/kerdes/${id}`}>
+        <Link href={`/kerdes/${id}`}>
           <a className={styles.overlay}></a>
         </Link>
       )}

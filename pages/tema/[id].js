@@ -105,10 +105,6 @@ export default function TopicPage() {
     }
   }, [inView, isReachingEnd]);
 
-  if (!questions) {
-    return <Layout />;
-  }
-
   return (
     <>
       <Modal open={editModal.open} onClose={closeEditModal}>
@@ -181,10 +177,22 @@ export default function TopicPage() {
             </div>
           </header>
           <main className={styles.main}>
-            {questions.map((q) => (
-              <Question {...q} />
-            ))}
-            {!isReachingEnd && <div ref={loaderRef}>loader div</div>}
+            {questions ? (
+              <>
+                {questions.map((q) => (
+                  <Question {...q} />
+                ))}
+                {!isReachingEnd && <Question skeleton ref={loaderRef} />}
+              </>
+            ) : (
+              <>
+                <Question skeleton />
+                <Question skeleton />
+                <Question skeleton />
+                <Question skeleton />
+                <Question skeleton />
+              </>
+            )}
           </main>
         </div>
       </Layout>

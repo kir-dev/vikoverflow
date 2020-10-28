@@ -30,7 +30,7 @@ export default function Avatar({
     <Wrapper {...wrapperProps}>
       <div
         className={cn(styles.avatar, className, {
-          [styles.disabled]: disabled || !label,
+          [styles.disabled]: disabled || !Boolean(onClick),
         })}
         onClick={onClick}
         style={{ "--size": size }}

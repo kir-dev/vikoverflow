@@ -60,7 +60,7 @@ const Header = () => {
                     <>
                       <Menu.Button className={styles.menuButton}>
                         <Avatar
-                          label={false}
+                          onClick={() => {}}
                           size={28}
                           loading={!userData?.user}
                           id={userData?.user?.avatar}

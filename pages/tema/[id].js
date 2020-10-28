@@ -1,13 +1,8 @@
 import Layout from "components/layout";
 import styles from "styles/pages/tema.module.css";
 import useSWR, { useSWRInfinite, mutate } from "swr";
-import Avatar from "components/avatar";
-import dayjs from "lib/dayjs";
-import tempQuestionStyles from "styles/pages/newindexquestion.module.css";
-import Link from "next/link";
 import { useInView } from "react-intersection-observer";
 import { useState, useEffect } from "react";
-import { Comment, Hearth } from "components/icons";
 import Button, { KIND } from "components/button";
 import { Edit, Plus } from "components/icons";
 import { useRouter } from "next/router";
@@ -17,6 +12,7 @@ import Textarea from "components/textarea";
 import { TopicDescriptionSchema } from "lib/schemas";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import Question from "components/__question-list-element";
 
 export default function TopicPage() {
   const { user } = useUser();
@@ -193,60 +189,5 @@ export default function TopicPage() {
         </div>
       </Layout>
     </>
-  );
-}
-
-function Question({
-  id,
-  title,
-  body,
-  upvotes,
-  answers,
-  topic,
-  createdAt,
-  creator,
-}) {
-  const { data: creatorData } = useSWR(creator ? `/api/user/${creator}` : null);
-
-  return (
-    <div className={tempQuestionStyles.container}>
-      <Link href={`/kerdes/${id}`}>
-        <a className={tempQuestionStyles.overlay}></a>
-      </Link>
-      <div className={tempQuestionStyles.header}>
-        <div className={tempQuestionStyles.creator}>
-          <Avatar
-            loading={!creatorData?.user}
-            id={creatorData?.user?.avatar}
-            size={32}
-            onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
-          />
-          <div className={tempQuestionStyles.creatorInfo}>
-            <p>{creatorData?.user?.name}</p>
-            <p>{dayjs(new Date(createdAt)).fromNow()}</p>
-          </div>
-        </div>
-      </div>
-
-      <div className={tempQuestionStyles.body}>
-        <h1>{title}</h1>
-        <p>{body}</p>
-      </div>
-
-      <div className={tempQuestionStyles.footer}>
-        <div className={tempQuestionStyles.actions}>
-          <div className={tempQuestionStyles.action}>
-            <Hearth fill={upvotes.currentUserUpvoted} />
-            <span>{upvotes.count}</span>
-          </div>
-          <div className={tempQuestionStyles.action}>
-            <Comment />
-
-            <span>{answers.count}</span>
-          </div>
-        </div>
-        <p className={tempQuestionStyles.topic}>#{topic}</p>
-      </div>
-    </div>
   );
 }

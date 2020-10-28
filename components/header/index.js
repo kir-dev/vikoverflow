@@ -64,6 +64,7 @@ const Header = () => {
                           size={28}
                           loading={!userData?.user}
                           id={userData?.user?.avatar}
+                          label={false}
                         />
                       </Menu.Button>
 

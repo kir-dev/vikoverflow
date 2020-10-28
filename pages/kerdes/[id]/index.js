@@ -183,13 +183,23 @@ function Question({
               loading={!creatorData?.user}
               id={creatorData?.user?.avatar}
               size={32}
-              onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
+              onClick={() => router.push(`/profil/${creator}`)}
             />
             <div className={styles.creatorInfo}>
-              <p>{creatorData?.user?.name}</p>
-              <p>{dayjs(new Date(createdAt)).fromNow()}</p>
+              <Tooltip label="Profil megtekintése">
+                <p onClick={() => router.push(`/profil/${creator}`)}>
+                  {creatorData?.user?.name}
+                </p>
+              </Tooltip>
+
+              <Tooltip
+                label={dayjs(new Date(createdAt)).format("YYYY. MMMM D. H:m")}
+              >
+                <p>{dayjs(new Date(createdAt)).fromNow()}</p>
+              </Tooltip>
             </div>
           </div>
+
           {user?.id === creator && (
             <div className={styles.headerActions}>
               <Button
@@ -437,11 +447,20 @@ function Answer({ questionId, id, creator, createdAt, body, upvotes }) {
               loading={!creatorData?.user}
               id={creatorData?.user?.avatar}
               size={32}
-              onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
+              onClick={() => router.push(`/profil/${creator}`)}
             />
             <div className={styles.creatorInfo}>
-              <p>{creatorData?.user?.name}</p>
-              <p>{dayjs(new Date(createdAt)).fromNow()}</p>
+              <Tooltip label="Profil megtekintése">
+                <p onClick={() => router.push(`/profil/${creator}`)}>
+                  {creatorData?.user?.name}
+                </p>
+              </Tooltip>
+
+              <Tooltip
+                label={dayjs(new Date(createdAt)).format("YYYY. MMMM D. H:m")}
+              >
+                <p>{dayjs(new Date(createdAt)).fromNow()}</p>
+              </Tooltip>
             </div>
           </div>
           {user?.id === creator && (
@@ -589,7 +608,7 @@ const AnswerForm = forwardRef(
             id={userData?.user?.avatar}
             size={32}
             className={styles.avatar}
-            onClick={() => router.push("/profil/[id]", `/profil/${user.id}`)}
+            label={false}
           />
           <Textarea
             name="body"

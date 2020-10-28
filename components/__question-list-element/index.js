@@ -1,5 +1,5 @@
 import Avatar from "components/avatar";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import dayjs from "lib/dayjs";
 import { Comment, Hearth } from "components/icons";
 import styles from "./question-list-element.module.css";
@@ -11,6 +11,7 @@ export default forwardRef(function QuestionListElement(
   { id, title, body, upvotes, answers, topic, createdAt, creator, skeleton },
   ref
 ) {
+  const router = useRouter();
   const { data: creatorData } = useSWR(creator ? `/api/user/${creator}` : null);
 
   if (skeleton) {
@@ -39,17 +40,17 @@ export default forwardRef(function QuestionListElement(
   }
 
   return (
-    <div className={styles.container}>
-      <Link href={`/kerdes/${id}`}>
-        <a className={styles.overlay}></a>
-      </Link>
+    <div
+      className={styles.container}
+      onClick={() => router.push(`/kerdes/${id}`)}
+    >
       <div className={styles.header}>
         <div className={styles.creator}>
           <Avatar
             loading={!creatorData?.user}
             id={creatorData?.user?.avatar}
             size={32}
-            onClick={() => router.push("/profil/[id]", `/profil/${creator}`)}
+            label={false}
           />
           <div className={styles.creatorInfo}>
             <p>{creatorData?.user?.name}</p>

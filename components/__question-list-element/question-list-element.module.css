@@ -6,23 +6,7 @@
   --border: #e6e6e6;
   --gray-2: #7b7b7b;
   --indent: 44px;
-  position: relative;
-}
-
-.overlay {
-  position: absolute;
-  display: inline-block;
-  height: 100%;
-  width: 100%;
-  top: 0px;
-  bottom: 0px;
-  left: 0px;
-  right: 0px;
-  z-index: 2;
-}
-
-.container:hover {
-  background: var(--accent-1);
+  cursor: pointer;
 }
 
 .header {
@@ -74,10 +58,17 @@
 }
 
 .body h1 {
+  display: block;
   font-weight: 500;
   font-size: var(--font-large);
   line-height: var(--line-height);
   margin-bottom: var(--gap);
+  text-decoration: none;
+  color: currentColor;
+}
+
+.container:hover .body h1 {
+  text-decoration: underline;
 }
 
 .body p {

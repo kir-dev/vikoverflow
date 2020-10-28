@@ -1,12 +1,13 @@
 import Layout from "components/layout";
 import styles from "styles/pages/index.module.css";
 import useSWR, { useSWRInfinite } from "swr";
-import Link from "next/link";
+import { useRouter } from "next/router";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import Question from "components/__question-list-element";
 
 export default function HomePage() {
+  const router = useRouter();
   const { data, size, setSize } = useSWRInfinite((index, prevData) => {
     if (prevData && !prevData.nextCursor) return null;
 
@@ -40,10 +41,7 @@ export default function HomePage() {
             <ul>
               {topicsData ? (
                 topicsData.topics.map((t) => (
-                  <li key={t.id}>
-                    <Link href={`/tema/${t.id}`}>
-                      <a></a>
-                    </Link>
+                  <li key={t.id} onClick={() => router.push(`/tema/${t.id}`)}>
                     <span>#{t.id}</span>
                     <span>{t.numberOfQuestions}</span>
                   </li>

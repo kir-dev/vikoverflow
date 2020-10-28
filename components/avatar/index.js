@@ -3,7 +3,6 @@ import { useState, useRef, useEffect, Fragment } from "react";
 import { useToasts } from "components/toasts";
 import styles from "./avatar.module.css";
 import cn from "clsx";
-import LoadingDots from "components/loading-dots";
 import useSWR, { mutate } from "swr";
 import Tooltip from "components/tooltip";
 import Image from "next/image";

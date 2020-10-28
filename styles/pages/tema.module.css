@@ -22,6 +22,7 @@
   top: calc(40px);
   background: var(--background);
   z-index: 1;
+  min-height: 77px;
 }
 
 .headerContent h1,

@@ -161,13 +161,18 @@ export default function TopicPage() {
               <h2>{topicData?.topic?.description}</h2>
             </div>
             <div className={styles.headerActions}>
-              <Button
-                kind={KIND.icon}
-                onClick={() => router.push(`/uj?tema=${topicData?.topic?.id}`)}
-                tooltip="Új kérdés hozzáadása a témához"
-              >
-                <Plus />
-              </Button>
+              {user && (
+                <Button
+                  kind={KIND.icon}
+                  onClick={() =>
+                    router.push(`/uj?tema=${topicData?.topic?.id}`)
+                  }
+                  tooltip="Új kérdés hozzáadása a témához"
+                >
+                  <Plus />
+                </Button>
+              )}
+
               {user && topicData?.topic?.creator === user.id && (
                 <Button
                   kind={KIND.icon}

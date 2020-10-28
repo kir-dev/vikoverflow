@@ -22,6 +22,7 @@ import { Hearth, Delete, Edit, Comment, Attachment } from "components/icons";
 // TODO skeleton
 
 export default function QuestionPage() {
+  const { user } = useUser();
   const router = useRouter();
   const questionId = router.query.id;
   const { data } = useSWR(questionId ? `/api/questions/${questionId}` : null);
@@ -56,7 +57,7 @@ export default function QuestionPage() {
           <Answer questionId={questionId} {...a} />
         ))}
 
-        <AnswerForm ref={answerFormRef} questionId={questionId} />
+        {user && <AnswerForm ref={answerFormRef} questionId={questionId} />}
       </div>
     </Layout>
   );
@@ -232,23 +233,33 @@ function Question({
         <div className={styles.footer}>
           <div className={styles.actions}>
             <div className={styles.action}>
-              <Button
-                kind={KIND.icon}
-                tooltip={upvotes.currentUserUpvoted ? "Nem tetszik" : "Tetszik"}
-                onClick={handleVote(!upvotes.currentUserUpvoted)}
-              >
+              {user ? (
+                <Button
+                  kind={KIND.icon}
+                  tooltip={
+                    upvotes.currentUserUpvoted ? "Nem tetszik" : "Tetszik"
+                  }
+                  onClick={handleVote(!upvotes.currentUserUpvoted)}
+                >
+                  <Hearth fill={upvotes.currentUserUpvoted} />
+                </Button>
+              ) : (
                 <Hearth fill={upvotes.currentUserUpvoted} />
-              </Button>
+              )}
               <span>{upvotes.count}</span>
             </div>
             <div className={styles.action}>
-              <Button
-                kind={KIND.icon}
-                tooltip={"Válasz írása"}
-                onClick={onCommentButtonClick}
-              >
+              {user ? (
+                <Button
+                  kind={KIND.icon}
+                  tooltip={"Válasz írása"}
+                  onClick={onCommentButtonClick}
+                >
+                  <Comment />
+                </Button>
+              ) : (
                 <Comment />
-              </Button>
+              )}
 
               <span>{answers.count}</span>
             </div>
@@ -460,13 +471,20 @@ function Answer({ questionId, id, creator, createdAt, body, upvotes }) {
         <div className={styles.footer}>
           <div className={styles.actions}>
             <div className={styles.action}>
-              <Button
-                kind={KIND.icon}
-                tooltip={upvotes.currentUserUpvoted ? "Nem tetszik" : "Tetszik"}
-                onClick={handleAnswerVote(!upvotes.currentUserUpvoted)}
-              >
+              {user ? (
+                <Button
+                  kind={KIND.icon}
+                  tooltip={
+                    upvotes.currentUserUpvoted ? "Nem tetszik" : "Tetszik"
+                  }
+                  onClick={handleAnswerVote(!upvotes.currentUserUpvoted)}
+                >
+                  <Hearth fill={upvotes.currentUserUpvoted} />
+                </Button>
+              ) : (
                 <Hearth fill={upvotes.currentUserUpvoted} />
-              </Button>
+              )}
+
               <span>{upvotes.count}</span>
             </div>
           </div>

@@ -9,13 +9,10 @@ const LoginPage = () => {
   return (
     <Layout footerDark>
       <div className={styles.root}>
-        <h1>Lépj be</h1>
         <Button
-          inverted
           onClick={() => {
             window.location = "/api/auth/login";
           }}
-          className={styles.button}
           data-test="loginButton"
         >
           Belépés AuthSCH fiókkal

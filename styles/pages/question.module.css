@@ -124,6 +124,7 @@
 .action {
   display: flex;
   align-items: center;
+  color: var(--accent-4);
 }
 
 .action span,

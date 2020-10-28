@@ -6,20 +6,9 @@
   composes: screen from global;
 }
 
-.root h1 {
-  font-size: 3rem;
-}
-
-.root .button {
-  margin-top: 1.2rem;
-  height: 3rem;
-  padding: 0 2rem;
-}
-
 .root p {
   text-align: center;
   line-height: 1.3;
-  font-size: 0.876rem;
   max-width: 250px;
   margin: 0.65rem auto 0;
 }

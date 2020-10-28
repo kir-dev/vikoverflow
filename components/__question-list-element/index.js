@@ -4,18 +4,39 @@ import dayjs from "lib/dayjs";
 import { Comment, Hearth } from "components/icons";
 import styles from "./question-list-element.module.css";
 import useSWR from "swr";
+import cn from "clsx";
+import { forwardRef } from "react";
 
-export default function QuestionListElement({
-  id,
-  title,
-  body,
-  upvotes,
-  answers,
-  topic,
-  createdAt,
-  creator,
-}) {
+export default forwardRef(function QuestionListElement(
+  { id, title, body, upvotes, answers, topic, createdAt, creator, skeleton },
+  ref
+) {
   const { data: creatorData } = useSWR(creator ? `/api/user/${creator}` : null);
+
+  if (skeleton) {
+    return (
+      <div ref={ref} className={styles.container}>
+        <div className={styles.header}>
+          <div className={styles.creator}>
+            <Avatar skeleton size={32} />
+          </div>
+        </div>
+
+        <div className={cn(styles.body, styles.skeleton)} />
+
+        <div className={styles.footer}>
+          <div className={styles.actions}>
+            <div className={styles.action}>
+              <Hearth />
+            </div>
+            <div className={styles.action}>
+              <Comment />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>
@@ -58,4 +79,4 @@ export default function QuestionListElement({
       </div>
     </div>
   );
-}
+});

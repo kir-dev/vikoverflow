@@ -31,10 +31,6 @@ export default function HomePage() {
     }
   }, [inView, isReachingEnd]);
 
-  if (!questions || !topicsData) {
-    return <Layout />;
-  }
-
   return (
     <Layout>
       <div className={styles.root}>
@@ -42,23 +38,45 @@ export default function HomePage() {
           <div className={styles.topicStats}>
             <h1>Népszerű témák</h1>
             <ul>
-              {topicsData.topics.map((t) => (
-                <li key={t.id}>
-                  <Link href={`/tema/${t.id}`}>
-                    <a></a>
-                  </Link>
-                  <span>#{t.id}</span>
-                  <span>{t.numberOfQuestions}</span>
-                </li>
-              ))}
+              {topicsData ? (
+                topicsData.topics.map((t) => (
+                  <li key={t.id}>
+                    <Link href={`/tema/${t.id}`}>
+                      <a></a>
+                    </Link>
+                    <span>#{t.id}</span>
+                    <span>{t.numberOfQuestions}</span>
+                  </li>
+                ))
+              ) : (
+                <>
+                  <li></li>
+                  <li></li>
+                  <li></li>
+                  <li></li>
+                </>
+              )}
             </ul>
           </div>
         </aside>
         <main className={styles.main}>
-          {questions.map((q) => (
-            <Question {...q} />
-          ))}
-          {!isReachingEnd && <div ref={loaderRef}>loader div</div>}
+          {questions ? (
+            <>
+              {questions.map((q) => (
+                <Question key={q.id} {...q} />
+              ))}
+              {!isReachingEnd && <Question skeleton ref={loaderRef} />}
+            </>
+          ) : (
+            <>
+              <Question skeleton />
+              <Question skeleton />
+              <Question skeleton />
+              <Question skeleton />
+              <Question skeleton />
+              <Question skeleton />
+            </>
+          )}
         </main>
       </div>
     </Layout>

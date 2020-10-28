@@ -15,6 +15,7 @@ export default function Avatar({
   onClick,
   disabled,
   label = "Profil megtekintése",
+  skeleton,
 }) {
   const Wrapper = label ? Tooltip : Fragment;
   const wrapperProps = label ? { label } : {};
@@ -34,7 +35,7 @@ export default function Avatar({
         onClick={onClick}
         style={{ "--size": size }}
       >
-        {!loading && (
+        {!loading && !skeleton && (
           <Image
             width={size}
             height={size}

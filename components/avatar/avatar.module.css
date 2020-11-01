@@ -35,14 +35,6 @@
   opacity: 1;
 }
 
-.loadingOverlay {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  left: 0;
-  right: 0;
-}
-
 .avatarInput {
   composes: visuallyHidden from global;
 }

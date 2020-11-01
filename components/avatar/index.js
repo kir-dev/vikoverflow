@@ -108,11 +108,6 @@ export function UploadAvatar({ className, size }) {
         disabled={uploading}
         label="Új profilkép feltöltése"
       />
-      {uploading && (
-        <div className={styles.loadingOverlay}>
-          <LoadingDots />
-        </div>
-      )}
       <input
         className={styles.avatarInput}
         ref={hiddenInputRef}

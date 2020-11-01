@@ -69,6 +69,11 @@ const Header = () => {
                       </Menu.Button>
 
                       <Menu.Items className={styles.menuItems}>
+                        <div className={styles.userInfo}>
+                          <p>Belépve mint</p>
+                          <p>{userData?.user?.name}</p>
+                        </div>
+                        <div className={styles.separator} />
                         <Menu.Item>
                           {({ active }) => (
                             <button

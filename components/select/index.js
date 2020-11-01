@@ -2,7 +2,7 @@ import styles from "./select.module.css";
 import cn from "clsx";
 import Error from "components/error";
 import Label from "components/label";
-import { ChevronDown } from "react-feather";
+import { DownArrow } from "components/icons";
 import { Fragment } from "react";
 
 export default function Select({
@@ -40,7 +40,7 @@ export default function Select({
           {children}
         </select>
         <span className={styles.arrow}>
-          <ChevronDown strokeWidth={1} size={18} />
+          <DownArrow />
         </span>
       </div>
       {error && (

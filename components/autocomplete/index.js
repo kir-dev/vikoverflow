@@ -2,7 +2,7 @@ import Select from "react-select/creatable";
 import Label from "components/label";
 import Error from "components/error";
 import moduleStyles from "./autocomplete.module.css";
-import { ChevronDown } from "react-feather";
+import { DownArrow } from "components/icons";
 import { Fragment } from "react";
 
 export default function Autocomplete({
@@ -37,7 +37,7 @@ export default function Autocomplete({
         error={error}
         maxMenuHeight={200}
         components={{
-          DropdownIndicator: () => <ChevronDown strokeWidth={1} size={18} />,
+          DropdownIndicator: () => <DownArrow />,
         }}
       />
       {error && (

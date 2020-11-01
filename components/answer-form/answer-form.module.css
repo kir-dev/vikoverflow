@@ -1,0 +1,40 @@
+.answerForm {
+  margin-left: var(--indent);
+  display: flex;
+  flex-direction: column;
+}
+
+.answerForm:not(:last-of-type) {
+  padding-bottom: var(--gap-large);
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--gap-large);
+}
+
+.answerFormContent {
+  display: flex;
+  margin-bottom: 8px;
+  width: 100%;
+}
+
+.answerFormContent img {
+  margin-right: 12px;
+}
+
+.answerFormContent textarea {
+  margin-left: 12px;
+  flex: 1;
+}
+
+.answerFormActions {
+  display: flex;
+  align-items: center;
+  margin-left: var(--indent);
+}
+
+.answerFormActions button:first-of-type {
+  margin-left: auto;
+}
+
+.answerFormActions button + button {
+  margin-left: 10px;
+}

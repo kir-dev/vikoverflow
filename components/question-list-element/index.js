@@ -29,9 +29,11 @@ export default forwardRef(function QuestionListElement(
           <div className={styles.actions}>
             <div className={styles.action}>
               <Hearth />
+              <span className={styles.hidden}>0</span>
             </div>
             <div className={styles.action}>
               <Comment />
+              <span className={styles.hidden}>0</span>
             </div>
           </div>
         </div>

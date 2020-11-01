@@ -27,30 +27,7 @@ const AskPage = () => {
 
     if (res.ok) {
       const { id } = await res.json();
-      const { title, body } = values;
-      mutate(
-        `/api/questions/${id}`,
-        {
-          question: {
-            id,
-            title: trimSpaces(title),
-            body: trimLineBreaks(body),
-            answers: {
-              count: 0,
-              list: [],
-            },
-            upvotes: {
-              count: 0,
-              currentUserUpvoted: false,
-            },
-            creator: user.id,
-            createdAt: Date.now(),
-          },
-        },
-        false
-      );
-
-      return router.push(`/kerdes/[id]`, `/kerdes/${id}`);
+      return router.push(`/kerdes/${id}`);
     } else {
       addToast("Hiba lépett fel kérdésed beküldése közben", {
         errored: true,

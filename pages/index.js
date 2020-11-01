@@ -4,7 +4,7 @@ import useSWR, { useSWRInfinite } from "swr";
 import { useRouter } from "next/router";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
-import Question from "components/__question-list-element";
+import Question from "components/question-list-element";
 
 export default function HomePage() {
   const router = useRouter();

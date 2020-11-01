@@ -1,0 +1,148 @@
+.container {
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--gap-large);
+}
+
+.header {
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--gap);
+}
+
+.creator {
+  display: flex;
+  cursor: pointer;
+}
+
+.avatar {
+  height: 32px;
+  width: 32px;
+  border: 1px solid var(--border);
+  border-radius: 100%;
+  vertical-align: middle;
+}
+
+.creatorInfo {
+  margin-left: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.creatorInfo p {
+  color: var(--foreground);
+  font-size: var(--font);
+  line-height: var(--line-height);
+  min-height: 17px;
+}
+
+.creatorInfo p:hover {
+  text-decoration: underline;
+}
+
+.creatorInfo p:last-child {
+  color: var(--gray);
+  font-size: var(--font-small);
+  line-height: var(--line-height);
+  min-height: unset;
+}
+
+.headerActions {
+  display: flex;
+  align-items: center;
+}
+
+.headerActions > * + * {
+  margin-left: var(--gap);
+}
+
+.body {
+  margin-left: var(--indent);
+}
+
+.body h1 {
+  font-weight: 500;
+  font-size: var(--font-large);
+  line-height: var(--line-height);
+  margin-bottom: var(--gap);
+}
+
+.body p {
+  font-size: var(--font);
+  line-height: var(--line-height);
+  white-space: pre-wrap;
+  margin-bottom: var(--gap);
+}
+
+.attachment {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px 3px 5px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--gray-2);
+  text-decoration: none;
+  font-size: var(--font);
+  line-height: var(--line-height);
+  margin-bottom: var(--gap);
+  word-break: break-all;
+}
+
+.attachment svg {
+  margin-right: 5px;
+  flex-shrink: 0;
+}
+
+.attachment:hover {
+  color: var(--foreground);
+  border-color: var(--foreground);
+  background: var(--accent-2);
+}
+
+.footer {
+  margin-left: var(--indent);
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+}
+
+.action {
+  display: flex;
+  align-items: center;
+  color: var(--accent-4);
+}
+
+.action span,
+.topic {
+  font-size: var(--font-small);
+  line-height: var(--line-height);
+  color: var(--gray-2);
+}
+
+.action span {
+  margin-left: 4px;
+}
+
+.action + .action {
+  margin-left: var(--gap-large);
+}
+
+.container:not(:first-child) {
+  margin-left: var(--indent);
+}
+
+.body.skeleton {
+  min-height: 50px;
+}
+
+.hidden {
+  opacity: 0;
+}

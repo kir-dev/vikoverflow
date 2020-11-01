@@ -12,7 +12,7 @@ import Textarea from "components/textarea";
 import { TopicDescriptionSchema } from "lib/schemas";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import Question from "components/__question-list-element";
+import Question from "components/question-list-element";
 
 export default function TopicPage() {
   const { user } = useUser();
@@ -20,11 +20,11 @@ export default function TopicPage() {
   const topicId = router.query.id;
   const { data: topicData } = useSWR(topicId ? `/api/topics/${topicId}` : null);
   const { data, size, setSize } = useSWRInfinite((index, prevData) => {
-    if (prevData && !prevData.nextCursor) return null;
+    if (!topicId || prevData && !prevData.nextCursor) return null;
 
-    if (index === 0) return `/api/questions`;
+    if (index === 0) return `/api/questions?topic=${topicId}`;
 
-    return `/api/questions?cursor=${prevData.nextCursor}&cursor2=${prevData.nextCursor2}`;
+    return `/api/questions?topic=${topicId}&cursor=${prevData.nextCursor}&cursor2=${prevData.nextCursor2}`;
   });
 
   const [loaderRef, inView] = useInView({ rootMargin: "400px 0px" });

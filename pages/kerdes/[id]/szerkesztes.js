@@ -40,24 +40,11 @@ const QuestionEditPage = () => {
     });
 
     if (res.ok) {
-      const { title, body, ...rest } = values;
-      mutate(
-        (oldData) => ({
-          question: {
-            ...oldData.question,
-            title: trimSpaces(title),
-            body: trimLineBreaks(body),
-            ...rest,
-          },
-        }),
-        false
-      );
+      await mutate();
       addToast("A kérdésed sikeresen szerkesztve.");
       return router.push(`/kerdes/[id]`, `/kerdes/${questionId}`);
     } else {
-      addToast("Hiba lépett fel kérdésed szerkesztése közben", {
-        errored: true,
-      });
+      addToast("Hiba lépett fel kérdésed szerkesztése közben");
     }
   };
 

@@ -2,7 +2,7 @@ import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { getQuestionSchema } from "lib/schemas";
 import { nanoid } from "nanoid";
-import { trimSpaces, trimLineBreaks } from "lib/utils";
+import { trimSpaces, trimLineBreaks, truncateBody } from "lib/utils";
 import parseMultipart from "lib/api/parse-multipart";
 import { uploadToS3 } from "lib/api/s3";
 
@@ -97,7 +97,7 @@ async function getAllQuestions(req, res) {
         creator,
         createdAt,
         title,
-        body,
+        body: truncateBody(body),
         answers: {
           count: numberOfAnswers,
         },

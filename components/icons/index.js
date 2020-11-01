@@ -8,3 +8,4 @@ export { default as Plus } from "./plus";
 export { default as User } from "./user";
 export { default as Logout } from "./logout";
 export { default as X } from "./x";
+export { default as DownArrow } from "./down-arrow";

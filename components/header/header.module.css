@@ -153,7 +153,7 @@
 
 .menuItems {
   position: absolute;
-  width: 242px;
+  width: 225px;
   background: var(--background);
   border: 1px solid #dddddd;
   box-sizing: border-box;
@@ -181,6 +181,18 @@
   padding: 0 var(--gap);
   outline: none;
   cursor: pointer;
+}
+
+.userInfo {
+  padding: var(--gap-small) 12px;
+}
+
+.userInfo p:first-of-type {
+  margin-bottom: 2px;
+}
+
+.userInfo p:last-of-type {
+  font-weight: 500;
 }
 
 .menuItem.active {

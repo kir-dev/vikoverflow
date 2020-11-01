@@ -153,45 +153,15 @@
 
 .menuItems {
   position: absolute;
-  width: 225px;
+  min-width: 225px;
   background: var(--background);
   border: 1px solid #dddddd;
   box-sizing: border-box;
   box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08);
   border-radius: 3px;
   right: 0;
-  margin-right: -9px;
   padding: var(--gap-small) 0;
   outline: none;
-  margin-top: 8px;
-}
-
-.menuItems::before {
-  z-index: 1;
-  content: "";
-  display: block;
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 8px;
-  right: 14px;
-  top: -16px;
-  border-color: transparent transparent #ddd;
-}
-
-.menuItems::after {
-  z-index: 1;
-  content: "";
-  display: block;
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-style: solid;
-  border-width: 8px;
-  right: 14px;
-  top: -14px;
-  border-color: transparent transparent var(--background);
 }
 
 .menuItems .separator {
@@ -213,16 +183,27 @@
   cursor: pointer;
 }
 
-.userInfo {
+.user {
   padding: var(--gap-small) 12px;
+  display: flex;
+  align-items: center;
+}
+
+.user *:first-child {
+  flex-shrink: 0;
+}
+
+.userInfo {
+  margin-left: var(--gap);
 }
 
 .userInfo p:first-of-type {
+  font-weight: 500;
   margin-bottom: 2px;
 }
 
 .userInfo p:last-of-type {
-  font-weight: 500;
+  color: #7b7b7b;
 }
 
 .menuItem.active {

@@ -69,9 +69,17 @@ const Header = () => {
                       </Menu.Button>
 
                       <Menu.Items className={styles.menuItems}>
-                        <div className={styles.userInfo}>
-                          <p>Belépve mint</p>
-                          <p>{userData?.user?.name}</p>
+                        <div className={styles.user}>
+                          <Avatar
+                            size={42}
+                            loading={!userData?.user}
+                            id={userData?.user?.avatar}
+                            label={false}
+                          />
+                          <div className={styles.userInfo}>
+                            <p>{userData?.user?.name}</p>
+                            <p>{userData?.user?.email}</p>
+                          </div>
                         </div>
                         <div className={styles.separator} />
                         <Menu.Item>

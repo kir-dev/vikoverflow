@@ -160,8 +160,38 @@
   box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.08);
   border-radius: 3px;
   right: 0;
+  margin-right: -9px;
   padding: var(--gap-small) 0;
   outline: none;
+  margin-top: 8px;
+}
+
+.menuItems::before {
+  z-index: 1;
+  content: "";
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px;
+  right: 14px;
+  top: -16px;
+  border-color: transparent transparent #ddd;
+}
+
+.menuItems::after {
+  z-index: 1;
+  content: "";
+  display: block;
+  position: absolute;
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 8px;
+  right: 14px;
+  top: -14px;
+  border-color: transparent transparent var(--background);
 }
 
 .menuItems .separator {

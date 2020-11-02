@@ -52,7 +52,6 @@ export default forwardRef(function QuestionListElement(
             loading={!creatorData?.user}
             id={creatorData?.user?.avatar}
             size={32}
-            label={false}
           />
           <div className={styles.creatorInfo}>
             <p>{creatorData?.user?.name}</p>

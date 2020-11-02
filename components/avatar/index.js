@@ -14,7 +14,7 @@ export default function Avatar({
   loading,
   onClick,
   disabled,
-  label = "Profil megtekintése",
+  label,
   skeleton,
 }) {
   const Wrapper = label ? Tooltip : Fragment;

@@ -163,6 +163,7 @@ export default function Question({
               id={creatorData?.user?.avatar}
               size={32}
               onClick={() => router.push(`/profil/${creator}`)}
+              label="Profil megtekintése"
             />
             <div className={styles.creatorInfo}>
               <Tooltip label="Profil megtekintése">

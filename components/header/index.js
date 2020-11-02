@@ -64,7 +64,6 @@ const Header = () => {
                           size={28}
                           loading={!userData?.user}
                           id={userData?.user?.avatar}
-                          label={false}
                         />
                       </Menu.Button>
 
@@ -74,7 +73,6 @@ const Header = () => {
                             size={42}
                             loading={!userData?.user}
                             id={userData?.user?.avatar}
-                            label={false}
                           />
                           <div className={styles.userInfo}>
                             <p>{userData?.user?.name}</p>

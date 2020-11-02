@@ -105,7 +105,6 @@ function AnswerForm(
           id={userData?.user?.avatar}
           size={32}
           className={styles.avatar}
-          label={false}
         />
         <Textarea
           name="body"

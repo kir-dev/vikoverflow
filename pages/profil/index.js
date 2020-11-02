@@ -15,6 +15,7 @@ import { trimSpaces } from "lib/utils";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
+import { Edit } from "components/icons";
 
 // TODO use optional catch all routes instead of 2 different profile pages
 // https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes
@@ -104,7 +105,12 @@ export default function ProfilePage() {
         <div className={styles.root}>
           <header className={styles.header}>
             <div className={styles.headerContent}>
-              <UploadAvatar size={102} />
+              <div className={styles.avatar}>
+                <UploadAvatar size={102} />
+                <div className={styles.editOverlay}>
+                  <Edit />
+                </div>
+              </div>
               <div className={styles.info}>
                 {userData?.user?.name && <h1>{userData?.user?.name}</h1>}
                 {userData?.user && <h2>{userData?.user?.bio}</h2>}

@@ -238,3 +238,27 @@
   color: var(--accent-4);
   font-size: var(--font-small);
 }
+
+.avatar {
+  position: relative;
+  display: flex;
+}
+
+.avatar:hover .editOverlay {
+  filter: brightness(0.9);
+}
+
+.editOverlay {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  background: white;
+  border: 1px solid var(--input-border);
+  height: 32px;
+  width: 32px;
+  border-radius: 100%;
+  bottom: 0;
+  right: 0;
+  pointer-events: none;
+}

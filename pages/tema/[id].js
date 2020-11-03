@@ -20,7 +20,7 @@ export default function TopicPage() {
   const topicId = router.query.id;
   const { data: topicData } = useSWR(topicId ? `/api/topics/${topicId}` : null);
   const { data, size, setSize } = useSWRInfinite((index, prevData) => {
-    if (!topicId || prevData && !prevData.nextCursor) return null;
+    if (!topicId || (prevData && !prevData.nextCursor)) return null;
 
     if (index === 0) return `/api/questions?topic=${topicId}`;
 
@@ -108,6 +108,7 @@ export default function TopicPage() {
   return (
     <>
       <Modal open={editModal.open} onClose={closeEditModal}>
+        <Modal.Header title="Téma leírásának módosítása" />
         <form onSubmit={handleSubmit(handleDescriptionEdit)}>
           <Modal.Body>
             <div className={styles.modalBody}>
@@ -116,6 +117,7 @@ export default function TopicPage() {
                 módosítani a téma leírását.
               </p>
               <Textarea
+              label="Új leírás"
                 name="description"
                 rows={3}
                 placeholder="Add meg a téma új leírását..."

@@ -51,7 +51,10 @@
   margin-left: var(--gap);
 }
 
+.modalBody p {
+  margin-bottom: 16px;
+}
+
 .modalBody textarea {
-  margin-top: var(--gap-large);
   width: 100%;
 }

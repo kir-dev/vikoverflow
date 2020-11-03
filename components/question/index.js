@@ -133,7 +133,7 @@ export default function Question({
   return (
     <>
       <Modal open={deleteModal.open} onClose={closeDeleteModal}>
-      <Modal.Header title="Törlés megerősítése" />
+        <Modal.Header title="Törlés megerősítése" />
         <Modal.Body>
           <p>
             Biztosan törlöd a kérdésedet?

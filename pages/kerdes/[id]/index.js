@@ -15,11 +15,6 @@ export default function QuestionPage() {
   const { data } = useSWR(questionId ? `/api/questions/${questionId}` : null);
   const answerFormRef = useRef(null);
 
-  function handleCommentButtonClick() {
-    answerFormRef?.current?.scrollIntoView();
-    answerFormRef?.current?.focus();
-  }
-
   useEffect(() => {
     if (!data) return;
 
@@ -43,16 +38,13 @@ export default function QuestionPage() {
   return (
     <Layout>
       <div className={styles.root}>
-        <Question
-          onCommentButtonClick={handleCommentButtonClick}
-          {...data.question}
-        />
+        <Question {...data.question} />
+
+        {user && <AnswerForm questionId={questionId} />}
 
         {data.question.answers.list.map((a) => (
           <Answer questionId={questionId} {...a} />
         ))}
-
-        {user && <AnswerForm ref={answerFormRef} questionId={questionId} />}
       </div>
     </Layout>
   );

@@ -11,10 +11,13 @@ import useSWR, { mutate } from "swr";
 import Button, { KIND } from "components/button";
 import Avatar from "components/avatar";
 
-function AnswerForm(
-  { questionId, answerId, initialValues, onCancel, onSubmit },
-  ref
-) {
+export default function AnswerForm({
+  questionId,
+  answerId,
+  initialValues,
+  onCancel,
+  onSubmit,
+}) {
   const { addToast } = useToasts();
   const { user, isLoading: isUserLoading } = useUser();
   const { data: userData } = useSWR(
@@ -110,12 +113,7 @@ function AnswerForm(
           name="body"
           placeholder="Írd be a válaszod..."
           rows={5}
-          ref={(innerRef) => {
-            if (ref) {
-              ref.current = innerRef;
-            }
-            register(innerRef);
-          }}
+          ref={register}
           error={Boolean(errors?.body?.message)}
         />
       </div>
@@ -139,5 +137,3 @@ function AnswerForm(
     </form>
   );
 }
-
-export default forwardRef(AnswerForm);

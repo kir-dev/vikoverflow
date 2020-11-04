@@ -24,7 +24,6 @@ export default function Question({
   topic,
   createdAt,
   creator,
-  onCommentButtonClick,
   skeleton,
 }) {
   const router = useRouter();
@@ -240,17 +239,7 @@ export default function Question({
               <span>{upvotes.count}</span>
             </div>
             <div className={styles.action}>
-              {user ? (
-                <Button
-                  kind={KIND.icon}
-                  tooltip={"Válasz írása"}
-                  onClick={onCommentButtonClick}
-                >
-                  <Comment />
-                </Button>
-              ) : (
-                <Comment />
-              )}
+              <Comment />
 
               <span>{answers.count}</span>
             </div>

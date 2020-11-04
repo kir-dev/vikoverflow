@@ -23,7 +23,7 @@
     "next": "^10.0.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "react-hook-form": "^6.9.6",
+    "react-hook-form": "^6.10.1",
     "react-intersection-observer": "^8.30.1",
     "react-select": "^3.1.0",
     "swr": "^0.3.6",

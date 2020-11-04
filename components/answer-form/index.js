@@ -1,8 +1,8 @@
-import { useMemo } from "react";
+import { useMemo, useState, useRef, useEffect } from "react";
 import Textarea from "components/textarea";
 import styles from "./answer-form.module.css";
 import { getAnswerSchema } from "lib/schemas";
-import { useForm } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { trimLineBreaks } from "lib/utils";
 import { useToasts } from "components/toasts";
@@ -10,6 +10,8 @@ import { useUser } from "lib/authenticate";
 import useSWR, { mutate } from "swr";
 import Button, { KIND } from "components/button";
 import Avatar from "components/avatar";
+import cn from "classnames";
+import Error from "components/error";
 
 export default function AnswerForm({
   questionId,
@@ -18,30 +20,48 @@ export default function AnswerForm({
   onCancel,
   onSubmit,
 }) {
+  const [focused, setFocused] = useState(false);
   const { addToast } = useToasts();
   const { user, isLoading: isUserLoading } = useUser();
   const { data: userData } = useSWR(
     !isUserLoading && user ? `/api/user/${user.id}` : null
   );
+  const editorRef = useRef(null);
 
   const validationSchema = useMemo(
     () => getAnswerSchema(Boolean(initialValues)),
     [initialValues]
   );
 
-  const { register, handleSubmit, errors, formState, reset } = useForm({
+  const { handleSubmit, errors, formState, reset, watch, control } = useForm({
     defaultValues: initialValues ? { body: initialValues.body } : { body: "" },
     resolver: yupResolver(validationSchema),
     mode: "onChange",
   });
   const { isDirty, isValid, isSubmitting } = formState;
 
+  useEffect(() => {
+    if (initialValues) {
+      editorRef.current.textContent = initialValues.body;
+    }
+  }, [initialValues]);
+
+  function handlePaste(e) {
+    e.preventDefault();
+    const text = e.clipboardData.getData("text/plain").trim();
+    document.execCommand("insertText", false, text);
+  }
+
+  const body = watch("body");
+
   async function submitThenReset(values) {
     await handleAnswer(values);
     reset();
+    editorRef.current.textContent = "";
   }
 
   async function handleAnswer(values) {
+    console.log(values);
     const res = await fetch(
       initialValues
         ? `/api/questions/${questionId}/answers/${answerId}`
@@ -109,30 +129,50 @@ export default function AnswerForm({
           size={32}
           className={styles.avatar}
         />
-        <Textarea
-          name="body"
-          placeholder="Írd be a válaszod..."
-          rows={5}
-          ref={register}
-          error={Boolean(errors?.body?.message)}
-        />
-      </div>
-      <div className={styles.answerFormActions}>
-        {errors?.body?.message && <Error>{errors.body.message}</Error>}
-
-        {initialValues && (
-          <Button onClick={onCancel} kind={KIND.secondary}>
-            Mégsem
-          </Button>
+        <div className={styles.inputWrapper}>
+          <Controller
+            control={control}
+            name="body"
+            render={({ onChange, onBlur }) => (
+              <div
+                contentEditable
+                onPaste={handlePaste}
+                ref={editorRef}
+                placeholder="Írd be a válaszod..."
+                className={cn(styles.input, {
+                  [styles.empty]: !body,
+                  [styles.errored]: errors?.body?.message,
+                })}
+                onFocus={() => setFocused(true)}
+                onBlur={() => {
+                  setFocused(false);
+                  onBlur();
+                }}
+                onInput={(e) => {
+                  onChange(e.currentTarget.textContent);
+                }}
+              />
+            )}
+          />
+          {errors?.body?.message && <Error>{errors.body.message}</Error>}
+        </div>
+        {(focused || body || errors?.body?.message) && (
+          <div className={styles.answerFormActions}>
+            <Button
+              type="submit"
+              disabled={isSubmitting || !(isValid && isDirty)}
+              loading={isSubmitting}
+              inverted
+            >
+              {initialValues ? "Mentés" : "Küldés"}
+            </Button>
+            {initialValues && (
+              <Button type="button" onClick={onCancel} kind={KIND.secondary}>
+                Mégsem
+              </Button>
+            )}
+          </div>
         )}
-        <Button
-          type="submit"
-          disabled={isSubmitting || !(isValid && isDirty)}
-          loading={isSubmitting}
-          inverted
-        >
-          Küldés
-        </Button>
       </div>
     </form>
   );

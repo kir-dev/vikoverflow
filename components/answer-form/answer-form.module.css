@@ -2,20 +2,17 @@
   margin-left: var(--indent);
   display: flex;
   flex-direction: column;
+  padding-bottom: var(--gap-large);
   border-bottom: 1px solid var(--border);
   margin-bottom: var(--gap-large);
-  padding-bottom: var(--gap-large);
 }
 
-.answerForm:not(:last-of-type) {
-  padding-bottom: var(--gap-large);
-  border-bottom: 1px solid var(--border);
-  margin-bottom: var(--gap-large);
+.answerForm button {
+  height: 32px;
 }
 
 .answerFormContent {
   display: flex;
-  margin-bottom: 8px;
   width: 100%;
 }
 
@@ -30,26 +27,40 @@
 
 .answerFormActions {
   display: flex;
-  align-items: center;
-  margin-left: var(--indent);
-}
-
-.answerFormActions button:first-of-type {
-  margin-left: auto;
+  flex-direction: column;
+  margin-left: var(--gap-large);
 }
 
 .answerFormActions button + button {
-  margin-left: 10px;
+  margin-top: var(--gap);
+}
+
+.inputWrapper {
+  flex: 1;
+  margin-left: 12px;
 }
 
 .input {
-  margin-left: 12px;
   outline: none;
+  max-width: 100%;
+  width: 100%;
+  white-space: pre-wrap;
+  word-break: break-word;
+  caret-color: rgb(55, 53, 47);
+  position: relative;
+  max-height: 45vh;
+  overflow: hidden auto;
+  margin-top: calc(((32 - 17) / 2) * 1px);
+  cursor: text;
 }
 
-.input:empty::before {
-  height: 100%;
-  width: 100%;
+.input.errored {
+  color: var(--error);
+  margin-bottom: var(--gap-small);
+}
+
+.input.empty::before {
+  position: absolute;
   color: rgb(55, 53, 47);
   -webkit-text-fill-color: rgba(55, 53, 47, 0.4);
   content: attr(placeholder);

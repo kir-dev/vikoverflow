@@ -181,7 +181,7 @@ export default function Answer({
   return (
     <>
       <Modal open={answerDeleteModal.open} onClose={closeAnswerDeleteModal}>
-      <Modal.Header title="Törlés megerősítése" />
+        <Modal.Header title="Törlés megerősítése" />
         <Modal.Body>
           <p>
             Biztosan törlöd a válaszodat?

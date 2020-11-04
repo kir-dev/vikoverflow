@@ -29,6 +29,12 @@ const Modal = ({ children, open, onClose }) => {
   );
 };
 
+Modal.Header = ({ title }) => (
+  <div className={styles.header}>
+    <h1>{title}</h1>
+  </div>
+);
+
 Modal.Body = ({ children }) => <div className={styles.body}>{children}</div>;
 
 Modal.Footer = ({ children }) => (

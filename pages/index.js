@@ -39,7 +39,7 @@ export default function HomePage() {
           <div className={styles.topicStats}>
             <h1>Népszerű témák</h1>
             <ul>
-              {topicsData ? (
+              {topicsData?.topics ? (
                 topicsData.topics.map((t) => (
                   <li key={t.id} onClick={() => router.push(`/tema/${t.id}`)}>
                     <span>#{t.id}</span>

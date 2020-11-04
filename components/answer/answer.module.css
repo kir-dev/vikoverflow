@@ -1,7 +1,10 @@
 .container {
   padding-bottom: 4px;
-  border-bottom: 1px solid var(--border);
   margin-bottom: var(--gap-large);
+}
+
+.container:not(:last-of-type) {
+  border-bottom: 1px solid var(--border);
 }
 
 .header {

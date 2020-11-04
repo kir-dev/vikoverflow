@@ -1,4 +1,4 @@
-import { forwardRef, useMemo } from "react";
+import { useMemo } from "react";
 import Textarea from "components/textarea";
 import styles from "./answer-form.module.css";
 import { getAnswerSchema } from "lib/schemas";

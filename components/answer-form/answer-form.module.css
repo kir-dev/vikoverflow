@@ -2,6 +2,9 @@
   margin-left: var(--indent);
   display: flex;
   flex-direction: column;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: var(--gap-large);
+  padding-bottom: var(--gap-large);
 }
 
 .answerForm:not(:last-of-type) {
@@ -37,4 +40,18 @@
 
 .answerFormActions button + button {
   margin-left: 10px;
+}
+
+.input {
+  margin-left: 12px;
+  outline: none;
+}
+
+.input:empty::before {
+  height: 100%;
+  width: 100%;
+  color: rgb(55, 53, 47);
+  -webkit-text-fill-color: rgba(55, 53, 47, 0.4);
+  content: attr(placeholder);
+  display: block;
 }

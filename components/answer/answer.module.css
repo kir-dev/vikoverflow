@@ -1,9 +1,6 @@
 .container {
   padding-bottom: 4px;
   margin-bottom: var(--gap-large);
-}
-
-.container:not(:last-child) {
   border-bottom: 1px solid var(--border);
 }
 

@@ -42,7 +42,7 @@ export default function AnswerForm({
 
   useEffect(() => {
     if (initialValues) {
-      editorRef.current.textContent = initialValues.body;
+      editorRef.current.innerText = initialValues.body;
     }
   }, [initialValues]);
 
@@ -57,11 +57,10 @@ export default function AnswerForm({
   async function submitThenReset(values) {
     await handleAnswer(values);
     reset();
-    editorRef.current.textContent = "";
+    editorRef.current.innerHTML = "";
   }
 
   async function handleAnswer(values) {
-    console.log(values);
     const res = await fetch(
       initialValues
         ? `/api/questions/${questionId}/answers/${answerId}`
@@ -149,7 +148,7 @@ export default function AnswerForm({
                   onBlur();
                 }}
                 onInput={(e) => {
-                  onChange(e.currentTarget.textContent);
+                  onChange(e.currentTarget.innerText);
                 }}
               />
             )}

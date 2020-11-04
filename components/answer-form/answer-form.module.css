@@ -52,6 +52,7 @@
   overflow: hidden auto;
   margin-top: calc(((32 - 17) / 2) * 1px);
   cursor: text;
+  min-height: 1em;
 }
 
 .input.errored {

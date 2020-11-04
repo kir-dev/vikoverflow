@@ -12,6 +12,7 @@ import Avatar from "components/avatar";
 import dayjs from "lib/dayjs";
 import cn from "clsx";
 import AnswerForm from "components/answer-form";
+import Linkify from "components/linkify";
 
 export default function Answer({
   questionId,
@@ -248,7 +249,9 @@ export default function Answer({
         </div>
 
         <div className={styles.body}>
-          <p>{body}</p>
+          <p>
+            <Linkify>{body}</Linkify>
+          </p>
         </div>
 
         <div className={styles.footer}>

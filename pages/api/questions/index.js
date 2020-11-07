@@ -66,15 +66,7 @@ async function getAllQuestions(req, res) {
       }
     }
 
-    if (req.query.search) {
-      params.ExpressionAttributeValues[":title"] = req.query.search;
-      params.ExpressionAttributeValues[":body"] = req.query.search;
-      params.ExpressionAttributeValues[":topic"] = req.query.search;
-      params.FilterExpression =
-        "contains(title, :title) or contains(body, :body) or contains(topic, :topic)";
-    } else {
-      params.Limit = req.query.limit ? parseInt(req.query.limit) : 10;
-    }
+    params.Limit = req.query.limit ? parseInt(req.query.limit) : 10;
 
     const { Items, LastEvaluatedKey } = await db.query(params).promise();
 

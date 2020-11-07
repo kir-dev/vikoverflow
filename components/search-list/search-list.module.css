@@ -1,0 +1,34 @@
+.root {
+  width: calc(800px + 2 * 24px);
+  max-width: 100%;
+  padding: 24px;
+  margin: 0 auto;
+}
+
+.results {
+  margin-top: var(--gap-large);
+}
+
+.result {
+  border-bottom: 1px solid var(--input-border);
+  cursor: pointer;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  white-space: pre-wrap;
+  padding: 12px 0;
+}
+
+.result:hover {
+  text-decoration: underline;
+}
+
+.empty {
+  display: flex;
+  align-items: center;
+  min-height: 41px;
+}
+
+.empty b {
+  font-weight: 600;
+}

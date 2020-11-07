@@ -1,5 +1,7 @@
 import Header from "components/header";
 import Head from "next/head";
+import SearchList from "components/search-list";
+import { useSearch } from "lib/search-context";
 
 function SEO({ title, description, image, favicon, url }) {
   return (
@@ -29,7 +31,10 @@ function SEO({ title, description, image, favicon, url }) {
       <meta property="og:url" content={url} />
 
       {/* General */}
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <meta
+        name="viewport"
+        content="width=device-width,height=device-height,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"
+      />
       <meta name="twitter:card" content="summary_large_image" />
 
       {/* Favicon */}
@@ -38,7 +43,7 @@ function SEO({ title, description, image, favicon, url }) {
   );
 }
 
-const Layout = ({
+export default function Layout({
   children,
   header = true,
   title = "vikoverflow",
@@ -46,18 +51,20 @@ const Layout = ({
   image = "https://vikoverflow.vassbence.com/static/og-image-20201029.png",
   favicon = "/static/favicon-20200519.ico",
   url = "https://vikoverflow.sch.bme.hu",
-}) => (
-  <>
-    <SEO
-      title={title}
-      description={description}
-      image={image}
-      favicon={favicon}
-      url={url}
-    />
-    {header && <Header />}
-    {children}
-  </>
-);
+}) {
+  const { search } = useSearch();
 
-export default Layout;
+  return (
+    <>
+      <SEO
+        title={title}
+        description={description}
+        image={image}
+        favicon={favicon}
+        url={url}
+      />
+      {header && <Header />}
+      {search ? <SearchList /> : children}
+    </>
+  );
+}

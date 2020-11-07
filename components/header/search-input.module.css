@@ -10,16 +10,22 @@
   color: var(--background);
 }
 
-.root:focus-within {
+.root.focused {
   width: 450px;
   color: var(--foreground);
 }
 
-.root svg {
+.root > svg {
   position: absolute;
   left: 6px;
   top: 2px;
   pointer-events: none;
+}
+
+.root button {
+  position: absolute;
+  right: 6px;
+  top: 2px;
 }
 
 .input {
@@ -35,7 +41,7 @@
   transition: background 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.input:focus {
+.root.focused .input {
   background: var(--background);
   color: var(--foreground);
 }
@@ -44,7 +50,7 @@
   color: var(--background);
 }
 
-.input:focus::placeholder {
+.root.focused .input::placeholder {
   color: var(--foreground);
 }
 

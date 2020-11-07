@@ -57,7 +57,9 @@ export default function AnswerForm({
   async function submitThenReset(values) {
     await handleAnswer(values);
     reset();
-    editorRef.current.innerHTML = "";
+    if (editorRef?.current) {
+      editorRef.current.innerHTML = "";
+    }
   }
 
   async function handleAnswer(values) {
@@ -108,8 +110,6 @@ export default function AnswerForm({
             },
           },
         }));
-
-        scrollTo({ top: 0, behavior: "smooth" });
       }
     } else {
       addToast("Hiba lépett fel a válaszod beküldése közben.");

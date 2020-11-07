@@ -6,3 +6,4 @@
 .env
 .vercel
 cdk.out
+.parcel-cache

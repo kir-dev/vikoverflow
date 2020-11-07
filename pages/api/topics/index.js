@@ -12,12 +12,7 @@ async function getAllTopics(req, res) {
       ScanIndexForward: false,
     };
 
-    if (req.query.search) {
-      params.ExpressionAttributeValues[":topic"] = req.query.search;
-      params.FilterExpression = "contains(topic, :topic)";
-    } else {
-      params.Limit = req.query.limit ? parseInt(req.query.limit) : 5;
-    }
+    params.Limit = req.query.limit ? parseInt(req.query.limit) : 5;
 
     const { Items } = await db.query(params).promise();
 

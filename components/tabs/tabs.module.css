@@ -1,0 +1,39 @@
+.tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: baseline;
+  padding-bottom: 1px;
+  box-shadow: 0 -1px 0 var(--accent-2) inset;
+  overflow-x: auto;
+}
+
+.tabContainer {
+  padding: 0 var(--gap);
+  cursor: pointer;
+  margin-bottom: -1px;
+  border-bottom: 1px solid var(--accent-2);
+  outline: 0;
+}
+
+.tabContainer:first-child {
+  padding-left: 0;
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  margin-bottom: -1px;
+  padding: 6px 2px;
+  border-bottom: 2px solid transparent;
+  color: var(--accent-4);
+}
+
+.tabContainer:focus .tab {
+  color: var(--foreground);
+}
+
+.activeTab,
+.disabled .tabContainer:focus .tab.activeTab {
+  color: var(--foreground);
+  border-bottom: 2px solid var(--foreground);
+}

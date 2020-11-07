@@ -13,7 +13,6 @@ export default function QuestionPage() {
   const router = useRouter();
   const questionId = router.query.id;
   const { data } = useSWR(questionId ? `/api/questions/${questionId}` : null);
-  const answerFormRef = useRef(null);
 
   useEffect(() => {
     if (!data) return;

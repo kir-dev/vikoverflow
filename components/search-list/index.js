@@ -4,7 +4,7 @@ import Tabs from "components/tabs";
 import useSWR from "swr";
 import { useRouter } from "next/router";
 import { useSearch } from "lib/search-context";
-import { useDebounce } from "lib/utils";
+import { useDebounce } from "use-debounce";
 
 function Result(props) {
   const router = useRouter();
@@ -49,9 +49,11 @@ function Result(props) {
   }
 }
 
-export default function SearchPage() {
+export default function SearchList() {
   const { search } = useSearch();
-  const debouncedSearch = useDebounce(search, 400);
+  const [debouncedSearch] = useDebounce(search, 300, {
+    maxWait: 500,
+  });
   const { data } = useSWR(
     search && debouncedSearch ? `/api/search?q=${debouncedSearch}` : null
   );
@@ -77,7 +79,7 @@ export default function SearchPage() {
         setSelected={setSelected}
       />
 
-      {results && (
+      {results && search === debouncedSearch && (
         <div className={styles.results}>
           {results.length ? (
             results.map((r, n) => <Result {...r} key={n} />)

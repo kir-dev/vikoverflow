@@ -4,6 +4,7 @@ import { ToastsProvider } from "components/toasts";
 import Router from "next/router";
 import { useState, useEffect } from "react";
 import { SearchContext } from "lib/search-context";
+import { useDebounce } from "use-debounce";
 
 function fetcher(url) {
   return fetch(url).then((r) => r.json());
@@ -11,6 +12,9 @@ function fetcher(url) {
 
 export default function MyApp({ Component, pageProps }) {
   const [search, setSearch] = useState("");
+  const [debouncedSearch] = useDebounce(search, 300, {
+    maxWait: 500,
+  });
 
   function resetSearch() {
     setSearch("");
@@ -29,7 +33,7 @@ export default function MyApp({ Component, pageProps }) {
   return (
     <SWRConfig value={{ fetcher }}>
       <ToastsProvider>
-        <SearchContext.Provider value={{ search, setSearch }}>
+        <SearchContext.Provider value={{ search, setSearch, debouncedSearch }}>
           <Component {...pageProps} />
         </SearchContext.Provider>
       </ToastsProvider>

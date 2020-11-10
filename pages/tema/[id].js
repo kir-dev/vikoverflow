@@ -24,7 +24,7 @@ export default function TopicPage() {
 
     if (index === 0) return `/api/questions?topic=${topicId}`;
 
-    return `/api/questions?topic=${topicId}&cursor=${prevData.nextCursor}&cursor2=${prevData.nextCursor2}`;
+    return `/api/questions?topic=${topicId}&cursor=${prevData.nextCursor}&cursorCreatedAt=${prevData.nextCursorCreatedAt}`;
   });
 
   const [loaderRef, inView] = useInView({ rootMargin: "400px 0px" });
@@ -117,7 +117,7 @@ export default function TopicPage() {
                 módosítani a téma leírását.
               </p>
               <Textarea
-              label="Új leírás"
+                label="Új leírás"
                 name="description"
                 rows={3}
                 placeholder="Add meg a téma új leírását..."

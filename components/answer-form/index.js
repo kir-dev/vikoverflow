@@ -1,5 +1,4 @@
 import { useMemo, useState, useRef, useEffect } from "react";
-import Textarea from "components/textarea";
 import styles from "./answer-form.module.css";
 import { getAnswerSchema } from "lib/schemas";
 import { useForm, Controller } from "react-hook-form";
@@ -19,6 +18,7 @@ export default function AnswerForm({
   initialValues,
   onCancel,
   onSubmit,
+  skeleton,
 }) {
   const [focused, setFocused] = useState(false);
   const { addToast } = useToasts();
@@ -114,6 +114,16 @@ export default function AnswerForm({
     } else {
       addToast("Hiba lépett fel a válaszod beküldése közben.");
     }
+  }
+
+  if (skeleton) {
+    return (
+      <div className={styles.answerForm}>
+        <div className={styles.answerFormContent}>
+          <Avatar skeleton size={32} />
+        </div>
+      </div>
+    );
   }
 
   return (

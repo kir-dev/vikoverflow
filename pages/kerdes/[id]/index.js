@@ -3,7 +3,7 @@ import useSWR from "swr";
 import styles from "styles/pages/question.module.css";
 import { useUser } from "lib/authenticate";
 import Layout from "components/layout";
-import { useRef, useEffect } from "react";
+import { useEffect } from "react";
 import AnswerForm from "components/answer-form";
 import Answer from "components/answer";
 import Question from "components/question";
@@ -27,6 +27,7 @@ export default function QuestionPage() {
       <Layout>
         <div className={styles.root}>
           <Question skeleton />
+          <AnswerForm skeleton />
           <Answer skeleton />
           <Answer skeleton />
         </div>

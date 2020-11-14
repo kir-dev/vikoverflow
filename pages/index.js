@@ -1,34 +1,27 @@
 import Layout from "components/layout";
 import styles from "styles/pages/index.module.css";
-import useSWR, { useSWRInfinite } from "swr";
+import useSWR from "swr";
 import { useRouter } from "next/router";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import Question from "components/question-list-element";
+import useQuestions from "swr/use-questions";
 
 export default function HomePage() {
   const router = useRouter();
-  const { data, size, setSize } = useSWRInfinite((index, prevData) => {
-    if (prevData && !prevData.nextCursor) return null;
-
-    if (index === 0) return `/api/questions`;
-
-    return `/api/questions?cursor=${prevData.nextCursor}&cursor2=${prevData.nextCursor2}`;
-  });
+  const {
+    questions,
+    initialDataLoaded,
+    isEmpty,
+    isReachingEnd,
+    loadMore,
+  } = useQuestions();
   const { data: topicsData } = useSWR("/api/topics");
-
   const [loaderRef, inView] = useInView({ rootMargin: "400px 0px" });
-
-  const isErrored = data?.some((p) => !!p.error);
-  const isReachingEnd = data && !data[data.length - 1]?.nextCursor;
-  const questions =
-    data && !isErrored
-      ? [].concat(...data.map((page) => page.questions))
-      : null;
 
   useEffect(() => {
     if (inView && !isReachingEnd) {
-      setSize(size + 1);
+      loadMore();
     }
   }, [inView, isReachingEnd]);
 
@@ -58,13 +51,17 @@ export default function HomePage() {
           </div>
         </aside>
         <main className={styles.main}>
-          {questions ? (
-            <>
-              {questions.map((q) => (
-                <Question key={q.id} {...q} />
-              ))}
-              {!isReachingEnd && <Question skeleton ref={loaderRef} />}
-            </>
+          {initialDataLoaded ? (
+            isEmpty ? (
+              <h1>Még nem érkeztek kérdések, tedd fel te az elsőt.</h1>
+            ) : (
+              <>
+                {questions.map((q) => (
+                  <Question key={q.id} {...q} />
+                ))}
+                {!isReachingEnd && <Question skeleton ref={loaderRef} />}
+              </>
+            )
           ) : (
             <>
               <Question skeleton />

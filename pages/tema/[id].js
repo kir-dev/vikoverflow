@@ -13,19 +13,20 @@ import { TopicDescriptionSchema } from "lib/schemas";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Question from "components/question-list-element";
+import useTopicQuestions from "swr/use-topic-questions";
 
 export default function TopicPage() {
   const { user } = useUser();
   const router = useRouter();
   const topicId = router.query.id;
   const { data: topicData } = useSWR(topicId ? `/api/topics/${topicId}` : null);
-  const { data, size, setSize } = useSWRInfinite((index, prevData) => {
-    if (!topicId || (prevData && !prevData.nextCursor)) return null;
-
-    if (index === 0) return `/api/questions?topic=${topicId}`;
-
-    return `/api/questions?topic=${topicId}&cursor=${prevData.nextCursor}&cursorCreatedAt=${prevData.nextCursorCreatedAt}`;
-  });
+  const {
+    questions,
+    initialDataLoaded,
+    isEmpty,
+    isReachingEnd,
+    loadMore,
+  } = useTopicQuestions();
 
   const [loaderRef, inView] = useInView({ rootMargin: "400px 0px" });
 
@@ -92,16 +93,9 @@ export default function TopicPage() {
     reset({ description: topicData?.topic?.description ?? "" });
   }, [topicData]);
 
-  const isErrored = data?.some((p) => !!p.error);
-  const isReachingEnd = data && !data[data.length - 1]?.nextCursor;
-  const questions =
-    data && !isErrored
-      ? [].concat(...data.map((page) => page.questions))
-      : null;
-
   useEffect(() => {
     if (inView && !isReachingEnd) {
-      setSize(size + 1);
+      loadMore();
     }
   }, [inView, isReachingEnd]);
 
@@ -179,15 +173,22 @@ export default function TopicPage() {
             </div>
           </header>
           <main className={styles.main}>
-            {questions ? (
-              <>
-                {questions.map((q) => (
-                  <Question {...q} />
-                ))}
-                {!isReachingEnd && <Question skeleton ref={loaderRef} />}
-              </>
+            {initialDataLoaded ? (
+              isEmpty ? (
+                <h1 className={styles.empty}>
+                  Még nem érkeztek kérdések, tedd fel te az elsőt.
+                </h1>
+              ) : (
+                <>
+                  {questions.map((q) => (
+                    <Question key={q.id} {...q} />
+                  ))}
+                  {!isReachingEnd && <Question skeleton ref={loaderRef} />}
+                </>
+              )
             ) : (
               <>
+                <Question skeleton />
                 <Question skeleton />
                 <Question skeleton />
                 <Question skeleton />

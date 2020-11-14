@@ -58,3 +58,9 @@
 .modalBody textarea {
   width: 100%;
 }
+
+.empty {
+  font-size: 14px;
+  margin-bottom: 8px;
+  font-weight: 500;
+}

@@ -1,7 +1,7 @@
 import { useSWRInfinite } from "swr";
 import { useRouter } from "next/router";
 
-export default function useQuestions() {
+export default function useTopicQuestions() {
   const router = useRouter();
   const topicId = router.query.id;
   const swr = useSWRInfinite((index, previousPageData) => {

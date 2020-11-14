@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useEffect } from "react";
 import { Edit } from "components/icons";
+import useActivities from "swr/use-activities";
 
 // TODO use optional catch all routes instead of 2 different profile pages
 // https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes
@@ -23,17 +24,14 @@ import { Edit } from "components/icons";
 export default function ProfilePage() {
   const { user } = useUser("/belepes");
   const { data: userData } = useSWR(user?.id ? `/api/user/${user.id}` : "");
-  const { data, size, setSize } = useSWRInfinite((index, prevData) => {
-    if (prevData && !prevData.nextCursor) return null;
-
-    if (index === 0) return `/api/user/activities`;
-
-    return `/api/user/activities?cursorPK=${encodeURIComponent(
-      prevData.nextCursor.PK
-    )}&cursorSK=${encodeURIComponent(prevData.nextCursor.SK)}&cursorCreatedAt=${
-      prevData.nextCursor.createdAt
-    }`;
-  });
+  const {
+    activities,
+    initialDataLoaded,
+    isLoadingMore,
+    isEmpty,
+    isReachingEnd,
+    loadMore,
+  } = useActivities();
   const { addToast } = useToasts();
 
   const { register, handleSubmit, reset, errors, formState } = useForm({
@@ -77,15 +75,6 @@ export default function ProfilePage() {
       });
     }
   }
-
-  const isErrored = data?.some((p) => !!p.error);
-  const isReachingEnd = data && !data[data.length - 1]?.nextCursor;
-  const isLoadingMore =
-    size > 0 && data && typeof data[size - 1] === "undefined";
-  const activities =
-    data && !isErrored
-      ? [].concat(...data.map((page) => page.activities))
-      : null;
 
   return (
     <>
@@ -202,21 +191,25 @@ export default function ProfilePage() {
               </div>
               <div className={styles.right}>
                 <h2>Legutóbbi tevékenységeid</h2>
-                <ul className={styles.activities}>
-                  {activities?.map((a) => (
-                    <li>{stringifyActivity(a)}</li>
-                  ))}
-                </ul>
+                {initialDataLoaded && !isEmpty && (
+                  <>
+                    <ul className={styles.activities}>
+                      {activities.map((a) => (
+                        <li>{stringifyActivity(a)}</li>
+                      ))}
+                    </ul>
 
-                {!isReachingEnd && activities?.length && (
-                  <span
-                    onClick={() => !isLoadingMore && setSize(size + 1)}
-                    className={cn(styles.loadMore, {
-                      [styles.loading]: isLoadingMore,
-                    })}
-                  >
-                    Továbbiak betöltése...
-                  </span>
+                    {!isReachingEnd && (
+                      <span
+                        onClick={() => !isLoadingMore && loadMore()}
+                        className={cn(styles.loadMore, {
+                          [styles.loading]: isLoadingMore,
+                        })}
+                      >
+                        Továbbiak betöltése...
+                      </span>
+                    )}
+                  </>
                 )}
               </div>
             </div>

@@ -3,7 +3,7 @@ import Layout from "components/layout";
 import { useUser } from "lib/authenticate";
 import { UploadAvatar } from "components/avatar";
 import styles from "styles/pages/profil.module.css";
-import useSWR, { useSWRInfinite, mutate } from "swr";
+import useSWR, { mutate } from "swr";
 import Input from "components/input";
 import Button from "components/button";
 import Link from "next/link";

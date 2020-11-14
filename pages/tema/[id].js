@@ -1,6 +1,6 @@
 import Layout from "components/layout";
 import styles from "styles/pages/tema.module.css";
-import useSWR, { useSWRInfinite, mutate } from "swr";
+import useSWR, { mutate } from "swr";
 import { useInView } from "react-intersection-observer";
 import { useState, useEffect } from "react";
 import Button, { KIND } from "components/button";

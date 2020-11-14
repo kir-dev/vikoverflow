@@ -3,8 +3,9 @@ import { nanoid } from "nanoid";
 import withUser from "lib/api/with-user";
 import { getAnswerSchema } from "lib/schemas";
 import { trimLineBreaks } from "lib/utils";
+import handler from "lib/api/handler";
 
-export default withUser(async function createAnswer(req, res) {
+async function createAnswer(req, res) {
   try {
     const isValid = await getAnswerSchema().isValid(req.body);
 
@@ -52,4 +53,8 @@ export default withUser(async function createAnswer(req, res) {
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
+}
+
+export default handler({
+  POST: withUser(createAnswer),
 });

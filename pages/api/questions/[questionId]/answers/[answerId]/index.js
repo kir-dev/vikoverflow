@@ -2,6 +2,7 @@ import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { getAnswerSchema } from "lib/schemas";
 import { trimLineBreaks } from "lib/utils";
+import handler from "lib/api/handler";
 
 // https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
 const BATCH_SIZE = 25;
@@ -147,18 +148,7 @@ async function deleteAnswer(req, res) {
   }
 }
 
-export default function handler(req, res) {
-  switch (req.method) {
-    case "PATCH":
-      return withUser(editAnswer)(req, res);
-
-    case "DELETE":
-      return withUser(deleteAnswer)(req, res);
-
-    default:
-      res.setHeader("Allow", ["PATCH", "DELETE"]);
-      return res
-        .status(405)
-        .json({ error: `Method ${req.method} Not Allowed` });
-  }
-}
+export default handler({
+  PATCH: withUser(editAnswer),
+  DELETE: withUser(deleteAnswer),
+});

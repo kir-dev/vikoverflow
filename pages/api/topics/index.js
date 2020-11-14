@@ -1,4 +1,5 @@
 import db from "lib/api/db";
+import handler from "lib/api/handler";
 
 async function getAllTopics(req, res) {
   try {
@@ -27,15 +28,6 @@ async function getAllTopics(req, res) {
   }
 }
 
-export default function handler(req, res) {
-  switch (req.method) {
-    case "GET":
-      return getAllTopics(req, res);
-
-    default:
-      res.setHeader("Allow", ["GET"]);
-      return res
-        .status(405)
-        .json({ error: `Method ${req.method} Not Allowed` });
-  }
-}
+export default handler({
+  GET: getAllTopics,
+});

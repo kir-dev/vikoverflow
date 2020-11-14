@@ -1,6 +1,7 @@
 import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { TopicDescriptionSchema } from "lib/schemas";
+import handler from "lib/api/handler";
 
 async function getTopic(req, res) {
   try {
@@ -84,18 +85,7 @@ async function editTopic(req, res) {
   }
 }
 
-export default function handler(req, res) {
-  switch (req.method) {
-    case "GET":
-      return getTopic(req, res);
-
-    case "PATCH":
-      return withUser(editTopic)(req, res);
-
-    default:
-      res.setHeader("Allow", ["GET", "PATCH"]);
-      return res
-        .status(405)
-        .json({ error: `Method ${req.method} Not Allowed` });
-  }
-}
+export default handler({
+  GET: getTopic,
+  PATCH: withUser(editTopic),
+});

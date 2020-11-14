@@ -1,6 +1,7 @@
 import withUser from "lib/api/with-user";
+import handler from "lib/api/handler";
 
-export default withUser(async function getUser(req, res) {
+async function getUser(req, res) {
   try {
     if (req.method !== "GET") {
       res.setHeader("Allow", ["GET"]);
@@ -14,4 +15,8 @@ export default withUser(async function getUser(req, res) {
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
+}
+
+export default handler({
+  GET: withUser(getUser),
 });

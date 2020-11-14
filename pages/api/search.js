@@ -1,5 +1,6 @@
 import { Client } from "@elastic/elasticsearch";
 import { truncateBody } from "lib/utils";
+import handler from "lib/api/handler";
 
 const client = new Client({
   node: process.env.ELASTICSEARCH_DOMAIN_ENDPOINT,
@@ -9,15 +10,8 @@ const client = new Client({
   },
 });
 
-export default async function search(req, res) {
+async function search(req, res) {
   try {
-    if (req.method !== "GET") {
-      res.setHeader("Allow", ["GET"]);
-      return res
-        .status(405)
-        .json({ error: `Method ${req.method} Not Allowed` });
-    }
-
     if (!req.query.q) {
       return res
         .status(400)
@@ -48,3 +42,7 @@ export default async function search(req, res) {
     return res.status(500).json({ error: e.message });
   }
 }
+
+export default handler({
+  GET: search,
+});

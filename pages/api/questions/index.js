@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 import { trimSpaces, trimLineBreaks, truncateBody } from "lib/utils";
 import parseMultipart from "lib/api/parse-multipart";
 import { uploadToS3 } from "lib/api/s3";
+import handler from "lib/api/handler";
 
 async function getAllQuestions(req, res) {
   try {
@@ -227,18 +228,7 @@ export const config = {
   },
 };
 
-export default function handler(req, res) {
-  switch (req.method) {
-    case "GET":
-      return getAllQuestions(req, res);
-
-    case "POST":
-      return withUser(createQuestion)(req, res);
-
-    default:
-      res.setHeader("Allow", ["GET", "POST"]);
-      return res
-        .status(405)
-        .json({ error: `Method ${req.method} Not Allowed` });
-  }
-}
+export default handler({
+  GET: getAllQuestions,
+  POST: withUser(createQuestion),
+});

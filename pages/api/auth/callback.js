@@ -2,16 +2,10 @@ import { serialize } from "cookie";
 import jwt from "jsonwebtoken";
 import db from "lib/api/db";
 import { isSecureEnvironment } from "lib/utils";
+import handler from "lib/api/handler";
 
-export default async function handleCallbackFromOauth(req, res) {
+async function handleCallbackFromOauth(req, res) {
   try {
-    if (req.method !== "GET") {
-      res.setHeader("Allow", ["GET"]);
-      return res
-        .status(405)
-        .json({ error: `Method ${req.method} Not Allowed` });
-    }
-
     const { code, state } = req.query;
 
     if (state !== process.env.OAUTH_SECRET) {
@@ -99,3 +93,7 @@ export default async function handleCallbackFromOauth(req, res) {
     return res.status(500).json({ error: error.message });
   }
 }
+
+export default handler({
+  GET: handleCallbackFromOauth,
+});

@@ -1,16 +1,10 @@
 import withUser from "lib/api/with-user";
 import { serialize } from "cookie";
 import { isSecureEnvironment } from "lib/utils";
+import handler from "lib/api/handler";
 
-export default withUser(async function (req, res) {
+async function logout(req, res) {
   try {
-    if (req.method !== "GET") {
-      res.setHeader("Allow", ["GET"]);
-      return res
-        .status(405)
-        .json({ error: `Method ${req.method} Not Allowed` });
-    }
-
     res.setHeader("Set-Cookie", [
       serialize("token", "", {
         maxAge: 0,
@@ -31,4 +25,8 @@ export default withUser(async function (req, res) {
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
+}
+
+export default handler({
+  GET: withUser(logout),
 });

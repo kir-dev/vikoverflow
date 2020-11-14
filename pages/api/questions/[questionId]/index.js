@@ -5,6 +5,7 @@ import { trimSpaces, trimLineBreaks } from "lib/utils";
 import { uploadToS3, deleteFromS3 } from "lib/api/s3";
 import parseMultipart from "lib/api/parse-multipart";
 import { DELETE_CURRENT_FILE } from "lib/constants";
+import handler from "lib/api/handler";
 
 // https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
 const BATCH_SIZE = 25;
@@ -358,21 +359,8 @@ export const config = {
   },
 };
 
-export default function handler(req, res) {
-  switch (req.method) {
-    case "GET":
-      return withUser(getQuestion, { throw: false })(req, res);
-
-    case "PATCH":
-      return withUser(editQuestion)(req, res);
-
-    case "DELETE":
-      return withUser(deleteQuestion)(req, res);
-
-    default:
-      res.setHeader("Allow", ["GET", "PATCH", "DELETE"]);
-      return res
-        .status(405)
-        .json({ error: `Method ${req.method} Not Allowed` });
-  }
-}
+export default handler({
+  GET: withUser(getQuestion, { throw: false }),
+  PATCH: withUser(editQuestion),
+  DELETE: withUser(deleteQuestion),
+});

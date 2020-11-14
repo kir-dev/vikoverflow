@@ -1,7 +1,8 @@
 import db from "lib/api/db";
 import withUser from "lib/api/with-user";
+import handler from "lib/api/handler";
 
-export default withUser(async function vote(req, res) {
+async function editVotes(req, res) {
   try {
     const params = {
       TransactItems: [
@@ -51,4 +52,8 @@ export default withUser(async function vote(req, res) {
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
+}
+
+export default handler({
+  PATCH: withUser(editVotes),
 });

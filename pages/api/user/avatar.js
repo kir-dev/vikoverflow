@@ -2,16 +2,10 @@ import { uploadToS3, deleteFromS3 } from "lib/api/s3";
 import withUser from "lib/api/with-user";
 import db from "lib/api/db";
 import parseMultipart from "lib/api/parse-multipart";
+import handler from "lib/api/handler";
 
-export default withUser(async function addCustomUserStuff(req, res) {
+async function addCustomUserStuff(req, res) {
   try {
-    if (req.method !== "POST") {
-      res.setHeader("Allow", ["POST"]);
-      return res
-        .status(405)
-        .json({ error: `Method ${req.method} Not Allowed` });
-    }
-
     const { parsedFiles } = await parseMultipart(req);
     let key;
     const file = parsedFiles[0];
@@ -56,10 +50,14 @@ export default withUser(async function addCustomUserStuff(req, res) {
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
-});
+}
 
 export const config = {
   api: {
     bodyParser: false,
   },
 };
+
+export default handler({
+  POST: withUser(addCustomUserStuff),
+});

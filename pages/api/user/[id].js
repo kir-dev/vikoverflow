@@ -2,6 +2,7 @@ import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { UserProfileSchema } from "lib/schemas";
 import { trimSpaces } from "lib/utils";
+import handler from "lib/api/handler";
 
 async function getUser(req, res) {
   try {
@@ -76,18 +77,7 @@ async function editUser(req, res) {
   }
 }
 
-export default function handler(req, res) {
-  switch (req.method) {
-    case "GET":
-      return withUser(getUser, { throw: false })(req, res);
-
-    case "PATCH":
-      return withUser(editUser)(req, res);
-
-    default:
-      res.setHeader("Allow", ["GET", "PATCH"]);
-      return res
-        .status(405)
-        .json({ error: `Method ${req.method} Not Allowed` });
-  }
-}
+export default handler({
+  GET: withUser(getUser, { throw: false }),
+  PATCH: withUser(editUser),
+});

@@ -1,16 +1,10 @@
 import db from "lib/api/db";
 import { ACTIVITY } from "lib/constants";
 import withUser from "lib/api/with-user";
+import handler from "lib/api/handler";
 
-export default withUser(async function getUserActivities(req, res) {
+async function getUserActivities(req, res) {
   try {
-    if (req.method !== "GET") {
-      res.setHeader("Allow", ["GET"]);
-      return res
-        .status(405)
-        .json({ error: `Method ${req.method} Not Allowed` });
-    }
-
     const params = {
       TableName: process.env.DYNAMO_TABLE_NAME,
       IndexName: "GSI3",
@@ -137,4 +131,8 @@ export default withUser(async function getUserActivities(req, res) {
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
+}
+
+export default handler({
+  GET: withUser(getUserActivities),
 });

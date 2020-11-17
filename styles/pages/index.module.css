@@ -20,7 +20,7 @@
   left: 0;
 }
 
-.root h1 {
+.empty, .topicStats h1 {
   font-size: 14px;
   margin-bottom: 8px;
   font-weight: 500;

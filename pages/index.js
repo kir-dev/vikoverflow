@@ -53,7 +53,9 @@ export default function HomePage() {
         <main className={styles.main}>
           {initialDataLoaded ? (
             isEmpty ? (
-              <h1>Még nem érkeztek kérdések, tedd fel te az elsőt.</h1>
+              <h1 className={styles.empty}>
+                Még nem érkeztek kérdések, tedd fel te az elsőt.
+              </h1>
             ) : (
               <>
                 {questions.map((q) => (

@@ -4,13 +4,12 @@ import { useRouter } from "next/router";
 export default function useTopicQuestions() {
   const router = useRouter();
   const topicId = router.query.id;
-  const swr = useSWRInfinite((index, previousPageData) => {
-    if (!topicId || (previousPageData && !previousPageData.nextCursor))
-      return null;
+  const swr = useSWRInfinite((i, prev) => {
+    if (!topicId || (prev && !prev.nextCursor)) return null;
 
-    if (index === 0) return `/api/questions?topic=${topicId}`;
+    if (i === 0) return `/api/questions?topic=${topicId}`;
 
-    return `/api/questions?topic=${topicId}&cursor=${previousPageData.nextCursor}&cursorCreatedAt=${previousPageData.nextCursorCreatedAt}`;
+    return `/api/questions?topic=${topicId}&cursor=${prev.nextCursor}`;
   });
 
   const questions = swr.data

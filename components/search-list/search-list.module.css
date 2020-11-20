@@ -3,6 +3,13 @@
   max-width: 100%;
   padding: 24px;
   margin: 0 auto;
+  position: relative;
+}
+
+.tabsContainer {
+  position: sticky;
+  top: calc(40px + 24px);
+  background: var(--background);
 }
 
 .results {
@@ -19,6 +26,10 @@
   padding: 12px 0;
 }
 
+.result svg {
+  margin-right: var(--gap);
+}
+
 .result:hover {
   text-decoration: underline;
 }
@@ -31,4 +42,24 @@
 
 .empty b {
   font-weight: 600;
+}
+
+.loadMore {
+  padding: 12px 0;
+  font-weight: 500;
+  font-size: 0.875rem;
+  cursor: pointer;
+  display: inline-block;
+  width: auto;
+}
+
+.loadMore:hover {
+  text-decoration: underline;
+}
+
+.loadMore.loading {
+  color: var(--accent-4);
+  pointer-events: none;
+  text-decoration: none;
+  cursor: initial;
 }

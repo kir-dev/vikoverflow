@@ -7,7 +7,7 @@ async function getUserActivities(req, res) {
   try {
     const params = {
       TableName: process.env.DYNAMO_TABLE_NAME,
-      IndexName: "GSI3",
+      IndexName: "GSI2",
       KeyConditionExpression: "creator = :creator",
       ScanIndexForward: false,
       ExpressionAttributeValues: {

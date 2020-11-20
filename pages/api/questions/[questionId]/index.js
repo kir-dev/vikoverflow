@@ -1,6 +1,6 @@
 import db from "lib/api/db";
 import withUser from "lib/api/with-user";
-import { getQuestionSchema } from "lib/schemas";
+import { QuestionSchema } from "lib/schemas";
 import { trimSpaces, trimLineBreaks } from "lib/utils";
 import { uploadToS3, deleteFromS3 } from "lib/api/s3";
 import parseMultipart from "lib/api/parse-multipart";
@@ -47,7 +47,7 @@ async function getQuestion(req, res) {
 
     const question = {
       id: metadata.PK.split("#")[1],
-      topic: metadata.topic,
+      topics: metadata.topics,
       upvotes: {
         count: metadata.upvotes,
         currentUserUpvoted: req.user
@@ -93,15 +93,15 @@ async function editQuestion(req, res) {
   try {
     const { parsedFields, parsedFiles } = await parseMultipart(req);
 
-    const isValid = await getQuestionSchema(
-      !!parsedFields.topicDescription
-    ).isValid(parsedFields);
+    parsedFields.topics = JSON.parse(parsedFields.topics);
+
+    const isValid = await QuestionSchema.isValid(parsedFields);
 
     if (!isValid) {
       return res.status(400).json({ error: "request not in desired format" });
     }
 
-    const allowedKeys = ["title", "body", "topic"];
+    const allowedKeys = ["title", "body", "topics"];
 
     const updates = Object.entries(parsedFields)
       .filter(([key, _]) => allowedKeys.includes(key))
@@ -124,67 +124,47 @@ async function editQuestion(req, res) {
         PK: `QUESTION#${req.query.questionId}`,
         SK: `QUESTION#${req.query.questionId}`,
       },
-      ProjectionExpression: "topic, attachment",
+      ProjectionExpression: "createdAt, topics, attachment",
     };
 
     const { Item } = await db.get(getParams).promise();
 
-    const oldTopicId = Item.topic;
-    const newTopicId = updates.topic;
+    // if a key has -1 it has to be removed
+    // if it has 1 it has to be added
+    const topicOperations = {};
 
-    if (oldTopicId !== newTopicId) {
-      // we are upserting a topic so the transaction doesnt fail
-      // but using if_not_exists s to make sure createdAt and stuff is not overwritten
-      const preparedUpdate = {
-        TableName: process.env.DYNAMO_TABLE_NAME,
-        Key: {
-          PK: `TOPIC#${newTopicId}`,
-          SK: `TOPIC#${newTopicId}`,
-        },
-        UpdateExpression: `
-        add
-          GSI1SK :incr
-        set
-          GSI1PK = if_not_exists(GSI1PK, :GSI1PK),
-          creator = if_not_exists(creator, :creator),
-          createdAt = if_not_exists(createdAt, :createdAt)`,
-        ExpressionAttributeValues: {
-          ":GSI1PK": "TOPIC",
-          ":creator": req.user.id,
-          ":createdAt": Date.now(),
-          ":incr": 1,
-        },
-      };
+    const oldTopics = Item.topics;
+    const newTopics = parsedFields.topics;
 
-      if (parsedFields.topicDescription) {
-        if (parsedFields.topicDescription.length > 64) {
-          return res.status(400).json({ error: "topicDescriotion too long" });
-        }
+    // all old topics which are not in new have to be removed
+    oldTopics
+      .filter((t) => !newTopics.includes(t))
+      .forEach((t) => (topicOperations[t] = -1));
 
-        preparedUpdate.UpdateExpression += `, description = if_not_exists(description, :description)`;
-        preparedUpdate.ExpressionAttributeValues[":description"] =
-          parsedFields.topicDescription;
-      }
+    // all new topics which are not in old have to be added
+    newTopics
+      .filter((t) => !oldTopics.includes(t))
+      .forEach((t) => (topicOperations[t] = 1));
 
-      params.TransactItems.push(
-        {
-          Update: {
-            TableName: process.env.DYNAMO_TABLE_NAME,
-            Key: {
-              PK: `TOPIC#${oldTopicId}`,
-              SK: `TOPIC#${oldTopicId}`,
-            },
-            UpdateExpression: "add GSI1SK :decr",
-            ExpressionAttributeValues: {
-              ":decr": -1,
-            },
-            ConditionExpression: "attribute_exists(PK)",
+    for (const topic of Object.keys(topicOperations)) {
+      const remove = topicOperations[topic] === -1;
+
+      params.TransactItems.push({
+        // increasing/decreasing the numberOfQuestions on each topic
+        Update: {
+          TableName: process.env.DYNAMO_TABLE_NAME,
+          Key: {
+            PK: `TOPIC#${topic}`,
+            SK: `TOPIC#${topic}`,
+          },
+          UpdateExpression:
+            "add GSI1SK :incr set GSI1PK = if_not_exists(GSI1PK, :GSI1PK)",
+          ExpressionAttributeValues: {
+            ":GSI1PK": "TOPIC",
+            ":incr": remove ? -1 : 1,
           },
         },
-        {
-          Update: preparedUpdate,
-        }
-      );
+      });
     }
 
     const preparedUpdate = {
@@ -270,7 +250,7 @@ async function deleteQuestion(req, res) {
       const queryParams = {
         TableName: process.env.DYNAMO_TABLE_NAME,
         KeyConditionExpression: "PK = :PK",
-        ProjectionExpression: "SK, topic, creator, attachment",
+        ProjectionExpression: "SK, topics, creator, attachment, createdAt",
         ExpressionAttributeValues: {
           ":PK": `QUESTION#${req.query.questionId}`,
         },
@@ -294,25 +274,26 @@ async function deleteQuestion(req, res) {
         .json({ error: "Not authorized to delete this question" });
     }
 
-    const topicId = metadata.topic;
-
     const batches = [];
 
-    let currentBatch = [
-      {
+    let currentBatch = [];
+
+    for (const topic of metadata.topics) {
+      currentBatch.push({
+        // decreasing the numberOfQuestions on each topic
         Update: {
           TableName: process.env.DYNAMO_TABLE_NAME,
           Key: {
-            PK: `TOPIC#${topicId}`,
-            SK: `TOPIC#${topicId}`,
+            PK: `TOPIC#${topic}`,
+            SK: `TOPIC#${topic}`,
           },
-          UpdateExpression: "add GSI1SK :decr",
+          UpdateExpression: "add GSI1SK :incr",
           ExpressionAttributeValues: {
-            ":decr": -1,
+            ":incr": -1,
           },
         },
-      },
-    ];
+      });
+    }
 
     for (const item of itemsToDelete) {
       currentBatch.push({

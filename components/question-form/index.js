@@ -3,9 +3,9 @@ import Button, { KIND } from "components/button";
 import Input from "components/input";
 import Textarea from "components/textarea";
 import useSWR from "swr";
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useRef, useEffect } from "react";
 import Autocomplete from "components/autocomplete";
-import { getQuestionSchema } from "lib/schemas";
+import { QuestionSchema } from "lib/schemas";
 import { DELETE_CURRENT_FILE } from "lib/constants";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -18,11 +18,7 @@ export default function QuestionForm({
   buttonText,
   skeleton,
 }) {
-  const [isTopicNew, setIsTopicNew] = useState(false);
   const { data } = useSWR("/api/topics");
-  const validationSchema = useMemo(() => getQuestionSchema(isTopicNew), [
-    isTopicNew,
-  ]);
   const fileInputRef = useRef(null);
   const {
     register,
@@ -35,7 +31,7 @@ export default function QuestionForm({
     clearErrors,
     watch,
   } = useForm({
-    resolver: yupResolver(validationSchema),
+    resolver: yupResolver(QuestionSchema),
     mode: "onChange",
   });
 
@@ -45,7 +41,7 @@ export default function QuestionForm({
     reset({
       title: initialValues?.title ?? "",
       body: initialValues?.body ?? "",
-      topic: initialValues?.topic ?? "",
+      topics: initialValues?.topics ?? [],
       file: initialValues?.attachment?.originalName
         ? { name: initialValues.attachment.originalName }
         : "",
@@ -82,18 +78,21 @@ export default function QuestionForm({
           />
 
           <Controller
-            name="topic"
+            name="topics"
             control={control}
             render={({ value, onChange, onBlur }) => (
               <Autocomplete
-                label={`Téma${isTopicNew ? " (újat fogsz létrehozni)" : ""}`}
-                error={errors?.topic?.message}
-                value={value ? { label: value, value } : null}
-                onChange={(value) => {
-                  if (value) {
-                    setIsTopicNew(false);
-                    onChange(value.value);
-                  }
+                label="Témák"
+                error={
+                  errors?.topics?.message ||
+                  (errors?.topics?.length &&
+                    errors.topics.map((t, i) => (
+                      <p>{`${value[i]}: ${t.message}`}</p>
+                    )))
+                }
+                value={value?.map((e) => ({ label: e, value: e }))}
+                onChange={(newValue) => {
+                  onChange(newValue ? newValue.map((e) => e.value) : []);
                 }}
                 onBlur={onBlur}
                 disabled={skeleton || !data?.topics || isSubmitting}
@@ -102,27 +101,15 @@ export default function QuestionForm({
                   value: e.id,
                 }))}
                 onCreate={(newTopicName) => {
-                  setIsTopicNew(true);
-                  onChange(newTopicName);
+                  onChange([...value, newTopicName]);
                 }}
-                placeholder="A kérdésed témája..."
+                placeholder="A kérdésed témái..."
                 noOptionsMessage={() => "Nincs még egy téma sem"}
                 formatCreateLabel={(str) => `"${str}" téma létrehozása...`}
+                isMulti
               />
             )}
           />
-
-          {isTopicNew && (
-            <Textarea
-              label="Új téma leírása"
-              name="topicDescription"
-              placeholder="Foglald össze miről szól az új témád..."
-              rows={2}
-              ref={register}
-              error={errors?.topicDescription?.message}
-              disabled={isSubmitting || skeleton}
-            />
-          )}
 
           <Controller
             name="file"

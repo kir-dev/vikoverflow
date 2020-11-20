@@ -18,9 +18,6 @@ import { useEffect } from "react";
 import { Edit } from "components/icons";
 import useActivities from "swr/use-activities";
 
-// TODO use optional catch all routes instead of 2 different profile pages
-// https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes
-
 export default function ProfilePage() {
   const { user } = useUser("/belepes");
   const { data: userData } = useSWR(user?.id ? `/api/user/${user.id}` : "");

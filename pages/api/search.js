@@ -1,14 +1,14 @@
-import { Client } from "@elastic/elasticsearch";
+import es from "lib/api/es";
 import { truncateBody } from "lib/utils";
 import handler from "lib/api/handler";
 
-const client = new Client({
-  node: process.env.ELASTICSEARCH_DOMAIN_ENDPOINT,
-  auth: {
-    username: process.env.ELASTICSEARCH_USER,
-    password: process.env.ELASTICSEARCH_PW,
-  },
-});
+function encodeJSON(json) {
+  return encodeURIComponent(JSON.stringify(json));
+}
+
+function decodeJSON(json) {
+  return JSON.parse(decodeURIComponent(json));
+}
 
 async function search(req, res) {
   try {
@@ -18,7 +18,7 @@ async function search(req, res) {
         .json({ error: "query parameter 'q' not provided" });
     }
 
-    const result = await client.search({
+    const params = {
       index: process.env.ELASTICSEARCH_INDEX_NAME,
       body: {
         query: {
@@ -28,8 +28,15 @@ async function search(req, res) {
             fields: ["*"],
           },
         },
+        sort: [{ _score: "desc" }, { _id: "asc" }],
       },
-    });
+    };
+
+    if (req.query.cursor) {
+      params.body.search_after = decodeJSON(req.query.cursor);
+    }
+
+    const result = await es.search(params);
 
     const mappedResults = result.body.hits.hits.map((h) =>
       h._source.body
@@ -37,7 +44,16 @@ async function search(req, res) {
         : h._source
     );
 
-    return res.json({ results: mappedResults });
+    const responseObj = {
+      results: mappedResults,
+    };
+
+    if (mappedResults.length === 10) {
+      const lastItem = result.body.hits.hits[9];
+      responseObj.nextCursor = encodeJSON([lastItem._score, lastItem._id]);
+    }
+
+    return res.json(responseObj);
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }

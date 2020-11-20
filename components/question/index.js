@@ -21,7 +21,7 @@ export default function Question({
   attachment,
   upvotes,
   answers,
-  topic,
+  topics,
   createdAt,
   creator,
   skeleton,
@@ -244,13 +244,20 @@ export default function Question({
               <span>{answers.count}</span>
             </div>
           </div>
-          <Tooltip label="Téma megtekintése">
-            <p className={styles.topic}>
-              <Link href={`/tema/${topic}`}>
-                <a>#{topic}</a>
-              </Link>
-            </p>
-          </Tooltip>
+          <div className={styles.topics}>
+            {topics.map((topic, i) => (
+              <>
+                <Tooltip label="Téma megtekintése">
+                  <p className={styles.topic}>
+                    <Link href={`/tema/${topic}`}>
+                      <a>#{topic}</a>
+                    </Link>
+                  </p>
+                </Tooltip>
+                {i !== topics.length - 1 && <p>,&nbsp;</p>}
+              </>
+            ))}
+          </div>
         </div>
       </div>
     </>

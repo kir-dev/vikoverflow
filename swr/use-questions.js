@@ -1,12 +1,12 @@
 import { useSWRInfinite } from "swr";
 
 export default function useQuestions() {
-  const swr = useSWRInfinite((index, previousPageData) => {
-    if (previousPageData && !previousPageData.nextCursor) return null;
+  const swr = useSWRInfinite((i, prev) => {
+    if (i === 0) return `/api/questions`;
 
-    if (index === 0) return `/api/questions`;
+    if (prev && !prev.nextCursor) return null;
 
-    return `/api/questions?cursor=${previousPageData.nextCursor}&cursor2=${previousPageData.nextCursor2}`;
+    return `/api/questions?cursor=${prev.nextCursor}`;
   });
 
   const questions = swr.data

@@ -101,6 +101,15 @@
   color: var(--accent-4);
 }
 
+.topics {
+  display: flex;
+  align-items: center;
+}
+
+.topic + .topic:before {
+  content: ", ";
+}
+
 .action span,
 .topic {
   font-size: var(--font-small);

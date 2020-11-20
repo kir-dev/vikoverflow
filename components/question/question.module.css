@@ -120,8 +120,14 @@
   color: var(--accent-4);
 }
 
+.topics {
+  display: flex;
+  align-items: center;
+}
+
 .action span,
-.topic {
+.topic,
+.topics p {
   font-size: var(--font-small);
   line-height: var(--line-height);
   color: var(--gray-2);

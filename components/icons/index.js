@@ -9,3 +9,5 @@ export { default as User } from "./user";
 export { default as Logout } from "./logout";
 export { default as X } from "./x";
 export { default as DownArrow } from "./down-arrow";
+export { default as Question } from "./question";
+export { default as Topic } from "./topic";

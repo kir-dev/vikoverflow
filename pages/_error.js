@@ -1,7 +1,7 @@
 import ErrorPage from "components/error-page";
 
 function Error({ statusCode }) {
-  return <ErrorPage statusCode={statusCode + 1} />;
+  return <ErrorPage statusCode={statusCode} />;
 }
 
 Error.getInitialProps = ({ res, err }) => {

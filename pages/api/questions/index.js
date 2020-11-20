@@ -1,117 +1,152 @@
 import db from "lib/api/db";
 import withUser from "lib/api/with-user";
-import { getQuestionSchema } from "lib/schemas";
+import { QuestionSchema } from "lib/schemas";
 import { nanoid } from "nanoid";
 import { trimSpaces, trimLineBreaks, truncateBody } from "lib/utils";
 import parseMultipart from "lib/api/parse-multipart";
 import { uploadToS3 } from "lib/api/s3";
 import handler from "lib/api/handler";
+import es from "lib/api/es";
+
+function encodeJSON(json) {
+  return encodeURIComponent(JSON.stringify(json));
+}
+
+function decodeJSON(json) {
+  return JSON.parse(decodeURIComponent(json));
+}
+
+function mapQuestions(rawDbItems) {
+  return rawDbItems.map(
+    ({
+      PK,
+      topics,
+      upvotes,
+      creator,
+      createdAt,
+      title,
+      body,
+      numberOfAnswers,
+    }) => ({
+      id: PK.split("#")[1],
+      topics,
+      upvotes: {
+        count: upvotes,
+      },
+      creator,
+      createdAt,
+      title,
+      body: truncateBody(body),
+      answers: {
+        count: numberOfAnswers,
+      },
+    })
+  );
+}
+
+function mapEs(rawEsItems) {
+  return rawEsItems.map(
+    ({ type, upvotes, numberOfAnswers, body, ...rest }) => ({
+      ...rest,
+      upvotes: { count: upvotes },
+      answers: {
+        count: numberOfAnswers,
+      },
+      body: truncateBody(body),
+    })
+  );
+}
+
+async function getQuestions(cursor) {
+  const params = {
+    TableName: process.env.DYNAMO_TABLE_NAME,
+    IndexName: "GSI1",
+    KeyConditionExpression: "GSI1PK = :GSI1PK",
+    ScanIndexForward: false,
+    ExpressionAttributeValues: {
+      ":GSI1PK": "QUESTION",
+    },
+    Limit: 10,
+  };
+
+  if (cursor) {
+    params.ExclusiveStartKey = cursor;
+  }
+
+  const { Items, LastEvaluatedKey } = await db.query(params).promise();
+
+  const responseObj = {
+    questions: mapQuestions(Items),
+  };
+
+  if (LastEvaluatedKey) {
+    responseObj.nextCursor = encodeJSON(LastEvaluatedKey);
+  }
+
+  return responseObj;
+}
+
+async function getQuestionsByTopic(topic, cursor) {
+  // checking if topic actually exists
+  {
+    const params = {
+      TableName: process.env.DYNAMO_TABLE_NAME,
+      Key: {
+        PK: `TOPIC#${topic}`,
+        SK: `TOPIC#${topic}`,
+      },
+      ProjectionExpression: "PK",
+    };
+
+    const { Item } = await db.get(params).promise();
+
+    if (!Item) {
+      throw new Error("topic not found");
+    }
+  }
+
+  const params = {
+    index: process.env.ELASTICSEARCH_INDEX_NAME,
+    body: {
+      query: {
+        match: {
+          topics: topic,
+        },
+      },
+      sort: [{ createdAt: "desc" }],
+    },
+  };
+
+  if (cursor) {
+    params.body.search_after = cursor;
+  }
+
+  const results = await es.search(params);
+
+  const rawQuestions = results.body.hits.hits.map((h) => h._source);
+
+  const responseObj = {
+    questions: mapEs(rawQuestions),
+  };
+
+  if (rawQuestions.length === 10) {
+    const lastItem = rawQuestions[9];
+    responseObj.nextCursor = encodeJSON([lastItem.createdAt]);
+  }
+
+  return responseObj;
+}
 
 async function getAllQuestions(req, res) {
   try {
-    let params;
+    const topic = req.query.topic;
+    const cursor = req.query.cursor && decodeJSON(req.query.cursor);
 
-    if (req.query.topic) {
-      const checkParams = {
-        TableName: process.env.DYNAMO_TABLE_NAME,
-        Key: {
-          PK: `TOPIC#${req.query.topic}`,
-          SK: `TOPIC#${req.query.topic}`,
-        },
-      };
-
-      const { Item } = await db.get(checkParams).promise();
-
-      if (!Item) {
-        return res.status(404).json({ error: "topic does not exist" });
-      }
-
-      params = {
-        TableName: process.env.DYNAMO_TABLE_NAME,
-        IndexName: "GSI2",
-        KeyConditionExpression: "topic = :topic",
-        ScanIndexForward: false,
-        ExpressionAttributeValues: {
-          ":topic": req.query.topic,
-        },
-      };
-    } else {
-      params = {
-        TableName: process.env.DYNAMO_TABLE_NAME,
-        IndexName: "GSI1",
-        KeyConditionExpression: "GSI1PK = :GSI1PK",
-        ScanIndexForward: false,
-        ExpressionAttributeValues: {
-          ":GSI1PK": "QUESTION",
-        },
-      };
+    if (topic) {
+      return res.json(await getQuestionsByTopic(topic, cursor));
     }
 
-    if (req.query.cursor) {
-      if (req.query.topic) {
-        params.ExclusiveStartKey = {
-          topic: req.query.topic,
-          PK: `QUESTION#${req.query.cursor}`,
-          SK: `QUESTION#${req.query.cursor}`,
-          createdAt: parseInt(req.query.cursorCreatedAt),
-        };
-      } else {
-        if (req.query.cursor2) {
-          params.ExclusiveStartKey = {
-            GSI1PK: "QUESTION",
-            GSI1SK: parseInt(req.query.cursor2),
-            PK: `QUESTION#${req.query.cursor}`,
-            SK: `QUESTION#${req.query.cursor}`,
-          };
-        }
-      }
-    }
-
-    params.Limit = req.query.limit ? parseInt(req.query.limit) : 10;
-
-    const { Items, LastEvaluatedKey } = await db.query(params).promise();
-
-    const questions = Items.map(
-      ({
-        PK,
-        topic,
-        upvotes,
-        creator,
-        createdAt,
-        title,
-        body,
-        numberOfAnswers,
-      }) => ({
-        id: PK.split("#")[1],
-        topic,
-        upvotes: {
-          count: upvotes,
-        },
-        creator,
-        createdAt,
-        title,
-        body: truncateBody(body),
-        answers: {
-          count: numberOfAnswers,
-        },
-      })
-    );
-
-    const responseObj = {
-      questions,
-    };
-
-    if (LastEvaluatedKey) {
-      responseObj.nextCursor = LastEvaluatedKey.PK.split("#")[1];
-      if (LastEvaluatedKey.GSI1SK) {
-        responseObj.nextCursor2 = LastEvaluatedKey.GSI1SK;
-      }
-      if (LastEvaluatedKey.createdAt) {
-        responseObj.nextCursorCreatedAt = LastEvaluatedKey.createdAt;
-      }
-    }
-
-    return res.json(responseObj);
+    return res.json(await getQuestions(cursor));
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
@@ -121,77 +156,56 @@ async function createQuestion(req, res) {
   try {
     const { parsedFields, parsedFiles } = await parseMultipart(req);
 
-    const checkParams = {
-      TableName: process.env.DYNAMO_TABLE_NAME,
-      Key: {
-        PK: `TOPIC#${parsedFields.topic}`,
-        SK: `TOPIC#${parsedFields.topic}`,
-      },
-    };
+    parsedFields.topics = JSON.parse(parsedFields.topics);
 
-    const { Item } = await db.get(checkParams).promise();
-
-    // a topicDescroption is required when the topic does not exists
-    const isValid = await getQuestionSchema(!Item).isValid(parsedFields);
-
-    if (!isValid) {
+    if (!(await QuestionSchema.isValid(parsedFields))) {
       return res.status(400).json({ error: "request not in desired format" });
     }
 
-    const topic = parsedFields.topic;
-
-    // we are upserting a topic so the transaction doesnt fail
-    // but using if_not_exists s to make sure createdAt and stuff is not overwritten
-    const preparedUpdate = {
-      TableName: process.env.DYNAMO_TABLE_NAME,
-      Key: {
-        PK: `TOPIC#${topic}`,
-        SK: `TOPIC#${topic}`,
-      },
-      UpdateExpression: `
-        add
-          GSI1SK :incr
-        set
-          GSI1PK = if_not_exists(GSI1PK, :GSI1PK),
-          creator = if_not_exists(creator, :creator),
-          createdAt = if_not_exists(createdAt, :createdAt),
-          description = if_not_exists(description, :description)`,
-      ExpressionAttributeValues: {
-        ":GSI1PK": "TOPIC",
-        ":creator": req.user.id,
-        ":createdAt": Date.now(),
-        ":incr": 1,
-        ":description": parsedFields?.topicDescription ?? "",
-      },
-    };
-
-    const id = nanoid();
+    const questionId = nanoid();
+    const createdAt = Date.now();
 
     const params = {
       TransactItems: [
         {
-          Update: preparedUpdate,
-        },
-        {
           Put: {
             TableName: process.env.DYNAMO_TABLE_NAME,
             Item: {
-              PK: `QUESTION#${id}`,
-              SK: `QUESTION#${id}`,
+              PK: `QUESTION#${questionId}`,
+              SK: `QUESTION#${questionId}`,
               GSI1PK: "QUESTION",
-              GSI1SK: Date.now(),
+              GSI1SK: createdAt,
               title: trimSpaces(parsedFields.title),
               body: trimLineBreaks(parsedFields.body),
               upvotes: 0,
               numberOfAnswers: 0,
-              topic: parsedFields.topic,
+              topics: parsedFields.topics,
               creator: req.user.id,
-              createdAt: Date.now(),
+              createdAt,
             },
           },
         },
       ],
     };
+
+    for (const topic of parsedFields.topics) {
+      params.TransactItems.push({
+        // increasing the numberOfQuestions on each topic
+        Update: {
+          TableName: process.env.DYNAMO_TABLE_NAME,
+          Key: {
+            PK: `TOPIC#${topic}`,
+            SK: `TOPIC#${topic}`,
+          },
+          UpdateExpression:
+            "add GSI1SK :incr set GSI1PK = if_not_exists(GSI1PK, :GSI1PK)",
+          ExpressionAttributeValues: {
+            ":GSI1PK": "TOPIC",
+            ":incr": 1,
+          },
+        },
+      });
+    }
 
     if (parsedFiles.length) {
       const file = parsedFiles[0];
@@ -200,7 +214,7 @@ async function createQuestion(req, res) {
         body: file.body,
         contentType: file.contentType,
         metadata: {
-          questionId: id,
+          questionId,
           creator: req.user.id,
           createdAt: Date.now().toString(),
           originalName: file.originalName,
@@ -216,7 +230,7 @@ async function createQuestion(req, res) {
 
     await db.transactWrite(params).promise();
 
-    return res.json({ id });
+    return res.json({ id: questionId });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }

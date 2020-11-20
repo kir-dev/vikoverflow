@@ -13,7 +13,6 @@ function mapRecord(record) {
       return {
         type,
         id: converted.PK.split("#")[1],
-        description: converted.description,
       };
 
     case "question":
@@ -22,7 +21,11 @@ function mapRecord(record) {
         id: converted.PK.split("#")[1],
         title: converted.title,
         body: converted.body,
-        topicId: converted.topic,
+        topics: converted.topics,
+        createdAt: converted.createdAt,
+        upvotes: converted.upvotes,
+        creator: converted.creator,
+        numberOfAnswers: converted.numberOfAnswers,
       };
 
     case "answer":

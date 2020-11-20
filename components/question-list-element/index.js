@@ -8,7 +8,7 @@ import cn from "clsx";
 import { forwardRef } from "react";
 
 export default forwardRef(function QuestionListElement(
-  { id, title, body, upvotes, answers, topic, createdAt, creator, skeleton },
+  { id, title, body, upvotes, answers, topics, createdAt, creator, skeleton },
   ref
 ) {
   const router = useRouter();
@@ -77,7 +77,14 @@ export default forwardRef(function QuestionListElement(
             <span>{answers.count}</span>
           </div>
         </div>
-        <p className={styles.topic}>#{topic}</p>
+        <div className={styles.topics}>
+          {topics.slice(0, 3).map((topic, i) => (
+            <p className={styles.topic}>
+              #{topic}
+              {topics.length > 3 && i === 2 ? ", …" : null}
+            </p>
+          ))}
+        </div>
       </div>
     </div>
   );

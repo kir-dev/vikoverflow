@@ -1,7 +1,12 @@
 .root {
   font-size: var(--font-small);
   display: inline-flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
   color: var(--error);
   line-height: 1;
+}
+
+.root > * + * {
+  margin-top: var(--gap-small);
 }

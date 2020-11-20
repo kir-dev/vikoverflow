@@ -1,6 +1,4 @@
 import db from "lib/api/db";
-import withUser from "lib/api/with-user";
-import { TopicDescriptionSchema } from "lib/schemas";
 import handler from "lib/api/handler";
 
 async function getTopic(req, res) {
@@ -11,7 +9,7 @@ async function getTopic(req, res) {
         PK: `TOPIC#${req.query.id}`,
         SK: `TOPIC#${req.query.id}`,
       },
-      ProjectionExpression: "PK, description, creator",
+      ProjectionExpression: "PK, GSI1SK",
     };
 
     const { Item } = await db.get(getParams).promise();
@@ -20,11 +18,9 @@ async function getTopic(req, res) {
       return res.status(404).json({ error: "topic not found" });
     }
 
-    const { PK, ...rest } = Item;
-
     const topic = {
-      id: PK.split("#")[1],
-      ...rest,
+      id: Item.PK.split("#")[1],
+      numberOfQuestions: Item.GSI1SK,
     };
 
     return res.json({ topic });
@@ -33,59 +29,6 @@ async function getTopic(req, res) {
   }
 }
 
-async function editTopic(req, res) {
-  try {
-    const isValid = await TopicDescriptionSchema.isValid(req.body);
-
-    if (!isValid) {
-      return res.status(400).json({ error: "request not in desired format" });
-    }
-
-    const allowedKeys = ["description"];
-
-    const updates = Object.entries(req.body)
-      .filter(([key, _]) => allowedKeys.includes(key))
-      .reduce((acc, [currKey, currVal]) => {
-        acc[currKey] = currVal;
-        return acc;
-      }, {});
-
-    if (!Object.keys(updates).length) {
-      return res.status(400).json({ error: "No updates" });
-    }
-
-    const updateParams = {
-      TableName: process.env.DYNAMO_TABLE_NAME,
-      Key: {
-        PK: `TOPIC#${req.query.id}`,
-        SK: `TOPIC#${req.query.id}`,
-      },
-      ConditionExpression: "attribute_exists(PK) and creator = :creator",
-      UpdateExpression: "set",
-      ExpressionAttributeValues: { ":creator": req.user.id },
-    };
-
-    Object.entries(updates).forEach(([key, value], i) => {
-      const isLastEntry = i === Object.keys(updates).length - 1;
-
-      updateParams.UpdateExpression += ` ${key} = :${key}`;
-
-      if (!isLastEntry) {
-        updateParams.UpdateExpression += ",";
-      }
-
-      updateParams.ExpressionAttributeValues[`:${key}`] = value;
-    });
-
-    await db.update(updateParams).promise();
-
-    return res.json({ success: true });
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
-  }
-}
-
 export default handler({
   GET: getTopic,
-  PATCH: withUser(editTopic),
 });

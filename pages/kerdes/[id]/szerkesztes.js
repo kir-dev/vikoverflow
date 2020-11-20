@@ -31,7 +31,10 @@ const QuestionEditPage = () => {
     const formData = new FormData();
 
     for (let key of Object.keys(values)) {
-      formData.append(key, values[key]);
+      formData.append(
+        key,
+        key === "topics" ? JSON.stringify(values[key]) : values[key]
+      );
     }
 
     const res = await fetch(`/api/questions/${questionId}`, {

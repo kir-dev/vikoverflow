@@ -11,9 +11,8 @@ async function getAllTopics(req, res) {
         ":GSI1PK": "TOPIC",
       },
       ScanIndexForward: false,
+      Limit: 5,
     };
-
-    params.Limit = req.query.limit ? parseInt(req.query.limit) : 5;
 
     const { Items } = await db.query(params).promise();
 

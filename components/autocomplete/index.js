@@ -17,6 +17,7 @@ export default function Autocomplete({
   noOptionsMessage,
   formatCreateLabel,
   label,
+  isMulti,
 }) {
   const Wrapper = label ? Label : Fragment;
   const wrapperProps = label ? { value: label } : {};
@@ -39,6 +40,8 @@ export default function Autocomplete({
         components={{
           DropdownIndicator: () => <DownArrow />,
         }}
+        isMulti={isMulti}
+        isClearable={false}
       />
       {error && (
         <div className={moduleStyles.errorRoot}>
@@ -67,8 +70,7 @@ const styles = {
         ? "var(--foreground)"
         : "var(--accent-2)"
     }`,
-    height: 35,
-    minHeight: "unset",
+    minHeight: 35,
     color: state?.selectProps?.error
       ? "var(--error) !important"
       : state.isDisabled
@@ -84,7 +86,7 @@ const styles = {
   }),
   valueContainer: (provided) => ({
     ...provided,
-    padding: "0 0 0 calc(0.75rem - 2px)",
+    padding: "4px 0 4px calc(0.75rem - 2px)",
   }),
   indicatorSeparator: () => ({ display: "none" }),
   indicatorsContainer: (provided) => ({

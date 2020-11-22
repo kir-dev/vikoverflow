@@ -2,6 +2,7 @@ import db from "lib/api/db";
 import { ACTIVITY } from "lib/constants";
 import withUser from "lib/api/with-user";
 import handler from "lib/api/handler";
+import { encodeJSON, decodeJSON } from "lib/utils";
 
 async function getUserActivities(req, res) {
   try {
@@ -13,17 +14,12 @@ async function getUserActivities(req, res) {
       ExpressionAttributeValues: {
         ":creator": req.user.id,
       },
-      Limit: 15,
+      Limit: 10,
       ProjectionExpression: "PK, SK, title, creator, createdAt",
     };
 
-    if (req.query.cursorPK && req.query.cursorSK && req.query.cursorCreatedAt) {
-      params.ExclusiveStartKey = {
-        creator: req.user.id,
-        createdAt: parseInt(req.query.cursorCreatedAt),
-        PK: decodeURIComponent(req.query.cursorPK),
-        SK: decodeURIComponent(req.query.cursorSK),
-      };
+    if (req.query.cursor) {
+      params.ExclusiveStartKey = decodeJSON(req.query.cursor);
     }
 
     const { Items, LastEvaluatedKey } = await db.query(params).promise();
@@ -120,11 +116,7 @@ async function getUserActivities(req, res) {
     };
 
     if (LastEvaluatedKey) {
-      responseObj.nextCursor = {
-        PK: LastEvaluatedKey.PK,
-        SK: LastEvaluatedKey.SK,
-        createdAt: LastEvaluatedKey.createdAt,
-      };
+      responseObj.nextCursor = encodeJSON(LastEvaluatedKey);
     }
 
     return res.json(responseObj);

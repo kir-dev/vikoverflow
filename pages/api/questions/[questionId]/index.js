@@ -208,9 +208,11 @@ async function editQuestion(req, res) {
           questionId: req.query.questionId,
           creator: req.user.id,
           createdAt: Date.now().toString(),
-          originalName: file.originalName,
+          originalName: encodeURIComponent(file.originalName),
         },
-        contentDisposition: `inline; filename="${file.originalName}"`,
+        contentDisposition: `inline; filename="${encodeURIComponent(
+          file.originalName
+        )}"`,
       });
 
       preparedUpdate.UpdateExpression += `, attachment = :attachment`;

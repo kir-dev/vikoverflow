@@ -6,15 +6,18 @@ export default function useSearch(rawSearch, selected) {
   const swr = useSWRInfinite((i, prev) => {
     if (!rawSearch || (prev && !prev.nextCursor)) return null;
 
-    if (i === 0) return `/api/search?q=${search}`;
+    if (i === 0)
+      return `/api/search?q=${search}${
+        selected !== "all" ? `&type=${selected}` : ""
+      }`;
 
-    return `/api/search?q=${search}&cursor=${prev.nextCursor}`;
+    return `/api/search?q=${search}&cursor=${prev.nextCursor}${
+      selected !== "all" ? `&type=${selected}` : ""
+    }`;
   });
 
   const results = swr.data
-    ? []
-        .concat(...swr.data.map((page) => page.results))
-        .filter((e) => selected === "all" || e.type === selected)
+    ? [].concat(...swr.data.map((page) => page.results))
     : [];
 
   const initialDataLoaded = !!swr.data;

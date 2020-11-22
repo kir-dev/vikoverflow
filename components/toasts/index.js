@@ -15,7 +15,10 @@ export function ToastsProvider({ children }) {
   const [messages, setMessages] = useState([]);
 
   function addToast(message) {
-    setMessages([...messages, { key: nanoid(), text: message }]);
+    setMessages([
+      ...messages.slice(Math.max(messages.length - 3, 0)),
+      { key: nanoid(), text: message },
+    ]);
   }
 
   function handleRemove(key) {

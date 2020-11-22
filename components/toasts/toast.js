@@ -8,11 +8,22 @@ export default function Toast({ index, text, hovering, onRemove }) {
   const timeoutRef = useRef(null);
 
   useEffect(() => {
-    // using a 10 ms delay to make sure the initial render does not
+    // using a small delay to make sure the initial render does not
     // have the .visible class so that the transform/transition plays
-    setTimeout(() => {
-      setVisible(true);
-    }, 10);
+
+    if ("requestIdleCallback" in window) {
+      // requestIdleCallback not supported in Safari
+      window.requestIdleCallback(
+        () => {
+          setVisible(true);
+        },
+        { timeout: 100 }
+      );
+    } else {
+      setTimeout(() => {
+        setVisible(true);
+      }, 1);
+    }
   }, []);
 
   useEffect(() => {

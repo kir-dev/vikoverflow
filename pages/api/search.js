@@ -1,14 +1,6 @@
 import es from "lib/api/es";
-import { truncateBody } from "lib/utils";
+import { truncateBody, encodeJSON, decodeJSON } from "lib/utils";
 import handler from "lib/api/handler";
-
-function encodeJSON(json) {
-  return encodeURIComponent(JSON.stringify(json));
-}
-
-function decodeJSON(json) {
-  return JSON.parse(decodeURIComponent(json));
-}
 
 async function search(req, res) {
   try {
@@ -22,15 +14,25 @@ async function search(req, res) {
       index: process.env.ELASTICSEARCH_INDEX_NAME,
       body: {
         query: {
-          multi_match: {
-            query: req.query.q,
-            fuzziness: "AUTO",
-            fields: ["*"],
+          bool: {
+            must: [
+              {
+                multi_match: {
+                  query: req.query.q,
+                  fuzziness: "AUTO",
+                  fields: ["*"],
+                },
+              },
+            ],
           },
         },
         sort: [{ _score: "desc" }, { _id: "asc" }],
       },
     };
+
+    if (req.query.type) {
+      params.body.query.bool.must.push({ match: { type: req.query.type } });
+    }
 
     if (req.query.cursor) {
       params.body.search_after = decodeJSON(req.query.cursor);
@@ -55,6 +57,8 @@ async function search(req, res) {
 
     return res.json(responseObj);
   } catch (e) {
+    console.log(e);
+    console.error(JSON.stringify(e, null, 2));
     return res.status(500).json({ error: e.message });
   }
 }

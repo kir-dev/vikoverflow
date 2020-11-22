@@ -1,16 +1,12 @@
 import { useSWRInfinite } from "swr";
 
 export default function useActivities() {
-  const swr = useSWRInfinite((index, previousPageData) => {
-    if (previousPageData && !previousPageData.nextCursor) return null;
+  const swr = useSWRInfinite((i, prev) => {
+    if (prev && !prev.nextCursor) return null;
 
-    if (index === 0) return `/api/user/activities`;
+    if (i === 0) return `/api/user/activities`;
 
-    return `/api/user/activities?cursorPK=${encodeURIComponent(
-      previousPageData.nextCursor.PK
-    )}&cursorSK=${encodeURIComponent(
-      previousPageData.nextCursor.SK
-    )}&cursorCreatedAt=${previousPageData.nextCursor.createdAt}`;
+    return `/api/user/activities?cursor=${prev.nextCursor}`;
   });
 
   const activities = swr.data

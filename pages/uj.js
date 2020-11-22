@@ -3,15 +3,15 @@ import Form from "components/question-form";
 import Layout from "components/layout";
 import Head from "next/head";
 import { useUser } from "lib/authenticate";
-import { mutate } from "swr";
 import { useToasts } from "components/toasts";
-import { trimSpaces, trimLineBreaks } from "lib/utils";
 
 const AskPage = () => {
   const router = useRouter();
   const { user } = useUser("/belepes");
   const { addToast } = useToasts();
-  const initialTopic = router.query.tema;
+  const initialTopics = router.query.temak
+    ? [...new Set(router.query.temak.split(",").slice(0, 5))]
+    : null;
 
   const handleSubmit = async (values) => {
     const formData = new FormData();
@@ -57,7 +57,7 @@ const AskPage = () => {
         onSubmit={handleSubmit}
         skeleton={!user}
         message="Később van lehetőség módosításokra."
-        initialValues={{ topic: initialTopic }}
+        initialValues={{ topics: initialTopics }}
       />
     </Layout>
   );

@@ -2,19 +2,17 @@ import db from "lib/api/db";
 import withUser from "lib/api/with-user";
 import { QuestionSchema } from "lib/schemas";
 import { nanoid } from "nanoid";
-import { trimSpaces, trimLineBreaks, truncateBody } from "lib/utils";
+import {
+  trimSpaces,
+  trimLineBreaks,
+  truncateBody,
+  encodeJSON,
+  decodeJSON,
+} from "lib/utils";
 import parseMultipart from "lib/api/parse-multipart";
 import { uploadToS3 } from "lib/api/s3";
 import handler from "lib/api/handler";
 import es from "lib/api/es";
-
-function encodeJSON(json) {
-  return encodeURIComponent(JSON.stringify(json));
-}
-
-function decodeJSON(json) {
-  return JSON.parse(decodeURIComponent(json));
-}
 
 function mapQuestions(rawDbItems) {
   return rawDbItems.map(
@@ -217,9 +215,9 @@ async function createQuestion(req, res) {
           questionId,
           creator: req.user.id,
           createdAt: Date.now().toString(),
-          originalName: file.originalName,
+          originalName: encodeURIComponent(file.originalName),
         },
-        contentDisposition: `inline; filename="${file.originalName}"`,
+        contentDisposition: `inline; filename="${encodeURIComponent(file.originalName)}"`,
       });
 
       params.TransactItems[1].Put.Item.attachment = {

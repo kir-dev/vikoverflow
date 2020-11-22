@@ -57,6 +57,13 @@
   background: #cccccc !important;
 }
 
+.fileName {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 80%;
+}
+
 .fileButtonContainer {
   display: flex;
   justify-content: space-between;

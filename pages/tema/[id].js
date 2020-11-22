@@ -52,7 +52,7 @@ export default function TopicPage() {
             {user && (
               <Button
                 kind={KIND.icon}
-                onClick={() => router.push(`/uj?tema=${topicData?.topic?.id}`)}
+                onClick={() => router.push(`/uj?temak=${topicData?.topic?.id}`)}
                 tooltip="Új kérdés hozzáadása a témához"
               >
                 <Plus />

@@ -9,7 +9,6 @@
 
 .toastContainer {
   width: 100%;
-  height: 42px;
   position: absolute;
   bottom: 0;
   right: 0;
@@ -28,7 +27,7 @@
 .toastContainer.visible {
   transform: translate3d(
       0,
-      calc(var(--index) * -15px),
+      calc(var(--index) * -35%),
       calc(var(--index) * -1px)
     )
     scale(calc(1 - (var(--index) / 100) * 5));
@@ -37,30 +36,23 @@
 .list:hover .toastContainer.visible {
   transform: translate3d(
     0,
-    calc(var(--index) * -50px),
+    calc(var(--index) * (-8px + -100%)),
     calc(var(--index) * -1px)
   );
 }
 
 .toast {
   width: 100%;
+  height: 100%;
   background: var(--background);
   color: var(--foreground);
   border-radius: var(--radius-large);
   border: 1px solid rgba(0, 0, 0, 0.1);
-  height: 42px;
   display: flex;
   align-items: center;
-  padding: 0 16px;
+  padding: 12.5px 16px;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
   font-size: 14px;
-}
-
-.toast span {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-  margin-top: -1px;
 }
 
 @media (max-width: 440px) {

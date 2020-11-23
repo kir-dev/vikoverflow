@@ -59,7 +59,7 @@
   font-weight: 500;
   font-size: var(--font-large);
   line-height: var(--line-height);
-  min-height: 22px;
+  min-height: 1em;
 }
 
 .body {
@@ -67,14 +67,14 @@
   line-height: var(--line-height);
   white-space: pre-wrap;
   margin-bottom: var(--gap);
-  min-height: calc(3 * 17px);
+  min-height: 4em;
 }
 
 .title:empty::before,
 .body:empty::before {
   position: absolute;
-  color: rgb(55, 53, 47);
-  -webkit-text-fill-color: rgba(55, 53, 47, 0.4);
+  color: var(--accent-4);
+  -webkit-text-fill-color: var(--accent-4);
   content: attr(placeholder);
   display: block;
 }
@@ -86,6 +86,9 @@
   margin-left: calc(var(--indent) - 4px);
   padding: 4px;
   border: 1px solid transparent;
+  white-space: pre-wrap;
+  word-break: break-word;
+  caret-color: var(--accent-4);
 }
 
 .body {

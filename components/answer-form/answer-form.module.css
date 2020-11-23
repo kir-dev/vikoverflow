@@ -46,7 +46,7 @@
   width: 100%;
   white-space: pre-wrap;
   word-break: break-word;
-  caret-color: rgb(55, 53, 47);
+  caret-color: var(--accent-4);
   position: relative;
   max-height: 45vh;
   overflow: hidden auto;
@@ -62,8 +62,8 @@
 
 .input.empty::before {
   position: absolute;
-  color: rgb(55, 53, 47);
-  -webkit-text-fill-color: rgba(55, 53, 47, 0.4);
+  color: var(--accent-4);
+  -webkit-text-fill-color: var(--accent-4);
   content: attr(placeholder);
   display: block;
 }

@@ -1,9 +1,18 @@
+import { components } from "react-select";
 import Select from "react-select/creatable";
 import Label from "components/label";
 import Error from "components/error";
 import moduleStyles from "./autocomplete.module.css";
-import { DownArrow } from "components/icons";
+import { DownArrow, X } from "components/icons";
 import { Fragment } from "react";
+
+const MultiValueRemove = (props) => {
+  return (
+    <components.MultiValueRemove {...props}>
+      <X width={16} height={16} />
+    </components.MultiValueRemove>
+  );
+};
 
 export default function Autocomplete({
   value,
@@ -39,6 +48,7 @@ export default function Autocomplete({
         maxMenuHeight={200}
         components={{
           DropdownIndicator: () => <DownArrow />,
+          MultiValueRemove,
         }}
         isMulti={isMulti}
         isClearable={false}
@@ -155,5 +165,22 @@ const styles = {
     fontSize: "inherit",
     lineHeight: "inherit",
     textAlign: "left",
+  }),
+  multiValue: (styles) => ({
+    ...styles,
+    alignItems: "center",
+    borderRadius: "var(--radius)",
+  }),
+  multiValueRemove: (styles) => ({
+    ...styles,
+    color: "var(--accent-4)",
+    margin: "0 2px",
+    borderRadius: "var(--radius)",
+    padding: 0,
+    cursor: "pointer",
+    ":hover": {
+      color: "var(--foreground)",
+      background: "#ccc",
+    },
   }),
 };

@@ -37,7 +37,11 @@ export default function Answer({
 
   async function handleAnswerDelete() {
     try {
-      setAnswerDeleteModal((oldVal) => ({ ...oldVal, loading: true }));
+      setAnswerDeleteModal((oldVal) => ({
+        ...oldVal,
+        loading: true,
+        error: "",
+      }));
 
       const answerId = answerDeleteModal.id;
 
@@ -73,9 +77,10 @@ export default function Answer({
         throw new Error("request failed");
       }
     } catch (e) {
-      addToast("Hiba lépett fel a válaszod törlése közben.", {
-        errored: true,
-      });
+      setAnswerDeleteModal((old) => ({
+        ...old,
+        error: "Hiba lépett fel a válaszod törlése közben.",
+      }));
     } finally {
       setAnswerDeleteModal((oldVal) => ({ ...oldVal, loading: false }));
     }
@@ -188,6 +193,9 @@ export default function Answer({
             Biztosan törlöd a válaszodat?
             <br />A válasz nem lesz visszaállítható.
           </p>
+          {answerDeleteModal.error && (
+            <p className={styles.modalError}>{answerDeleteModal.error}</p>
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button

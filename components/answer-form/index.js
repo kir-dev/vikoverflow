@@ -55,28 +55,36 @@ export default function AnswerForm({
   const body = watch("body");
 
   async function submitThenReset(values) {
-    await handleAnswer(values);
-    reset();
-    if (editorRef?.current) {
-      editorRef.current.innerHTML = "";
+    try {
+      await handleAnswer(values);
+      reset();
+      if (editorRef?.current) {
+        editorRef.current.innerHTML = "";
+      }
+    } catch (e) {
+      // no-op, alreay handled in handleAnswer
     }
   }
 
   async function handleAnswer(values) {
-    const res = await fetch(
-      initialValues
-        ? `/api/questions/${questionId}/answers/${answerId}`
-        : `/api/questions/${questionId}/answers`,
-      {
-        method: initialValues ? "PATCH" : "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(values),
-      }
-    );
+    try {
+      const res = await fetch(
+        initialValues
+          ? `/api/questions/${questionId}/answers/${answerId}`
+          : `/api/questions/${questionId}/answers`,
+        {
+          method: initialValues ? "PATCH" : "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(values),
+        }
+      );
 
-    if (res.ok) {
+      if (!res.ok) {
+        throw new Error("fetch failed");
+      }
+
       if (initialValues) {
         mutate(`/api/questions/${questionId}`, (oldData) => ({
           question: {
@@ -111,8 +119,9 @@ export default function AnswerForm({
           },
         }));
       }
-    } else {
+    } catch (e) {
       addToast("Hiba lépett fel a válaszod beküldése közben.");
+      throw e;
     }
   }
 

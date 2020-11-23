@@ -161,3 +161,8 @@
 .hidden {
   opacity: 0;
 }
+
+.modalError {
+  color: var(--error) !important;
+  margin-top: var(--gap-large);
+}

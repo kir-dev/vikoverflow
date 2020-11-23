@@ -16,7 +16,7 @@ export default function Button({
   tooltip,
   ...otherProps
 }) {
-  const Wrapper = tooltip ? Tooltip : Fragment;
+  const Wrapper = tooltip && !disabled ? Tooltip : Fragment;
   const wrapperProps = tooltip ? { label: tooltip } : {};
   const kindClassName = kind ? styles[kind] : false;
 

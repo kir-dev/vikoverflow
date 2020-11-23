@@ -48,7 +48,11 @@ export default function Question({
 
   const handleDeleteModalSubmit = async () => {
     try {
-      setDeleteModal((deleteModal) => ({ ...deleteModal, loading: true }));
+      setDeleteModal((deleteModal) => ({
+        ...deleteModal,
+        loading: true,
+        error: false,
+      }));
 
       const res = await fetch(`/api/questions/${id}`, {
         method: "DELETE",
@@ -58,7 +62,10 @@ export default function Question({
         router.push("/");
       }
     } catch (e) {
-      addToast("Hiba lépett fel a kérdésed törlése közben.");
+      setDeleteModal((old) => ({
+        ...old,
+        error: "Hiba lépett fel a kérdésed törlése közben.",
+      }));
     } finally {
       setDeleteModal((deleteModal) => ({ ...deleteModal, loading: false }));
     }
@@ -138,6 +145,9 @@ export default function Question({
             Biztosan törlöd a kérdésedet?
             <br />A kérdés és a válaszok sem lesznek később visszaállíthatóak.
           </p>
+          {deleteModal.error && (
+            <p className={styles.modalError}>{deleteModal.error}</p>
+          )}
         </Modal.Body>
         <Modal.Footer>
           <Button

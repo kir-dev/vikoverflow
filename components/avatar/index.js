@@ -68,9 +68,15 @@ export function UploadAvatar({ className, size }) {
   }
 
   async function handleUpload(e) {
+    const file = e.target?.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
     setUploading(true);
     const formData = new FormData();
-    formData.append("newProfilePic", e.target.files[0]);
+    formData.append("newProfilePic", file);
 
     const res = await fetch("/api/user/avatar", {
       method: "POST",

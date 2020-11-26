@@ -64,7 +64,6 @@ export default function AnswerForm({
         : "",
     });
 
-    console.log(initialValues?.attachment);
   }, [initialValues]);
 
   function handlePaste(e) {
@@ -264,9 +263,6 @@ export default function AnswerForm({
                 kind={KIND.icon}
                 type="button"
                 tooltip="Csatolmány hozzáadása"
-                onClick={(e) => {
-                  console.log("lefut");
-                }}
                 tabIndex="0"
                 ref={attachmentButtonRef}
                 onClick={handleUploadButtonClick}

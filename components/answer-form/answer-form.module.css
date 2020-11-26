@@ -28,10 +28,11 @@
 .answerFormActions {
   display: flex;
   flex-direction: column;
+  align-items: flex-end;
   margin-left: var(--gap-large);
 }
 
-.answerFormActions button + button {
+.answerFormActions > button + button {
   margin-top: var(--gap);
 }
 
@@ -66,4 +67,48 @@
   -webkit-text-fill-color: rgba(55, 53, 47, 0.4);
   content: attr(placeholder);
   display: block;
+}
+
+.submitButtons {
+  display: flex;
+  align-items: center;
+}
+
+.submitButtons > * + * {
+  margin-left: var(--gap);
+}
+
+.submitButtons + * {
+  margin-top: var(--gap);
+}
+
+.fileInput {
+  composes: visuallyHidden from global;
+}
+
+.attachment {
+  padding: 4px 10px;
+  margin-top: var(--gap-large);
+  min-height: 32px;
+  width: 100%;
+  background: #eaeaea;
+  border-radius: var(--radius);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.attachment button {
+  background: #eaeaea !important;
+}
+
+.attachment button:hover {
+  background: #cccccc !important;
+}
+
+.fileName {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  max-width: 80%;
 }

@@ -183,7 +183,7 @@ export default function Question({
               </Tooltip>
 
               <Tooltip
-                label={dayjs(new Date(createdAt)).format("YYYY. MMMM D. H:m")}
+                label={dayjs(new Date(createdAt)).format("YYYY. MMMM D. HH:mm")}
               >
                 <p>{dayjs(new Date(createdAt)).fromNow()}</p>
               </Tooltip>

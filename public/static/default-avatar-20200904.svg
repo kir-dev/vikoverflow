@@ -6,7 +6,7 @@
 			<stop stop-color="#3f06f9" offset="100%"></stop>
 		  </linearGradient>
 		</defs>
-		<g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+		<g id="Page-1" stroke="none" strokeWidth="1" fill="none" fillRule="evenodd">
 		  <rect id="Rectangle" fill="url(#g)" x="0" y="0" width="80" height="80"></rect>
 		</g>
 	  </svg>

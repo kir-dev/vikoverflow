@@ -1,5 +1,6 @@
 const { DynamoDB } = require("aws-sdk");
 const { Client } = require("@elastic/elasticsearch");
+const { serializeError } = require("serialize-error");
 
 function mapRecord(record) {
   const converted = DynamoDB.Converter.output({
@@ -48,82 +49,63 @@ function mapRecord(record) {
   }
 }
 
+const client = new Client({
+  node: `https://${process.env.ES_DOMAIN}`,
+  auth: {
+    username: process.env.ES_USER,
+    password: process.env.ES_PASSWORD,
+  },
+});
+
 exports.handler = async function (event, context) {
-  const NODE = process.env.ES_DOMAIN;
-  const INDEX = process.env.ES_INDEX;
+  try {
+    console.info("event:", JSON.stringify(event, null, 2));
 
-  console.log("DynamoDB to ES synchronize event triggered");
-  console.log("Received event object:", event);
-  console.log("ES domain to use:", NODE);
+    for (const record of event.Records.filter((record) => record.dynamodb)) {
+      try {
+        const id = `${record.dynamodb.Keys.PK.S}|${record.dynamodb.Keys.SK.S}`;
 
-  if (!event.Records) {
-    console.log("No records to process. Exiting");
-    return;
-  }
+        if (record.eventName === "REMOVE") {
+          if (
+            !["topic", "question", "answer", "user"].includes(
+              record.dynamodb.Keys.SK.S?.split("#")?.[0]?.toLowerCase()
+            )
+          ) {
+            continue;
+          }
 
-  const client = new Client({
-    node: `https://${NODE}`,
-    auth: {
-      username: process.env.ES_USER,
-      password: process.env.ES_PASSWORD,
-    },
-  });
+          console.info("deleting:", id);
 
-  for (const record of event.Records.filter((record) => record.dynamodb)) {
-    try {
-      let result;
+          const result = await client.delete({
+            index: process.env.ES_INDEX,
+            id,
+          });
 
-      const keys = record.dynamodb.Keys;
+          console.info("result:", JSON.stringify(result, null, 2));
 
-      console.log(JSON.stringify(record));
-
-      const id = `${keys.PK.S}|${keys.SK.S}`;
-
-      if (!id) {
-        console.log(
-          `Can not detect the ID of the document to index. Make sure the DynamoDB document has a field called '${process.env.PK}'`
-        );
-        continue;
-      }
-
-      if (record.eventName === "REMOVE") {
-        console.log("Deleting document: " + id);
-        result = await client.delete({
-          index: INDEX,
-          id,
-        });
-      } else {
-        if (!record.dynamodb.NewImage) {
-          console.log(
-            "Trying to index new document but the DynamoDB stream event did not provide the NewImage. Skipping..."
-          );
           continue;
         }
-
-        console.log("Indexing document: " + id);
 
         const document = mapRecord(record.dynamodb.NewImage);
 
         if (!document) {
-          console.log(
-            "This document does not need to be saved to elasticsearch"
-          );
           continue;
         }
 
-        console.log("The full object to store is: ", document);
-        result = await client.index({
-          index: INDEX,
+        console.info("indexing:", id);
+
+        const result = await client.index({
+          index: process.env.ES_INDEX,
           id,
           body: document,
         });
-      }
 
-      console.log(result);
-    } catch (e) {
-      console.error("Failed to process DynamoDB row");
-      console.error(record);
-      console.error(e);
+        console.info("result:", JSON.stringify(result, null, 2));
+      } catch (e) {
+        console.error("error:", JSON.stringify(serializeError(e), null, 2));
+      }
     }
+  } catch (e) {
+    console.error("error:", JSON.stringify(serializeError(e), null, 2));
   }
 };

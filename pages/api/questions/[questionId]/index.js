@@ -77,6 +77,7 @@ async function getQuestion(req, res) {
             creator: e.creator,
             createdAt: e.createdAt,
             body: e.body,
+            attachment: e.attachment,
           };
         }),
       },

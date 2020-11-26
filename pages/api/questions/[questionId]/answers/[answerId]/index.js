@@ -3,12 +3,17 @@ import withUser from "lib/api/with-user";
 import { getAnswerSchema } from "lib/schemas";
 import { trimLineBreaks } from "lib/utils";
 import handler from "lib/api/handler";
+import parseMultipart from "lib/api/parse-multipart";
+import { DELETE_CURRENT_FILE } from "lib/constants";
+import { uploadToS3, deleteFromS3 } from "lib/api/s3";
 
 // https://docs.aws.amazon.com/amazondynamodb/latest/APIReference/API_TransactWriteItems.html
 const BATCH_SIZE = 25;
 
 async function editAnswer(req, res) {
   try {
+    const { parsedFields, parsedFiles } = await parseMultipart(req);
+
     const params = {
       TableName: process.env.DYNAMO_TABLE_NAME,
       Key: {
@@ -20,16 +25,17 @@ async function editAnswer(req, res) {
         ":creator": req.user.id,
       },
       ConditionExpression: "creator = :creator",
+      ReturnValues: "ALL_OLD",
     };
 
-    const isValid = await getAnswerSchema(true).isValid(req.body);
+    const isValid = await getAnswerSchema(true).isValid(parsedFields);
 
     if (!isValid) {
       return res.status(400).json({ error: "request not in desired format" });
     }
 
     const allowedKeys = ["body"];
-    const updates = Object.entries(req.body).filter(([key, _]) =>
+    const updates = Object.entries(parsedFields).filter(([key, _]) =>
       allowedKeys.includes(key)
     );
 
@@ -49,7 +55,43 @@ async function editAnswer(req, res) {
       params.ExpressionAttributeValues[`:${key}`] = value;
     });
 
-    await db.update(params).promise();
+    if (parsedFiles.length && parsedFields.file !== DELETE_CURRENT_FILE) {
+      const file = parsedFiles[0];
+
+      const key = await uploadToS3({
+        body: file.body,
+        contentType: file.contentType,
+        metadata: {
+          questionId: req.query.questionId,
+          answerId: req.query.answerId,
+          creator: req.user.id,
+          createdAt: Date.now().toString(),
+          originalName: encodeURIComponent(file.originalName),
+        },
+        contentDisposition: `inline; filename="${encodeURIComponent(
+          file.originalName
+        )}"`,
+      });
+
+      params.UpdateExpression += `, attachment = :attachment`;
+      params.ExpressionAttributeValues[":attachment"] = {
+        s3Key: key,
+        originalName: file.originalName,
+      };
+    }
+
+    if (parsedFields.file === DELETE_CURRENT_FILE) {
+      params.UpdateExpression += " remove attachment";
+    }
+
+    const { Attributes } = await db.update(params).promise();
+
+    if (
+      (parsedFiles.length || parsedFields.file === DELETE_CURRENT_FILE) &&
+      Attributes.attachment
+    ) {
+      await deleteFromS3(Attributes.attachment.s3Key);
+    }
 
     return res.json({ success: true });
   } catch (e) {
@@ -59,6 +101,20 @@ async function editAnswer(req, res) {
 
 async function deleteAnswer(req, res) {
   try {
+    const params = {
+      TableName: process.env.DYNAMO_TABLE_NAME,
+      Key: {
+        PK: `QUESTION#${req.query.questionId}`,
+        SK: `ANSWER#${req.query.answerId}`,
+      },
+    };
+
+    const { Item: metadata } = await db.get(params).promise();
+
+    if (!metadata) {
+      return res.status(404).json({ error: "Answer not found." });
+    }
+
     let cursor;
     let itemsToDelete = [];
 
@@ -142,11 +198,21 @@ async function deleteAnswer(req, res) {
       batches.map((batch) => db.transactWrite(batch).promise())
     );
 
+    if (metadata?.attachment) {
+      await deleteFromS3(metadata.attachment.s3Key);
+    }
+
     return res.json({ success: true });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
 }
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 export default handler({
   PATCH: withUser(editAnswer),

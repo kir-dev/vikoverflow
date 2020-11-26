@@ -6,7 +6,7 @@ import { useState } from "react";
 import Modal from "components/modal";
 import Tooltip from "components/tooltip";
 import Button, { KIND } from "components/button";
-import { Hearth, Edit, Delete } from "components/icons";
+import { Hearth, Edit, Delete, Attachment } from "components/icons";
 import styles from "./answer.module.css";
 import Avatar from "components/avatar";
 import dayjs from "lib/dayjs";
@@ -22,6 +22,7 @@ export default function Answer({
   body,
   upvotes,
   skeleton,
+  attachment,
 }) {
   const router = useRouter();
   const { addToast } = useToasts();
@@ -154,7 +155,7 @@ export default function Answer({
       <AnswerForm
         questionId={questionId}
         answerId={id}
-        initialValues={{ body }}
+        initialValues={{ body, attachment }}
         onCancel={() => setIsEditing(false)}
         onSubmit={() => setIsEditing(false)}
       />
@@ -230,7 +231,7 @@ export default function Answer({
               </Tooltip>
 
               <Tooltip
-                label={dayjs(new Date(createdAt)).format("YYYY. MMMM D. H:m")}
+                label={dayjs(new Date(createdAt)).format("YYYY. MMMM D. HH:mm")}
               >
                 <p>{dayjs(new Date(createdAt)).fromNow()}</p>
               </Tooltip>
@@ -260,6 +261,19 @@ export default function Answer({
           <p>
             <Linkify>{body}</Linkify>
           </p>
+          {attachment && (
+            <Tooltip label="Csatolmány megtekintése">
+              <a
+                href={`${process.env.NEXT_PUBLIC_S3_URL}/${attachment.s3Key}`}
+                target="_blank"
+                rel="noopener"
+                className={styles.attachment}
+              >
+                <Attachment />
+                <span>{attachment.originalName}</span>
+              </a>
+            </Tooltip>
+          )}
         </div>
 
         <div className={styles.footer}>

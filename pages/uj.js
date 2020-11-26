@@ -16,11 +16,8 @@ const AskPage = () => {
   const handleSubmit = async (values) => {
     const formData = new FormData();
 
-    for (let key of Object.keys(values)) {
-      formData.append(
-        key,
-        key === "topics" ? JSON.stringify(values[key]) : values[key]
-      );
+    for (const [key, value] of Object.entries(values)) {
+      formData.append(key, key === "topics" ? JSON.stringify(value) : value);
     }
 
     const res = await fetch("/api/questions", {

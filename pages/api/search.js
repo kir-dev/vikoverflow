@@ -57,8 +57,6 @@ async function search(req, res) {
 
     return res.json(responseObj);
   } catch (e) {
-    console.log(e);
-    console.error(JSON.stringify(e, null, 2));
     return res.status(500).json({ error: e.message });
   }
 }

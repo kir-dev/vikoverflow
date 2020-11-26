@@ -11,6 +11,8 @@ import Button, { KIND } from "components/button";
 import Avatar from "components/avatar";
 import cn from "classnames";
 import Error from "components/error";
+import { Attachment, X } from "components/icons";
+import { DELETE_CURRENT_FILE } from "lib/constants";
 
 export default function AnswerForm({
   questionId,
@@ -27,14 +29,24 @@ export default function AnswerForm({
     !isUserLoading && user ? `/api/user/${user.id}` : null
   );
   const editorRef = useRef(null);
+  const attachmentButtonRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const validationSchema = useMemo(
     () => getAnswerSchema(Boolean(initialValues)),
     [initialValues]
   );
 
-  const { handleSubmit, errors, formState, reset, watch, control } = useForm({
-    defaultValues: initialValues ? { body: initialValues.body } : { body: "" },
+  const {
+    handleSubmit,
+    errors,
+    formState,
+    reset,
+    watch,
+    control,
+    clearErrors,
+    setError,
+  } = useForm({
     resolver: yupResolver(validationSchema),
     mode: "onChange",
   });
@@ -44,6 +56,15 @@ export default function AnswerForm({
     if (initialValues) {
       editorRef.current.innerText = initialValues.body;
     }
+
+    reset({
+      body: initialValues?.body ?? "",
+      file: initialValues?.attachment?.originalName
+        ? { name: initialValues.attachment.originalName }
+        : "",
+    });
+
+    console.log(initialValues?.attachment);
   }, [initialValues]);
 
   function handlePaste(e) {
@@ -52,7 +73,8 @@ export default function AnswerForm({
     document.execCommand("insertText", false, text);
   }
 
-  const body = watch("body");
+  const body = watch("body", initialValues?.body);
+  const watchFile = watch("file");
 
   async function submitThenReset(values) {
     try {
@@ -68,16 +90,19 @@ export default function AnswerForm({
 
   async function handleAnswer(values) {
     try {
+      const formData = new FormData();
+
+      for (const [key, value] of Object.entries(values)) {
+        formData.append(key, value);
+      }
+
       const res = await fetch(
         initialValues
           ? `/api/questions/${questionId}/answers/${answerId}`
           : `/api/questions/${questionId}/answers`,
         {
           method: initialValues ? "PATCH" : "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(values),
+          body: formData,
         }
       );
 
@@ -125,6 +150,10 @@ export default function AnswerForm({
     }
   }
 
+  function handleUploadButtonClick() {
+    fileInputRef.current.click();
+  }
+
   if (skeleton) {
     return (
       <div className={styles.answerForm}>
@@ -162,9 +191,11 @@ export default function AnswerForm({
                   [styles.errored]: errors?.body?.message,
                 })}
                 onFocus={() => setFocused(true)}
-                onBlur={() => {
-                  setFocused(false);
-                  onBlur();
+                onBlur={(e) => {
+                  if (!(e?.relatedTarget === attachmentButtonRef?.current)) {
+                    setFocused(false);
+                    onBlur();
+                  }
                 }}
                 onInput={(e) => {
                   onChange(e.currentTarget.innerText);
@@ -172,18 +203,86 @@ export default function AnswerForm({
               />
             )}
           />
+          <Controller
+            name="file"
+            control={control}
+            render={({ value, onChange }) => (
+              <>
+                {value?.name && (
+                  <div className={styles.attachment}>
+                    <p className={styles.fileName}>{value.name}</p>
+                    <Button
+                      kind={KIND.icon}
+                      disabled={isSubmitting}
+                      small
+                      type="button"
+                      onClick={() => {
+                        fileInputRef.current.value = null;
+                        onChange(
+                          initialValues?.attachment ? DELETE_CURRENT_FILE : ""
+                        );
+                      }}
+                    >
+                      <X />
+                    </Button>
+                  </div>
+                )}
+
+                <input
+                  className={styles.fileInput}
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+
+                    if (!file) {
+                      clearErrors("fileSize");
+                      onChange("");
+                    } else if (file.size > 1024 * 1024 * 5) {
+                      setError("fileSize", {
+                        type: "manual",
+                        message: "5 MB a maximális fájlméret",
+                      });
+                    } else {
+                      clearErrors("fileSize");
+                      onChange(e.target.files[0]);
+                    }
+                  }}
+                />
+              </>
+            )}
+          />
           {errors?.body?.message && <Error>{errors.body.message}</Error>}
+          {errors?.fileSize?.message && (
+            <Error>{errors.fileSize.message}</Error>
+          )}
         </div>
         {(focused || body || errors?.body?.message) && (
           <div className={styles.answerFormActions}>
-            <Button
-              type="submit"
-              disabled={isSubmitting || !(isValid && isDirty)}
-              loading={isSubmitting}
-              inverted
-            >
-              {initialValues ? "Mentés" : "Küldés"}
-            </Button>
+            <div className={styles.submitButtons}>
+              <Button
+                kind={KIND.icon}
+                type="button"
+                tooltip="Csatolmány hozzáadása"
+                onClick={(e) => {
+                  console.log("lefut");
+                }}
+                tabIndex="0"
+                ref={attachmentButtonRef}
+                onClick={handleUploadButtonClick}
+                disabled={watchFile && watchFile !== DELETE_CURRENT_FILE}
+              >
+                <Attachment />
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting || !(isValid && isDirty)}
+                loading={isSubmitting}
+                inverted
+              >
+                {initialValues ? "Mentés" : "Küldés"}
+              </Button>
+            </div>
             {initialValues && (
               <Button type="button" onClick={onCancel} kind={KIND.secondary}>
                 Mégsem

@@ -4,10 +4,14 @@ import withUser from "lib/api/with-user";
 import { getAnswerSchema } from "lib/schemas";
 import { trimLineBreaks } from "lib/utils";
 import handler from "lib/api/handler";
+import parseMultipart from "lib/api/parse-multipart";
+import { uploadToS3 } from "lib/api/s3";
 
 async function createAnswer(req, res) {
   try {
-    const isValid = await getAnswerSchema().isValid(req.body);
+    const { parsedFields, parsedFiles } = await parseMultipart(req);
+
+    const isValid = await getAnswerSchema().isValid(parsedFields);
 
     if (!isValid) {
       return res.status(400).json({ error: "request not in desired format" });
@@ -37,7 +41,7 @@ async function createAnswer(req, res) {
             Item: {
               PK: `QUESTION#${req.query.questionId}`,
               SK: `ANSWER#${id}`,
-              body: trimLineBreaks(req.body.body),
+              body: trimLineBreaks(parsedFields.body),
               upvotes: 0,
               creator: req.user.id,
               createdAt: Date.now(),
@@ -47,6 +51,30 @@ async function createAnswer(req, res) {
       ],
     };
 
+    if (parsedFiles.length) {
+      const file = parsedFiles[0];
+
+      const key = await uploadToS3({
+        body: file.body,
+        contentType: file.contentType,
+        metadata: {
+          questionId: req.query.questionId,
+          answerId: id,
+          creator: req.user.id,
+          createdAt: Date.now().toString(),
+          originalName: encodeURIComponent(file.originalName),
+        },
+        contentDisposition: `inline; filename="${encodeURIComponent(
+          file.originalName
+        )}"`,
+      });
+
+      params.TransactItems[1].Put.Item.attachment = {
+        s3Key: key,
+        originalName: file.originalName,
+      };
+    }
+
     await db.transactWrite(params).promise();
 
     return res.json({ success: true });
@@ -54,6 +82,12 @@ async function createAnswer(req, res) {
     return res.status(500).json({ error: e.message });
   }
 }
+
+export const config = {
+  api: {
+    bodyParser: false,
+  },
+};
 
 export default handler({
   POST: withUser(createAnswer),

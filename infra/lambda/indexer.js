@@ -92,7 +92,10 @@ exports.handler = async function (event, context) {
           continue;
         }
 
-        console.info("indexing:", id);
+        console.info(
+          record.eventName === "INSERT" ? "inserting:" : "modifying:",
+          id
+        );
 
         const result = await client.index({
           index: process.env.ES_INDEX,

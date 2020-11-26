@@ -63,7 +63,6 @@ export default function AnswerForm({
         ? { name: initialValues.attachment.originalName }
         : "",
     });
-
   }, [initialValues]);
 
   function handlePaste(e) {
@@ -136,6 +135,7 @@ export default function AnswerForm({
                   body: trimLineBreaks(values.body),
                   upvotes: { count: 0, currentUserUpvoted: false },
                   creator: user.id,
+                  createdAt: Date.now(),
                 },
                 ...oldData.question.answers.list,
               ],

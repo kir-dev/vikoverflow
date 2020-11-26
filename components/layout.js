@@ -49,7 +49,7 @@ export default function Layout({
   title = "vikoverflow",
   description = "description",
   image = "https://vikoverflow.vassbence.com/static/og-image-20201029.png",
-  favicon = "/static/favicon-20200519.ico",
+  favicon = "/static/favicon-20201126.ico",
   url = "https://vikoverflow.sch.bme.hu",
 }) {
   const { search } = useSearch();

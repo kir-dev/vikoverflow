@@ -28,7 +28,12 @@ jobs:
           SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
           REGION: ${{ secrets.REGION }}
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          NEXT_PUBLIC_S3_URL: ${{ secrets.NEXT_PUBLIC_S3_URL }}
           DYNAMO_TABLE_NAME: ${{ secrets.DYNAMO_TABLE_NAME }}
+          ELASTICSEARCH_INDEX_NAME: ${{ secrets.ELASTICSEARCH_INDEX_NAME }}
+          ELASTICSEARCH_USER: ${{ secrets.ELASTICSEARCH_USER }}
+          ELASTICSEARCH_PW: ${{ secrets.ELASTICSEARCH_PW }}
+          ELASTICSEARCH_DOMAIN_ENDPOINT: ${{ secrets.ELASTICSEARCH_DOMAIN_ENDPOINT }}
           OAUTH_SECRET: ${{ secrets.OAUTH_SECRET }}
           OAUTH_PASS: ${{ secrets.OAUTH_PASS }}
           OAUTH_ID: ${{ secrets.OAUTH_ID }}
@@ -44,7 +49,12 @@ jobs:
           SECRET_ACCESS_KEY: ${{ secrets.SECRET_ACCESS_KEY }}
           REGION: ${{ secrets.REGION }}
           S3_BUCKET_NAME: ${{ secrets.S3_BUCKET_NAME }}
+          NEXT_PUBLIC_S3_URL: ${{ secrets.NEXT_PUBLIC_S3_URL }}
           DYNAMO_TABLE_NAME: ${{ secrets.DYNAMO_TABLE_NAME }}
+          ELASTICSEARCH_INDEX_NAME: ${{ secrets.ELASTICSEARCH_INDEX_NAME }}
+          ELASTICSEARCH_USER: ${{ secrets.ELASTICSEARCH_USER }}
+          ELASTICSEARCH_PW: ${{ secrets.ELASTICSEARCH_PW }}
+          ELASTICSEARCH_DOMAIN_ENDPOINT: ${{ secrets.ELASTICSEARCH_DOMAIN_ENDPOINT }}
           OAUTH_SECRET: ${{ secrets.OAUTH_SECRET }}
           OAUTH_PASS: ${{ secrets.OAUTH_PASS }}
           OAUTH_ID: ${{ secrets.OAUTH_ID }}

@@ -1,4 +1,8 @@
+import { nanoid } from "nanoid";
+
 export default function PlusIcon() {
+  const id = nanoid();
+
   return (
     <svg
       width="24"
@@ -8,7 +12,7 @@ export default function PlusIcon() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <mask
-        id="maskplus"
+        id={id}
         mask-type="alpha"
         maskUnits="userSpaceOnUse"
         x="4"
@@ -23,7 +27,7 @@ export default function PlusIcon() {
           fill="currentColor"
         />
       </mask>
-      <g mask="url(#maskplus)">
+      <g mask={`url(#${id})`}>
         <path
           fillRule="evenodd"
           clipRule="evenodd"

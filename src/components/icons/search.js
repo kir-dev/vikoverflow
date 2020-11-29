@@ -1,4 +1,8 @@
+import { nanoid } from "nanoid";
+
 export default function SearchIcon() {
+  const id = nanoid();
+
   return (
     <svg
       width="24"
@@ -8,7 +12,7 @@ export default function SearchIcon() {
       xmlns="http://www.w3.org/2000/svg"
     >
       <mask
-        id="mask0"
+        id={id}
         mask-type="alpha"
         maskUnits="userSpaceOnUse"
         x="3"
@@ -23,7 +27,7 @@ export default function SearchIcon() {
           fill="currentColor"
         />
       </mask>
-      <g mask="url(#mask0)">
+      <g mask={`url(#${id}`}>
         <path
           fillRule="evenodd"
           clipRule="evenodd"

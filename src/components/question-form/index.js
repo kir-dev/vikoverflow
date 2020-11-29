@@ -31,7 +31,15 @@ export default function QuestionForm({
     clearErrors,
     watch,
   } = useForm({
-    resolver: yupResolver(QuestionSchema),
+    defaultValues: {
+      title: "",
+      body: "",
+      topics: [],
+      file: "",
+    },
+    // TODO remove options param if yup get's fixed
+    // https://github.com/jquense/yup/issues/1127
+    resolver: yupResolver(QuestionSchema, { abortEarly: true }),
     mode: "onChange",
   });
 
@@ -180,8 +188,6 @@ export default function QuestionForm({
             </div>
             <Button
               disabled={isSubmitting || !(isValid && isDirty) || skeleton}
-              loading={isSubmitting}
-              inverted
               type="submit"
             >
               {buttonText}

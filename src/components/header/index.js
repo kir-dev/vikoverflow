@@ -5,17 +5,15 @@ import { logout, useUser } from "lib/authenticate";
 import { useRouter } from "next/router";
 import { useState, useEffect } from "react";
 import Toggle from "./toggle";
-import Button from "components/button";
 import Avatar from "components/avatar";
 import { Menu } from "@headlessui/react";
 import SearchInput from "./search-input";
 import Tooltip from "components/tooltip";
 import useSWR from "swr";
-import { Plus, User, Logout } from "components/icons";
+import { Plus, User, Logout, Search } from "components/icons";
 
 const Header = () => {
   const router = useRouter();
-
   const { isLoading, user } = useUser();
   const { data: userData } = useSWR(user?.id ? `/api/user/${user.id}` : null);
   const [active, setActive] = useState(false);
@@ -40,7 +38,6 @@ const Header = () => {
           >
             <Toggle active={active} />
           </div>
-          {isLoading}
 
           <nav
             className={cn(styles.rightNav, { [styles.visible]: !isLoading })}
@@ -124,13 +121,28 @@ const Header = () => {
       <div className={cn(styles.mobileNav, { [styles.active]: active })}>
         {user ? (
           <>
-            <Link href="/uj" passHref>
-              <Button>Új kérdés</Button>
+            <Link href="/uj">
+              <a>
+                Új kérdés
+                <Plus />
+              </a>
+            </Link>
+            <Link href="/kereses">
+              <a>
+                Keresés
+                <Search />
+              </a>
             </Link>
             <Link href="/profil">
-              <a>Profil</a>
+              <a>
+                Profil
+                <User />
+              </a>
             </Link>
-            <a onClick={logout}>Kilépés</a>
+            <a onClick={logout}>
+              Kilépés
+              <Logout />
+            </a>
           </>
         ) : (
           <Link href="/belepes">

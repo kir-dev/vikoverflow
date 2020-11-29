@@ -2,6 +2,7 @@ import Header from "components/header";
 import Head from "next/head";
 import SearchList from "components/search-list";
 import { useSearch } from "lib/search-context";
+import { useRouter } from "next/router";
 
 function SEO({ title, description, image, favicon, url }) {
   return (
@@ -53,6 +54,7 @@ export default function Layout({
   url = "https://vikoverflow.sch.bme.hu",
 }) {
   const { search } = useSearch();
+  const { pathname } = useRouter();
 
   return (
     <>
@@ -64,7 +66,7 @@ export default function Layout({
         url={url}
       />
       {header && <Header />}
-      {search ? <SearchList /> : children}
+      {search && pathname !== "/kereses" ? <SearchList /> : children}
     </>
   );
 }

@@ -1,5 +1,5 @@
 import { useUser } from "lib/authenticate";
-import { useState, useRef, useEffect, Fragment } from "react";
+import { useState, useRef, Fragment } from "react";
 import { useToasts } from "components/toasts";
 import styles from "./avatar.module.css";
 import cn from "clsx";
@@ -19,12 +19,6 @@ export default function Avatar({
 }) {
   const Wrapper = label ? Tooltip : Fragment;
   const wrapperProps = label ? { label } : {};
-  const imgRef = useRef(null);
-  const [ready, setReady] = useState(false);
-
-  useEffect(() => {
-    imgRef?.current?.complete && setReady(true);
-  }, []);
 
   return (
     <Wrapper {...wrapperProps}>
@@ -40,9 +34,6 @@ export default function Avatar({
             width={size}
             height={size}
             alt="User's avatar"
-            className={cn({ [styles.ready]: ready })}
-            onLoad={() => setReady(true)}
-            ref={imgRef}
             src={
               id
                 ? `${process.env.NEXT_PUBLIC_S3_URL}/${id}`

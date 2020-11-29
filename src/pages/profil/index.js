@@ -144,20 +144,20 @@ export default function ProfilePage() {
                           <path
                             d="M5.9497 11C8.68334 11 10.8994 8.76142 10.8994 6C10.8994 3.23858 8.68334 1 5.9497 1C3.21606 1 1 3.23858 1 6C1 8.76142 3.21606 11 5.9497 11Z"
                             stroke="#7B7B7B"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                           />
                           <path
                             d="M5.94971 8V6"
                             stroke="#7B7B7B"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                           />
                           <path
                             d="M5.94971 4H5.95471"
                             stroke="#7B7B7B"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
                           />
                         </svg>
 
@@ -177,8 +177,6 @@ export default function ProfilePage() {
                       <Button
                         type="submit"
                         disabled={isSubmitting || !(isValid && isDirty)}
-                        loading={isSubmitting}
-                        inverted
                       >
                         Mentés
                       </Button>

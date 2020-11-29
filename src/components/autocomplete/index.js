@@ -5,6 +5,7 @@ import Error from "components/error";
 import moduleStyles from "./autocomplete.module.css";
 import { DownArrow, X } from "components/icons";
 import { Fragment } from "react";
+import { nanoid } from "nanoid";
 
 const MultiValueRemove = (props) => {
   return (
@@ -34,6 +35,7 @@ export default function Autocomplete({
   return (
     <Wrapper {...wrapperProps}>
       <Select
+        instanceId="vikoverflow-select"
         value={value}
         onChange={onChange}
         options={options}

@@ -1,0 +1,9 @@
+.inputContainer {
+  padding: 24px 24px 0;
+}
+
+@media screen and (min-width: 951px) {
+  .inputContainer {
+    display: none;
+  }
+}

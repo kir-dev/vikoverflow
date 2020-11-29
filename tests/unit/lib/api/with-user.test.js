@@ -1,4 +1,4 @@
-import withUser from "../../../../lib/api/with-user";
+import withUser from "../../../../src/lib/api/with-user";
 import jwt from "jsonwebtoken";
 
 jest.mock("jsonwebtoken");

@@ -273,8 +273,6 @@ export default function AnswerForm({
               <Button
                 type="submit"
                 disabled={isSubmitting || !(isValid && isDirty)}
-                loading={isSubmitting}
-                inverted
               >
                 {initialValues ? "Mentés" : "Küldés"}
               </Button>

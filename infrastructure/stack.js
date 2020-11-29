@@ -61,7 +61,7 @@ class VikoverflowStack extends cdk.Stack {
     });
 
     const ddbToEsLambda = new lambdaNode.NodejsFunction(this, "ddbToEsLambda", {
-      entry: path.resolve(__dirname, "./lambda/indexer.js"),
+      entry: path.resolve(__dirname, "./es-indexer-lambda.js"),
       environment: {
         ES_DOMAIN: es.domainEndpoint,
         ES_INDEX: process.env.ELASTICSEARCH_INDEX_NAME,

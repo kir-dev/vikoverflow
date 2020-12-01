@@ -1,8 +1,14 @@
 const ALL_VALID_METHODS = ["GET", "POST", "PATCH", "DELETE"];
 
 export default function handler(mapping) {
-  if (Object.keys(mapping).some((key) => !ALL_VALID_METHODS.includes(key))) {
+  const keys = Object.keys(mapping);
+
+  if (keys.some((key) => !ALL_VALID_METHODS.includes(key))) {
     throw new Error("Invalid method in mapping");
+  }
+
+  if (keys.some((key) => typeof mapping[key] !== "function")) {
+    throw new Error("Methods value is not a function");
   }
 
   return function _handlerFn(req, res) {

@@ -13,7 +13,6 @@ const LoginPage = () => {
           onClick={() => {
             window.location = "/api/auth/login";
           }}
-          data-test="loginButton"
         >
           Belépés AuthSCH fiókkal
         </Button>

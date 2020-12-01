@@ -35,6 +35,7 @@ export const QuestionSchema = Yup.object().shape({
         )
         .max(16, "Ez így túl hosszúkás")
     )
+    .required("Témát is tessék választani")
     .min(1, "Legalább egy témát adj meg")
     .max(5, "Maximum 5 témát választhatsz"),
 });

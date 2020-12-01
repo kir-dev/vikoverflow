@@ -4,24 +4,29 @@ dotenv.config();
 jest.setTimeout(1000 * 60 * 2);
 
 describe("frontend authentication flow", () => {
-  it("should allow users to log in and get an auth token to access private routes", async () => {
-    // tries to access private routes -> get redirected to login page
+  it("should deny access to private routes for unauthenticated requests", async () => {
     await page.goto("http://localhost:3000/profil");
+    await expect(page.url()).toBe("http://localhost:3000/belepes");
 
-    // log in to vikoverflow
+    await page.goto("http://localhost:3000/uj");
+    await expect(page.url()).toBe("http://localhost:3000/belepes");
+
+    await page.goto("http://localhost:3000/kerdes/__test__/szerkesztes");
+    await expect(page.url()).toBe("http://localhost:3000/belepes");
+  });
+
+  it("should allow users to log in and get an auth token then access private routes", async () => {
+    await page.goto("http://localhost:3000/belepes");
     await page.click("text=Belépés AuthSCH fiókkal");
-
-    // fill AuthSCH login info
     await page.fill("#LoginForm_username", process.env.TEST_OAUTH_USERNAME);
     await page.fill("#LoginForm_password", process.env.TEST_OAUTH_PASSWORD);
     await page.click("text=Bejelentkezés");
-    try {
+
+    // AuthSCH sometimes shows a second confirmation button
+    if ((await page.url()) !== "http://localhost:3000/") {
       await page.click("text=Engedélyezés");
-    } catch (error) {
-      // no-op, AuthSCH sometimes does not show the second confirmation button
     }
 
-    // redirected back to vikoverflow
     const cookies = await context.cookies();
     const tokenCookie = cookies.find((c) => c.name === "token");
     const loggedInCookie = cookies.find((c) => c.name === "logged-in");
@@ -35,6 +40,16 @@ describe("frontend authentication flow", () => {
 
     // tries to access private route -> success
     await page.goto("http://localhost:3000/profil");
-    await page.waitForSelector(`text=${process.env.TEST_OAUTH_PROFILE_NAME}`);
+
+    await expect(page).toHaveSelector(
+      `text=${process.env.TEST_OAUTH_PROFILE_NAME}`
+    );
+    await expect(page.url()).toBe("http://localhost:3000/profil");
+  });
+
+  it("should redirect authenticated users to the index page", async () => {
+    await page.goto("http://localhost:3000/belepes");
+    await page.waitForTimeout(1000);
+    await expect(page.url()).toBe("http://localhost:3000/");
   });
 });

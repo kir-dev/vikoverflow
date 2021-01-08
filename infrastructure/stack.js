@@ -22,8 +22,8 @@ class VikoverflowStack extends cdk.Stack {
       removalPolicy: cdk.RemovalPolicy.DESTROY,
       billingMode: dynamodb.BillingMode.PROVISIONED,
       tableName: process.env.DYNAMO_TABLE_NAME,
-      readCapacity: 8,
-      writeCapacity: 8,
+      readCapacity: 3,
+      writeCapacity: 3,
       partitionKey: { name: "PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "SK", type: dynamodb.AttributeType.STRING },
       stream: dynamodb.StreamViewType.NEW_IMAGE,
@@ -32,15 +32,15 @@ class VikoverflowStack extends cdk.Stack {
       indexName: "GSI1",
       partitionKey: { name: "GSI1PK", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "GSI1SK", type: dynamodb.AttributeType.NUMBER },
-      readCapacity: 8,
-      writeCapacity: 8,
+      readCapacity: 3,
+      writeCapacity: 3,
     });
     table.addGlobalSecondaryIndex({
       indexName: "GSI2",
       partitionKey: { name: "creator", type: dynamodb.AttributeType.STRING },
       sortKey: { name: "createdAt", type: dynamodb.AttributeType.NUMBER },
-      readCapacity: 8,
-      writeCapacity: 8,
+      readCapacity: 3,
+      writeCapacity: 3,
     });
 
     const es = new elasticsearch.Domain(this, "ElasticSearchDomain", {

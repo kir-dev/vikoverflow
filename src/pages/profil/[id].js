@@ -4,11 +4,34 @@ import useSWR from "swr";
 import { useRouter } from "next/router";
 import Layout from "components/layout";
 import { useEffect } from "react";
+import { getUserById } from "pages/api/user/[id]";
 
-export default function ProfilePage() {
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
+}
+
+export async function getStaticProps({ params }) {
+  try {
+    const initialData = await getUserById(params.id);
+    return {
+      props: { initialData },
+      revalidate: 1,
+    };
+  } catch (e) {
+    return {
+      notFound: true,
+    };
+  }
+}
+
+export default function ProfilePage({ initialData }) {
   const router = useRouter();
   const { data } = useSWR(
-    router.query.id ? `/api/user/${router.query.id}` : null
+    router.query.id ? `/api/user/${router.query.id}` : null,
+    { initialData }
   );
 
   useEffect(() => {

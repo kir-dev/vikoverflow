@@ -1,4 +1,18 @@
-const ALL_VALID_METHODS = ["GET", "POST", "PATCH", "DELETE"];
+import { HTTPError } from "lib/utils";
+
+function sendError(res, error) {
+  if (error instanceof HTTPError) {
+    return res.status(error.statusCode).json({ error: error.message });
+  }
+
+  if (error instanceof Error) {
+    return res.status(500).json({ error: error.message });
+  }
+
+  return res.status(500).json({ error: "Damn, something went real bad..." });
+}
+
+const ALL_VALID_METHODS = ["GET", "PATCH", "DELETE", "POST"];
 
 export default function handler(mapping) {
   const keys = Object.keys(mapping);
@@ -11,12 +25,21 @@ export default function handler(mapping) {
     throw new Error("Methods value is not a function");
   }
 
-  return function _handlerFn(req, res) {
+  return async function _handlerFn(req, res) {
     if (mapping[req.method]) {
-      return mapping[req.method](req, res);
+      try {
+        await mapping[req.method](req, res);
+      } catch (error) {
+        sendError(res, error);
+      }
+
+      return;
     }
 
     res.setHeader("Allow", Object.keys(mapping));
-    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
+    return sendError(
+      res,
+      new HTTPError(405, `Method ${req.method} Not Allowed`)
+    );
   };
 }

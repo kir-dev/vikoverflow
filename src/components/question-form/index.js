@@ -37,8 +37,6 @@ export default function QuestionForm({
       topics: [],
       file: "",
     },
-    // TODO remove options param if yup get's fixed
-    // https://github.com/jquense/yup/issues/1127
     resolver: yupResolver(QuestionSchema, { abortEarly: true }),
     mode: "onChange",
   });

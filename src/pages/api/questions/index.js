@@ -13,6 +13,7 @@ import parseMultipart from "lib/api/parse-multipart";
 import { uploadToS3 } from "lib/api/s3";
 import handler from "lib/api/handler";
 import es from "lib/api/es";
+import { HTTPError } from "lib/utils";
 
 function mapQuestions(rawDbItems) {
   return rawDbItems.map(
@@ -55,7 +56,7 @@ function mapEs(rawEsItems) {
   );
 }
 
-async function getQuestions(cursor) {
+export async function getQuestions(cursor) {
   const params = {
     TableName: process.env.DYNAMO_TABLE_NAME,
     IndexName: "GSI1",
@@ -84,7 +85,7 @@ async function getQuestions(cursor) {
   return responseObj;
 }
 
-async function getQuestionsByTopic(topic, cursor) {
+export async function getQuestionsByTopic(topic, cursor) {
   // checking if topic actually exists
   {
     const params = {
@@ -136,102 +137,96 @@ async function getQuestionsByTopic(topic, cursor) {
 }
 
 async function getAllQuestions(req, res) {
-  try {
-    const topic = req.query.topic;
-    const cursor = req.query.cursor && decodeJSON(req.query.cursor);
+  const topic = req.query.topic;
+  const cursor = req.query.cursor && decodeJSON(req.query.cursor);
 
-    if (topic) {
-      return res.json(await getQuestionsByTopic(topic, cursor));
-    }
-
-    return res.json(await getQuestions(cursor));
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
+  if (topic) {
+    return res.json(await getQuestionsByTopic(topic, cursor));
   }
+
+  return res.json(await getQuestions(cursor));
 }
 
 async function createQuestion(req, res) {
-  try {
-    const { parsedFields, parsedFiles } = await parseMultipart(req);
+  const { parsedFields, parsedFiles } = await parseMultipart(req);
 
-    parsedFields.topics = JSON.parse(parsedFields.topics);
+  parsedFields.topics = JSON.parse(parsedFields.topics);
 
-    if (!(await QuestionSchema.isValid(parsedFields))) {
-      return res.status(400).json({ error: "request not in desired format" });
-    }
-
-    const questionId = nanoid();
-    const createdAt = Date.now();
-
-    const params = {
-      TransactItems: [
-        {
-          Put: {
-            TableName: process.env.DYNAMO_TABLE_NAME,
-            Item: {
-              PK: `QUESTION#${questionId}`,
-              SK: `QUESTION#${questionId}`,
-              GSI1PK: "QUESTION",
-              GSI1SK: createdAt,
-              title: trimSpaces(parsedFields.title),
-              body: trimLineBreaks(parsedFields.body),
-              upvotes: 0,
-              numberOfAnswers: 0,
-              topics: parsedFields.topics,
-              creator: req.user.id,
-              createdAt,
-            },
-          },
-        },
-      ],
-    };
-
-    for (const topic of parsedFields.topics) {
-      params.TransactItems.push({
-        // increasing the numberOfQuestions on each topic
-        Update: {
-          TableName: process.env.DYNAMO_TABLE_NAME,
-          Key: {
-            PK: `TOPIC#${topic}`,
-            SK: `TOPIC#${topic}`,
-          },
-          UpdateExpression:
-            "add GSI1SK :incr set GSI1PK = if_not_exists(GSI1PK, :GSI1PK)",
-          ExpressionAttributeValues: {
-            ":GSI1PK": "TOPIC",
-            ":incr": 1,
-          },
-        },
-      });
-    }
-
-    if (parsedFiles.length) {
-      const file = parsedFiles[0];
-
-      const key = await uploadToS3({
-        body: file.body,
-        contentType: file.contentType,
-        metadata: {
-          questionId,
-          creator: req.user.id,
-          createdAt: Date.now().toString(),
-          originalName: encodeURIComponent(file.originalName),
-        },
-        contentDisposition: `inline; filename="${encodeURIComponent(file.originalName)}"`,
-      });
-
-      params.TransactItems[1].Put.Item.attachment = {
-        s3Key: key,
-        originalName: file.originalName,
-      };
-    }
-
-    await db.transactWrite(params).promise();
-
-    return res.json({ id: questionId });
-  } catch (e) {
-    return res.status(500).json({ error: e.message });
+  if (!(await QuestionSchema.isValid(parsedFields))) {
+    throw new HTTPError(400, "request not in desired format");
   }
+
+  const questionId = nanoid();
+  const createdAt = Date.now();
+
+  const params = {
+    TransactItems: [
+      {
+        Put: {
+          TableName: process.env.DYNAMO_TABLE_NAME,
+          Item: {
+            PK: `QUESTION#${questionId}`,
+            SK: `QUESTION#${questionId}`,
+            GSI1PK: "QUESTION",
+            GSI1SK: createdAt,
+            title: trimSpaces(parsedFields.title),
+            body: trimLineBreaks(parsedFields.body),
+            upvotes: 0,
+            numberOfAnswers: 0,
+            topics: parsedFields.topics,
+            creator: req.user.id,
+            createdAt,
+          },
+        },
+      },
+    ],
+  };
+
+  for (const topic of parsedFields.topics) {
+    params.TransactItems.push({
+      // increasing the numberOfQuestions on each topic
+      Update: {
+        TableName: process.env.DYNAMO_TABLE_NAME,
+        Key: {
+          PK: `TOPIC#${topic}`,
+          SK: `TOPIC#${topic}`,
+        },
+        UpdateExpression:
+          "add GSI1SK :incr set GSI1PK = if_not_exists(GSI1PK, :GSI1PK)",
+        ExpressionAttributeValues: {
+          ":GSI1PK": "TOPIC",
+          ":incr": 1,
+        },
+      },
+    });
+  }
+
+  if (parsedFiles.length) {
+    const file = parsedFiles[0];
+
+    const key = await uploadToS3({
+      body: file.body,
+      contentType: file.contentType,
+      metadata: {
+        questionId,
+        creator: req.user.id,
+        createdAt: Date.now().toString(),
+        originalName: encodeURIComponent(file.originalName),
+      },
+      contentDisposition: `inline; filename="${encodeURIComponent(
+        file.originalName
+      )}"`,
+    });
+
+    params.TransactItems[0].Put.Item.attachment = {
+      s3Key: key,
+      originalName: file.originalName,
+    };
+  }
+
+  await db.transactWrite(params).promise();
+
+  return res.json({ id: questionId });
 }
 
 export const config = {

@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import { HTTPError } from "lib/utils";
 
 const withUser = (fn, options = { throw: true }) => async (req, res) => {
   const token = req.cookies?.token;
@@ -8,7 +9,7 @@ const withUser = (fn, options = { throw: true }) => async (req, res) => {
       req.user = null;
       return await fn(req, res);
     }
-    return res.status(400).json({ error: "Missing token" });
+    throw new HTTPError(403, "Missing token");
   }
 
   try {
@@ -19,7 +20,7 @@ const withUser = (fn, options = { throw: true }) => async (req, res) => {
       req.user = null;
       return await fn(req, res);
     }
-    return res.status(401).json({ error: "Bad token" });
+    throw new HTTPError(403, "Bad token");
   }
 
   return await fn(req, res);

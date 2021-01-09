@@ -178,6 +178,15 @@
   cursor: pointer;
 }
 
+.menuItem.info {
+  cursor: initial;
+}
+
+.menuItem.info a {
+  color: #7b7b7b;
+  text-decoration: none;
+}
+
 .user {
   padding: var(--gap-small) 12px;
   display: flex;

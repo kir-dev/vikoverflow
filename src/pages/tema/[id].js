@@ -4,24 +4,54 @@ import useSWR from "swr";
 import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import Button, { KIND } from "components/button";
-import { Edit, Plus } from "components/icons";
+import { Plus } from "components/icons";
 import { useRouter } from "next/router";
 import { useUser } from "lib/authenticate";
 import Question from "components/question-list-element";
 import useTopicQuestions from "swr/use-topic-questions";
+import { getQuestionsByTopic } from "pages/api/questions";
+import { getTopicById } from "pages/api/topics/[id]";
 
-export default function TopicPage() {
+export async function getStaticPaths() {
+  return {
+    paths: [],
+    fallback: "blocking",
+  };
+}
+
+export async function getStaticProps({ params }) {
+  try {
+    const topicData = await getTopicById(params.id);
+    const firstPageOfQuestions = await getQuestionsByTopic(params.id);
+    return {
+      props: {
+        initialTopicData: topicData,
+        initialQuestionsData: [firstPageOfQuestions],
+      },
+      revalidate: 1,
+    };
+  } catch (e) {
+    return {
+      notFound: true,
+    };
+  }
+}
+
+export default function TopicPage({ initialTopicData, initialQuestionsData }) {
   const { user } = useUser();
   const router = useRouter();
   const topicId = router.query.id;
-  const { data: topicData } = useSWR(topicId ? `/api/topics/${topicId}` : null);
+  const { data: topicData } = useSWR(
+    topicId ? `/api/topics/${topicId}` : null,
+    { initialData: initialTopicData }
+  );
   const {
     questions,
     initialDataLoaded,
     isEmpty,
     isReachingEnd,
     loadMore,
-  } = useTopicQuestions();
+  } = useTopicQuestions({ initialData: initialQuestionsData });
 
   const [loaderRef, inView] = useInView({ rootMargin: "400px 0px" });
 

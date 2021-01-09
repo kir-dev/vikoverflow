@@ -1,4 +1,4 @@
-import handler from "../../../../src/lib/api/handler";
+import handler from "lib/api/handler";
 
 describe("handler", () => {
   it("should throw an error when an invalid method is passed", () => {

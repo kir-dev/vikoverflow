@@ -1,5 +1,6 @@
-import withUser from "../../../../src/lib/api/with-user";
+import withUser from "lib/api/with-user";
 import jwt from "jsonwebtoken";
+import { HTTPError } from "lib/utils";
 
 jest.mock("jsonwebtoken");
 
@@ -18,12 +19,12 @@ describe("with-user", () => {
     res.json = jest.fn().mockReturnValue(res);
 
     const handler = withUser(fn);
-    await handler(req, res);
+    await expect(handler(req, res)).rejects.toThrow(
+      new HTTPError(403, "Missing token")
+    );
 
     expect(fn).toHaveBeenCalledTimes(0);
     expect(jwt.verify).toHaveBeenCalledTimes(0);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith({ error: "Missing token" });
   });
 
   it("should call fn when no token is provided & options.throw = false", async () => {
@@ -55,12 +56,12 @@ describe("with-user", () => {
     res.json = jest.fn().mockReturnValue(res);
 
     const handler = withUser(fn);
-    await handler(req, res);
+    await expect(handler(req, res)).rejects.toThrow(
+      new HTTPError(403, "Bad token")
+    );
 
     expect(fn).toHaveBeenCalledTimes(0);
     expect(jwt.verify).toHaveBeenCalledTimes(1);
-    expect(res.status).toHaveBeenCalledWith(401);
-    expect(res.json).toHaveBeenCalledWith({ error: "Bad token" });
   });
 
   it("should call fn when a bad token is provided & options.throw = false", async () => {

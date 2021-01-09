@@ -104,6 +104,20 @@ const Header = () => {
                             </button>
                           )}
                         </Menu.Item>
+                        <div className={styles.separator} />
+                        <Menu.Item>
+                          <div className={cn(styles.menuItem, styles.info)}>
+                            <p>v1.0.0</p>
+                            <span>&nbsp;·&nbsp;</span>
+                            <a
+                              href="https://github.com/kir-dev/vikoverflow"
+                              target="_blank"
+                              rel="noopener"
+                            >
+                              Forráskód
+                            </a>
+                          </div>
+                        </Menu.Item>
                       </Menu.Items>
                     </>
                   </Menu>

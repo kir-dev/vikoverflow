@@ -1,4 +1,4 @@
-import { QuestionSchema } from "../../../src/lib/schemas";
+import { QuestionSchema } from "lib/schemas";
 
 describe("schemas", () => {
   describe("question", () => {

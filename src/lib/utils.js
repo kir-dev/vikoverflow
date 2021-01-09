@@ -1,3 +1,10 @@
+export class HTTPError extends Error {
+  constructor(statusCode, message) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
+
 export function trimSpaces(str) {
   return str.trim().replace(/\s\s+/g, " ");
 }

@@ -1,0 +1,39 @@
+.root {
+  border-top: 1px solid var(--accent-2);
+  font-size: 0.875rem;
+  padding: 1.5rem 0 3rem;
+  background: var(--accent-1);
+}
+
+.inner {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  composes: container from global;
+}
+
+.link {
+  color: var(--accent-4);
+  text-decoration: none;
+  padding: 0 0.5rem;
+}
+
+.link:first-of-type {
+  margin-left: 0.5rem;
+  transition: color 200ms ease;
+}
+
+.link:hover {
+  color: var(--foreground);
+}
+
+.sponsors {
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.sponsors a {
+  margin-left: 0.5rem;
+  margin-bottom: -4px;
+}

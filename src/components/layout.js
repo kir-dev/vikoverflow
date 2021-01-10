@@ -3,6 +3,7 @@ import Head from "next/head";
 import SearchList from "components/search-list";
 import { useSearch } from "lib/search-context";
 import { useRouter } from "next/router";
+import Footer from "components/footer";
 
 function SEO({ title, description, image, favicon, url }) {
   return (
@@ -67,6 +68,7 @@ export default function Layout({
       />
       {header && <Header />}
       {search && pathname !== "/kereses" ? <SearchList /> : children}
+      <Footer />
     </>
   );
 }

@@ -1,9 +1,0 @@
-.git
-.gitignore
-.next
-.vercel
-.dockerignore
-Dockerfile
-docker-compose.yml
-node_modules
-nginx

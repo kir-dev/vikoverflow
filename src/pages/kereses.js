@@ -8,17 +8,19 @@ import { Search } from "components/icons";
 export default function SearchPage() {
   const { search, setSearch } = useSearch();
   return (
-    <Layout>
-      <div className={styles.inputContainer}>
-        <Input
-          prefix={<Search />}
-          placeholder="Keresés"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
-      </div>
+    <Layout footerDark>
+      <div className={styles.root}>
+        <div className={styles.inputContainer}>
+          <Input
+            prefix={<Search />}
+            placeholder="Keresés"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+        </div>
 
-      <SearchList />
+        <SearchList />
+      </div>
     </Layout>
   );
 }

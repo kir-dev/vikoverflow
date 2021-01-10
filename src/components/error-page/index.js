@@ -17,7 +17,7 @@ export default function ErrorPage({ statusCode, showGithub }) {
   const text = useMemo(() => getErrorMessage(statusCode), [statusCode]);
 
   return (
-    <Layout>
+    <Layout footerDark>
       <div className={styles.page}>
         <div className={styles.inner}>
           <h1>{statusCode}</h1>

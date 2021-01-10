@@ -47,7 +47,7 @@ function SEO({ title, description, image, favicon, url }) {
 
 export default function Layout({
   children,
-  header = true,
+  footerDark,
   title = "vikoverflow",
   description = "description",
   image = "https://vikoverflow.vassbence.com/static/og-image-20201029.png",
@@ -66,9 +66,9 @@ export default function Layout({
         favicon={favicon}
         url={url}
       />
-      {header && <Header />}
+      <Header />
       {search && pathname !== "/kereses" ? <SearchList /> : children}
-      <Footer />
+      <Footer dark={footerDark} />
     </>
   );
 }

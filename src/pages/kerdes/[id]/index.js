@@ -24,7 +24,7 @@ export default function QuestionPage() {
 
   if (!data) {
     return (
-      <Layout>
+      <Layout footerDark>
         <div className={styles.root}>
           <Question skeleton />
           <AnswerForm skeleton />
@@ -36,7 +36,7 @@ export default function QuestionPage() {
   }
 
   return (
-    <Layout>
+    <Layout footerDark>
       <div className={styles.root}>
         <Question {...data.question} />
 

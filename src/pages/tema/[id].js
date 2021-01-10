@@ -68,7 +68,7 @@ export default function TopicPage({ initialTopicData, initialQuestionsData }) {
   }, [inView, isReachingEnd]);
 
   return (
-    <Layout>
+    <Layout footerDark>
       <div className={styles.root}>
         <header className={styles.header}>
           <div className={styles.headerContent}>

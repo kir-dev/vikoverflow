@@ -1,3 +1,7 @@
+.root {
+  composes: screen from global;
+}
+
 .inputContainer {
   padding: 24px 24px 0;
 }

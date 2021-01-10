@@ -1,7 +1,0 @@
-version: '3'
-services:
-  nextjs:
-    build: ./
-    restart: always
-    ports:
-      - 80:3000

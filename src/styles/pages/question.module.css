@@ -1,4 +1,5 @@
 .root {
+  composes: screen from global;
   width: calc(800px + 2 * 24px);
   max-width: 100%;
   padding: 24px;

@@ -41,7 +41,7 @@ export default function HomePage({ initialQuestionsData, initialTopicsData }) {
   }, [inView, isReachingEnd]);
 
   return (
-    <Layout>
+    <Layout footerDark>
       <div className={styles.root}>
         <aside className={styles.aside}>
           <div className={styles.topicStats}>

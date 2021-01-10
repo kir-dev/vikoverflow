@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="logo.svg" alt="vikoverflow" height="100" />
+  <img src="logo.svg"  height="100" />
 </div>
 
 <br>

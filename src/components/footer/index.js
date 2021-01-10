@@ -2,9 +2,9 @@ import Link from "next/link";
 import styles from "./footer.module.css";
 import cn from "clsx";
 
-const Footer = () => (
+const Footer = ({ dark }) => (
   <>
-    <footer className={styles.root}>
+    <footer className={cn(styles.root, { [styles.dark]: dark })}>
       <div className={styles.inner}>
         <span>
           <b>vikoverflow</b>

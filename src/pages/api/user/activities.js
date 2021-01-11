@@ -3,7 +3,6 @@ import { ACTIVITY } from "lib/constants";
 import withUser from "lib/api/with-user";
 import handler from "lib/api/handler";
 import { encodeJSON, decodeJSON } from "lib/utils";
-import { HTTPError } from "lib/utils";
 
 async function getUserActivities(req, res) {
   const params = {

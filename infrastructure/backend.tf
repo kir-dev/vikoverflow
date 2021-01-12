@@ -71,7 +71,7 @@ resource "aws_s3_bucket" "user_uploads_bucket" {
 
 resource "aws_elasticsearch_domain" "es" {
   domain_name           = var.es_domain_name
-  elasticsearch_version = "7.9"
+  elasticsearch_version = "7.7"
 
   cluster_config {
     instance_type = "t3.small.elasticsearch"

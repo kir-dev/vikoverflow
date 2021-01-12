@@ -13,4 +13,3 @@ vikoverflow aims to deliver a unified, fast and delightful experience for studen
 ## Sponsors
 
 <a href="https://vercel.com?utm_source=kir-dev&utm_campaign=oss"><img src="vercel.svg" height="100" /></a>
-,

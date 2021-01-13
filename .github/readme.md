@@ -10,6 +10,6 @@
 
 vikoverflow aims to deliver a unified, fast and delightful experience for students to ask and answer questions. It check all the boxes when it comes to providing features one might expect from such a platform, including ease of use, hassle-free file uploads and robust searching capabilities.
 
-## Sponsors
+<br>
 
-<a href="https://vercel.com?utm_source=kir-dev&utm_campaign=oss"><img src="vercel.svg" height="100" /></a>
+<a href="https://vercel.com?utm_source=kir-dev&utm_campaign=oss"><img src="pbv.svg" height="40" /></a>

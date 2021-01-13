@@ -31,13 +31,8 @@
   color: var(--foreground);
 }
 
-.sponsors {
+.vercel {
   display: flex;
   align-items: center;
   margin-left: auto;
-}
-
-.sponsors a {
-  margin-left: 0.5rem;
-  margin-bottom: -4px;
 }

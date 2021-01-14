@@ -9,7 +9,6 @@ import { useRouter } from "next/router";
 import { useUser } from "lib/authenticate";
 import Question from "components/question-list-element";
 import useTopicQuestions from "swr/use-topic-questions";
-import { getQuestionsByTopic } from "pages/api/questions";
 import { getTopicById } from "pages/api/topics/[id]";
 
 export async function getStaticPaths() {
@@ -22,11 +21,9 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params }) {
   try {
     const topicData = await getTopicById(params.id);
-    const firstPageOfQuestions = await getQuestionsByTopic(params.id);
     return {
       props: {
         initialTopicData: topicData,
-        initialQuestionsData: [firstPageOfQuestions],
       },
       revalidate: 1,
     };
@@ -37,13 +34,13 @@ export async function getStaticProps({ params }) {
   }
 }
 
-export default function TopicPage({ initialTopicData, initialQuestionsData }) {
+export default function TopicPage({ initialTopicData }) {
   const { user } = useUser();
   const router = useRouter();
   const topicId = router.query.id;
   const { data: topicData } = useSWR(
     topicId ? `/api/topics/${topicId}` : null,
-    { initialData: initialTopicData }
+    { initialData: initialTopicData, revalidateOnMount: true }
   );
   const {
     questions,
@@ -51,7 +48,7 @@ export default function TopicPage({ initialTopicData, initialQuestionsData }) {
     isEmpty,
     isReachingEnd,
     loadMore,
-  } = useTopicQuestions({ initialData: initialQuestionsData });
+  } = useTopicQuestions();
 
   const [loaderRef, inView] = useInView({ rootMargin: "400px 0px" });
 
@@ -91,7 +88,7 @@ export default function TopicPage({ initialTopicData, initialQuestionsData }) {
           </div>
         </header>
         <main className={styles.main}>
-          {initialDataLoaded ? (
+          {topicData?.topic && initialDataLoaded ? (
             isEmpty ? (
               <h1 className={styles.empty}>
                 Még nem érkeztek kérdések, tedd fel te az elsőt.
@@ -99,7 +96,7 @@ export default function TopicPage({ initialTopicData, initialQuestionsData }) {
             ) : (
               <>
                 {questions.map((q) => (
-                  <Question key={q.id} {...q} />
+                  <Question key={q?.id} {...q} />
                 ))}
                 {!isReachingEnd && <Question skeleton ref={loaderRef} />}
               </>

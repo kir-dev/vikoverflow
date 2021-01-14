@@ -59,6 +59,16 @@ export default function Question({
       });
 
       if (res.ok) {
+        mutate(
+          "/api/questions",
+          (oldData) => ({
+            ...oldData,
+            questions: oldData?.questions?.length
+              ? oldData.questions.filter((e) => e.id !== id)
+              : [],
+          }),
+          false
+        );
         router.push("/");
       }
     } catch (e) {

@@ -22,7 +22,7 @@ export default function QuestionPage() {
     }
   }, [data]);
 
-  if (!data) {
+  if (!data?.question) {
     return (
       <Layout footerDark>
         <div className={styles.root}>

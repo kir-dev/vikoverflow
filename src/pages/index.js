@@ -6,19 +6,8 @@ import { useInView } from "react-intersection-observer";
 import { useEffect } from "react";
 import Question from "components/question-list-element";
 import useQuestions from "swr/use-questions";
-import { getQuestions } from "pages/api/questions";
-import { getTopics } from "pages/api/topics";
 
-export async function getStaticProps() {
-  const initialQuestionsData = [await getQuestions()];
-  const initialTopicsData = await getTopics();
-  return {
-    props: { initialQuestionsData, initialTopicsData },
-    revalidate: 1,
-  };
-}
-
-export default function HomePage({ initialQuestionsData, initialTopicsData }) {
+export default function HomePage() {
   const router = useRouter();
   const {
     questions,
@@ -26,12 +15,8 @@ export default function HomePage({ initialQuestionsData, initialTopicsData }) {
     isEmpty,
     isReachingEnd,
     loadMore,
-    hasNewQuestions,
-    addNewQuestions,
-  } = useQuestions({ initialData: initialQuestionsData });
-  const { data: topicsData } = useSWR("/api/topics", {
-    initialData: initialTopicsData,
-  });
+  } = useQuestions();
+  const { data: topicsData } = useSWR("/api/topics");
   const [loaderRef, inView] = useInView({ rootMargin: "400px 0px" });
 
   useEffect(() => {

@@ -1,15 +1,7 @@
-<div align="center">
-  <img src="logo.svg"  height="100" />
-</div>
+# vikoverflow
 
-<br>
+vikoverflow is a platform for students to share knowledge. It aims to deliver a unified, fast and delightful experience for students to ask and answer questions while providing features such as ease of use, hassle-free file uploads and robust searching capabilities.
 
-<p align="center">
-  <b>A platform for students to share knowledge</b>
-</p>
+## Sponsors
 
-vikoverflow aims to deliver a unified, fast and delightful experience for students to ask and answer questions. It check all the boxes when it comes to providing features one might expect from such a platform, including ease of use, hassle-free file uploads and robust searching capabilities.
-
-<br>
-
-<a href="https://vercel.com?utm_source=kir-dev&utm_campaign=oss"><img src="pbv.svg" height="40" /></a>
+<a href="https://vercel.com?utm_source=kir-dev&utm_campaign=oss"><img src="pbv.svg" height="36" /></a>

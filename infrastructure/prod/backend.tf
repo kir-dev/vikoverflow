@@ -1,5 +1,5 @@
 locals {
-  build_folder_path = "${path.cwd}/build"
+  build_folder_path = abspath("../build")
 }
 
 resource "aws_dynamodb_table" "dynamo_table" {
@@ -203,10 +203,10 @@ resource "aws_iam_role_policy_attachment" "stream_policy_attachment" {
 }
 
 resource "aws_lambda_event_source_mapping" "es_indexer_lambda_mapping" {
-  event_source_arn  = aws_dynamodb_table.dynamo_table.stream_arn
-  function_name     = aws_lambda_function.es_indexer_lambda.arn
-  starting_position = "TRIM_HORIZON"
-  batch_size = 100
-  maximum_retry_attempts = 100
+  event_source_arn               = aws_dynamodb_table.dynamo_table.stream_arn
+  function_name                  = aws_lambda_function.es_indexer_lambda.arn
+  starting_position              = "TRIM_HORIZON"
+  batch_size                     = 100
+  maximum_retry_attempts         = 100
   bisect_batch_on_function_error = true
 }

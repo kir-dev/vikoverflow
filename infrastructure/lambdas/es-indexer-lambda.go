@@ -1,3 +1,6 @@
+// build with:
+// GOOS=linux GOARCH=amd64 go build -o ../build/es-indexer-lambda es-indexer-lambda.go
+
 package main
 
 import (

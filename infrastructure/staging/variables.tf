@@ -5,28 +5,28 @@ variable "region" {
 
 variable "dynamodb_table_name" {
   type    = string
-  default = "vikoverflow"
+  default = "staging-vikoverflow"
 }
 
 variable "dynamodb_table_capacity" {
   type        = number
   description = "watch out, we have 3 indexes total so this values gets tripled"
-  default     = 5
+  default     = 1
 }
 
 variable "s3_bucket_name" {
   type    = string
-  default = "vikoverflow-user-uploads"
+  default = "staging-vikoverflow-user-uploads"
 }
 
-variable "es_domain_name" {
-  type    = string
-  default = "vikoverflow"
+variable "es_domain" {
+  type        = string
+  description = "domain of production deployment "
 }
 
 variable "es_index" {
   type    = string
-  default = "prod"
+  default = "staging"
 }
 
 variable "es_user" {

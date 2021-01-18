@@ -13,6 +13,9 @@ module.exports = {
     ];
   },
   images: {
-    domains: ["staging-vikoverflow-user-uploads.s3-eu-central-1.amazonaws.com"],
+    domains: [
+      "vikoverflow-user-uploads.s3-eu-central-1.amazonaws.com",
+      "staging-vikoverflow-user-uploads.s3-eu-central-1.amazonaws.com",
+    ],
   },
 };
